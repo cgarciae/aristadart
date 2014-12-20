@@ -1,0 +1,52 @@
+<div>
+    ID: 
+    <select ng-model="evento.id">
+        <option ng-repeat="id in ids" ng-value="id">{{id}}</option>
+    </select>
+    
+    <input type="number" ng-model="evento.id"> 
+    <button ng-click="LoadData()" >Load</button> <button ng-click="SaveData()" >Save</button>
+    
+    <br><img alt={{evento.descripcion}} ng-src="{{evento.imagenPreview.urlTextura}}">
+    <br>URL Imagen: <input type="text" ng-model="evento.imagenPreview.urlTextura">
+    <br>Nombre: <input type="text" ng-model="evento.nombre">
+    <br>Descripcion: <input type="text" ng-model="evento.descripcion">
+    <br>Vista
+    <ul>
+        <li ng-repeat="vista in evento.experiencia.vistas">
+            ID: {{vista.id}}
+            
+            <h2> Icono </h2>
+            <ul>
+                <li>Imagen: <input type="text" ng-model="vista.icon.urlTextura"></li>
+                <li>Nombre: <input type="text" ng-model="vista.icon.texto"></li>
+            </ul>
+            <h2> Modelo </h2>
+            <ul>
+                <li>URL: <input type="text" ng-model="vista.modelo.url_objeto"></li>
+                <li>Version: <input type="number" ng-model="vista.modelo.version"></li>
+            </ul>
+            <h2> Target </h2>
+            <ul>
+                <li>URL: <input type="text" ng-model="vista.target.url"></li>
+                <li>Version: <input type="number" ng-model="vista.target.version"></li>
+            </ul>
+            <h2> Elementos</h2> {{vista.muebles.length}}
+            <ul>
+                <li ng-repeat="elemento in vista.muebles"> 
+                <ul>
+                    <li>ID: {{elemento.id}}</li>
+                    <li>Nombre: <input type="text" ng-model="elemento.nombre"></li>
+                    <li>Titulo: <input type="text" ng-model="elemento.titulo"></li>
+                    <li>URL Imagen: <input type="text" ng-model="elemento.urlImagen"></li>
+                    <li>Texto: <input type="text" ng-model="elemento.texto"></li>
+                </ul>
+                <br>
+                </li>   
+            </ul>
+            <br> <button ng-click="NuevaElemento (vista)">Nuevo Elemento</button>
+        </li>
+    </ul>
+    <br> <button ng-click="NuevaVista()">Nueva Vista</button>
+            
+</div>

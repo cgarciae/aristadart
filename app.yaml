@@ -1,0 +1,4 @@
+version: web3
+runtime: custom
+vm: true
+api_version: 1
