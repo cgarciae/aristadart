@@ -1,0 +1,9 @@
+docker rm webDart
+docker rmi cgarciae/testdart
+
+cd "/c/Users/Cristian Garcia/Documents/Dart/redstonetest/restonetest/"
+docker build -t="cgarciae/testdart" .
+
+docker run -d -p 8091:8080 -it --name webDart --link db:db cgarciae/testdart
+
+docker logs webDart

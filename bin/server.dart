@@ -1,135 +1,47 @@
-import 'dart:io';
-import 'dart:async';
-
-import 'package:shelf/shelf.dart' as shelf;
-import 'package:shelf_static/shelf_static.dart';
 import 'package:redstone/server.dart' as app;
-
-import 'package:restonetest/general/aristageneral.dart';
-
-import 'package:gcloud/db.dart';
-import 'package:appengine/appengine.dart';
-import 'package:restonetest/server/aristaweb.dart';
 import 'package:redstone_mapper/plugin.dart';
-import 'package:di/di.dart' as di;
-import 'package:fp/fp.dart';
+import 'package:redstone_mapper_mongo/manager.dart';
+import 'package:mongo_dart/mongo_dart.dart';
+import 'package:shelf/shelf.dart' as shelf;
 
+main() {
 
-DatastoreDB get db => context.services.db;
+  var dbManager = new MongoDbManager("mongodb://db/test", poolSize: 3);
 
-@app.Route('/random')
-@Encode()
-random ()
-{
-
-    var evento = new EventoDB.New
-    (
-        nombre : "Arista Demo Construccion",
-        descripcion : "Descubre el poder de la Realidad Aumetada y Virtual en el sector inmobiliario.",
-        imagenPreview : new TextureGUIDB.New
-        (
-            urlTextura: "HG/Materials/Splash2"
-        ),
-        experiencia : new ExperienciaDB.New
-        (
-            vistas : 
-            [
-                new ViewDB.ConstruccionRA
-                    (
-                        modelo: new ObjetoUnity.New
-                        (
-                            url_objeto: "HG/Prefabs/Plantillas/DemoConstruccion",
-                            version: 3
-                        ),
-                        target: new AristaImageTarget.New
-                        (
-                            url: "AristaTest",
-                            version: 0
-                        ),
-                        icon: new TextureGUIDB.New
-                        (
-                            urlTextura: "HG/Materials/App/Galeria",
-                            texto: "Realidad Aumentada"
-                        ),
-                        muebles:
-                        [
-                            new ElementoConstruccionDB.New
-                            (
-                                nombre: "Zona Social",
-                                titulo: "Zonas Social",
-                                urlImagen: "HG/Materials/DemoConstruccion/zonaSocial",
-                                texto: "Juegos infantiles, salon social, sauna, turco y gimnasio. Placa recreativa."
-                            )
-                        ]
-                    )
-            ]
-        )
-    );
-
-    return Help.ClearAllOfKind(EventoDB)
-        .then(evento.Put);
-
+  app.addPlugin(getMapperPlugin(dbManager));
+  app.setupConsoleLog();
+  app.start();
 
 }
 
-@app.Route('/evento/add', methods: const[app.POST])
-@Encode()
-addUser(@Decode() EventoDB evento) {
-
-    return evento.Put();
-}
-
-@app.Route('/id/:id')
-@Encode()
-getId (int id)
+//redstone_mapper will create a "dbConn" attribute
+//for every request.
+@app.Route("/mongo")
+listUsers(@app.Attr() MongoDb dbConn) 
 {
-    return Help
-            .FindId(EventoDB, id)
-            .then (Help.Build);
-}
-
-@app.Route('/all/ids')
-@Encode()
-AllIds ()
-{
-    return Help
-            .All(EventoDB)
-            .then((List<EventoDB> eventos) => 
-                new ListInt()..list = eventos
-                    .map ((Evento evento) => evento.id)
-                    .toList()
-             );
-}
-
-
-@app.Route('/test')
-@Encode()
-test ()
-{
+    dbConn.innerConn.collection("s");
     
-    var t = new TS ()..field = "TS";
-    
-    return t.Put();
-}
-
-main() 
-{
-
-    app.setShelfHandler
-    (
-        createStaticHandler
-        (
-            "build/web",
-            defaultDocument: "index.html",
-            serveFilesOutsidePath: true
-        )
-    );
-    app.setupConsoleLog();
-    app.addPlugin(getMapperPlugin());
-    app.setUp();
-    runAppEngine(app.handleRequest).then((_)
-    {
-        
-        
+    return dbConn.collection("s").insert({"s":"chao"}).then((_) {
+    return dbConn.collection("s").find().toList();
     });
 }
+
+@app.Route("/hola")
+hello(@app.Attr() MongoDb dbConn) => "Hola Mateo";
+
+@app.Route("/chao")
+chao(@app.Attr() MongoDb dbConn) => "CHAOOOO";
+
+@app.Interceptor(r'/.*')
+handleResponseHeader() {
+  if (app.request.method == "OPTIONS") {
+    //overwrite the current response and interrupt the chain.
+    app.response = new shelf.Response.ok(null, headers: _createCorsHeader());
+    app.chain.interrupt();
+  } else {
+    //process the chain and wrap the response
+    app.chain.next(() => app.response.change(headers: _createCorsHeader()));
+  }
+}
+
+_createCorsHeader() => {"Access-Control-Allow-Origin": "*"};

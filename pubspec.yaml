@@ -2,16 +2,15 @@ name: restonetest
 description: A sample web application
 dependencies:
   angular: any
-  appengine: any
   browser: any
-  di: any
   fp: any
+  mongo_dart: any
   redstone: any
   redstone_mapper: any
+  redstone_mapper_mongo: any
   shelf_static: any
 transformers:
 - redstone_mapper
 - angular:
     html_files:
     - lib/client/models/evento/evento.html
-
