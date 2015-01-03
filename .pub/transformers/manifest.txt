@@ -1,0 +1,2 @@
+1.8.3
+di/module_transformer,redstone_mapper,smoke/src/default_transformer

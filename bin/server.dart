@@ -5,8 +5,9 @@ import 'package:mongo_dart/mongo_dart.dart';
 import 'package:shelf/shelf.dart' as shelf;
 
 main() {
-
-  var dbManager = new MongoDbManager("mongodb://db/test", poolSize: 3);
+  
+  var ip = "104.131.109.228:8095";
+  var dbManager = new MongoDbManager("mongodb://${ip}/test", poolSize: 3);
 
   app.addPlugin(getMapperPlugin(dbManager));
   app.setupConsoleLog();
@@ -24,6 +25,8 @@ listUsers(@app.Attr() MongoDb dbConn)
     return dbConn.collection("s").insert({"s":"chao"}).then((_) {
     return dbConn.collection("s").find().toList();
     });
+    
+    
 }
 
 @app.Route("/hola")
