@@ -7,7 +7,7 @@ import 'package:shelf/shelf.dart' as shelf;
 main() {
   
   var ip = "104.131.109.228:8095";
-  var dbManager = new MongoDbManager("mongodb://${ip}/test", poolSize: 3);
+  var dbManager = new MongoDbManager("mongodb://db/test", poolSize: 3);
 
   app.addPlugin(getMapperPlugin(dbManager));
   app.setupConsoleLog();
@@ -30,7 +30,7 @@ listUsers(@app.Attr() MongoDb dbConn)
 }
 
 @app.Route("/hola")
-hello(@app.Attr() MongoDb dbConn) => "Hola Mateo";
+hello(@app.Attr() MongoDb dbConn) => "Hola Mateo!!";
 
 @app.Route("/chao")
 chao(@app.Attr() MongoDb dbConn) => "CHAOOOO";
