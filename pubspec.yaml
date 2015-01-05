@@ -1,7 +1,7 @@
 name: restonetest
 description: A sample web application
 dependencies:
-  angular: any
+  angular: 1.0.0
   browser: any
   fp: any
   mongo_dart: any
