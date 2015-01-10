@@ -1,8 +1,9 @@
-name: restonetest
+name: aristadart
 description: A sample web application
 dependencies:
   angular: 1.0.0
   browser: any
+  di: any
   fp: any
   mongo_dart: any
   redstone: any
@@ -13,4 +14,7 @@ transformers:
 - redstone_mapper
 - angular:
     html_files:
-    - lib/client/models/evento/evento.html
+    - lib/components/login/login.html
+    - lib/components/home/home.html
+    - lib/components/evento/evento.html
+    - lib/components/view/view.html

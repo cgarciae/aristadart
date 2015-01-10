@@ -1,0 +1,16 @@
+<div> 
+Hola {{user.username}}!!!
+
+<h1>Eventos</h1>
+    <ul>
+        <li ng-repeat="evento in eventos" 
+            ng-click="ver (evento)">
+            <span style="font-size: 20">{{evento.nombre}}</span> <button ng-click="eliminar (evento, $event)">X</button>
+            <section>{{evento.descripcion}}</section>
+        </li>
+    </ul>
+    
+   
+  <input type="button" ng-click='nuevoEvento()' value="Nuevo Evento">
+  
+</div>

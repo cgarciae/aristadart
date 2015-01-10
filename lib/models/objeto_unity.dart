@@ -1,4 +1,4 @@
-part of aristageneral;
+part of arista;
 
 class ObjetoUnity
 {

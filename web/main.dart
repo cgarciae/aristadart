@@ -1,8 +1,10 @@
-import 'package:restonetest/client/aristaclient.dart';
 import 'package:angular/angular.dart';
 import 'package:angular/application_factory.dart';
 import 'package:redstone_mapper/mapper.dart';
 import 'package:redstone_mapper/mapper_factory.dart';
+import 'package:aristadart/arista_client.dart';
+import 'package:redstone/query_map.dart';
+import  'dart:html';
 
 @MirrorsUsed(targets: const[
   'angular',
@@ -24,10 +26,11 @@ class MyAppModule extends Module
 {
     MyAppModule()
     {
-        bind (EventoComponent);
-        bind (AAA);
-        bind (BBB);
-        bind (CCC);
+        bind (Login);
+        bind (Home);
+        bind (EventoVista);
+        bind(RouteInitializerFn, toValue: recipeBookRouteInitializer);
+        bind(NgRoutingUsePushState, toValue: new NgRoutingUsePushState.value(false));
     }
 }
 
@@ -40,12 +43,10 @@ void main()
 {
     bootstrapMapper();
 
-    List<int> list = new List<int> ();
-    
-    print (decodeJson(r'{"list":[4925812092436480,4925812092436481]}', ListInt).list);
 
     applicationFactory()
         .addModule(new MyAppModule())
         .run();
+    
     
 }
