@@ -15,7 +15,7 @@ part 'components/login/login.dart';
 part 'components/home/home.dart';
 part 'routing/router.dart';
 
-get storage => dom.window.localStorage;
+dom.Storage get storage => dom.window.localStorage;
 
 class ReqParam
 {
@@ -98,4 +98,50 @@ Future<dynamic> jsonRequestDecoded (String path, Object obj, Type type)
 {
     return jsonRequestString(path, obj)
     .then((json) => decodeJson(json, type));
+}
+
+Future<Resp> saveInCollection (String collection, Object obj)
+{
+    return jsonRequestDecoded('private/save/$collection', obj, Resp);
+}
+
+Future<dynamic> getFromCollection (Type type, String collection, String id)
+{
+    return getRequestDecoded(type, 'private/get/$collection/$id');
+}
+
+Function doIfSuccess ([Function f])
+{
+    return (dynamic resp)
+    {
+        if (resp.success)
+        {
+            if (f != null)
+                f (resp);
+        }
+        else
+        {
+            dom.window.alert(resp.error);
+        }
+    };
+}
+
+Future<Resp> pushIDtoList (String collection, String objID, String fieldName, String referenceID)
+{
+    return getRequestDecoded (Resp, '/private/push/$collection/$objID/$fieldName/$referenceID');
+}
+
+Future<Resp> pullIDfromList (String collection, String objID, String fieldName, String referenceID)
+{
+    return getRequestDecoded (Resp, '/private/pull/$collection/$objID/$fieldName/$referenceID');
+}
+
+Future<Resp> deleteFromCollection (String collection, String id)
+{
+    return getRequestDecoded(Resp, '/private/delete/$collection/$id');
+}
+
+Future<IdResp> newFromCollection (String collection)
+{
+    return getRequestDecoded(IdResp, '/private/new/$collection');
 }

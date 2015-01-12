@@ -35,3 +35,24 @@ Map ObjectToMap (dynamic obj)
 }
 
 QueryMap NewQueryMap () => new QueryMap(new Map());
+
+class Resp
+{
+    @Field() bool success;
+    @Field() String error;
+}
+
+class VistasResp extends Resp
+{
+    @Field() List<Vista> vistas = [];
+}
+
+class VistaResp extends Resp
+{
+    @Field() Vista vista;
+}
+
+class IdResp extends Resp
+{
+    @Field() String id;
+}

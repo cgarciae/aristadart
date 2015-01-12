@@ -1,11 +1,14 @@
 part of arista;
 
-class View
+class Vista
 {
-
+    //Info general
+    @Id() String id;
+    
     @Field() String type__;
-    @Field() TextureGUI icon;
+    @Field() TextureGUI icon = new TextureGUI();
 
+    //Info expecifica
     @Field() ObjetoUnity modelo;
     @Field() AristaImageTarget target;
     

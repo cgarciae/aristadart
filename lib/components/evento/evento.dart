@@ -9,12 +9,15 @@ class EventoVista
 {
     
     Evento evento = new Evento ();
+    List<Vista> vistas = [];
     
-    EventoVista (RouteProvider routeProvider) 
+    Router router;
+    
+    EventoVista (RouteProvider routeProvider, this.router) 
     {
-        var id = routeProvider.parameters['id'];
+        var eventoID = routeProvider.parameters['eventoID'];
         
-        if (id == null)
+        if (eventoID == null)
         {
             //Crear nuevo evento
             getRequestQueryMap('private/new/evento').then((QueryMap res)
@@ -29,29 +32,94 @@ class EventoVista
         else
         {
             //Cargar evento
-            getRequestDecoded(Evento, "private/get/evento/$id").then((Evento e)
+            getRequestDecoded(Evento, "private/get/evento/$eventoID").then((Evento e)
             {
                 evento = e;
+                
+                return cargarVistas(e.id);
             });
         }
     }
     
+    cargarVistas (String eventID)
+    {
+        return getRequestDecoded(VistasResp, "private/get/evento/$eventID/vistas")
+        .then(doIfSuccess((VistasResp resp)
+        {
+            vistas = resp.vistas;
+        }));
+    }
+    
     save ()
     {
-        jsonRequestQueryMap('private/save/evento', evento)
-        .then((QueryMap map)
+        jsonRequestDecoded('private/save/evento', evento, Resp)
+        .then((Resp resp)
         {
-            if (map.success == null || ! map.success)
+            if (resp.success)
+            {
+                router.go('home', {});
+            }
+            else
             {
                 dom.window.alert('Save Failed');
             }
         });
     }
     
-    void NuevaVista ()
+    nuevaVista ()
     {
-       
+        getRequestDecoded (IdResp, 'private/new/vista')
+        
+        .then (doIfSuccess ((resp) => addVistaId (resp.id)));
     }
     
+    Future<Resp> addVistaId  (String vistaID)
+    {
+        var eventoID = evento.id;
+        
+        return pushIDtoList ('evento', eventoID, 'viewIds', vistaID)
+        
+        .then (doIfSuccess ((resp)
+        {
+            var vista = new Vista()
+                ..id = vistaID
+                ..icon.texto = "Nueva Vista";
+            
+            return saveVista (vista);
+        }));
+    }
+    
+    saveVista (Vista vista)
+    {
+        return saveInCollection('vista', vista)
+                
+        .then (doIfSuccess ((_)
+        {
+            vistas.add (vista);
+            evento.viewIds.add (vista.id);
+        }));
+    }
+    
+    
+    eliminar (Vista v, dom.MouseEvent event)
+    {
+        event.stopImmediatePropagation();
+        
+        deleteFromCollection ('vista', v.id)
+        .then(doIfSuccess((Resp resp)
+        {
+            return removeVista (v);
+        }));
+    }
+    
+    Future removeVista (Vista v)
+    {
+        return pullIDfromList('evento', evento.id, 'viewIds', v.id)
+        .then(doIfSuccess ((Resp resp) 
+        {
+            vistas.remove (v);
+            evento.viewIds.remove (v.id);
+        }));
+    }
 }
 

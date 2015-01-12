@@ -2,7 +2,7 @@ part of arista_client;
 
 @Component
 (
-    selector : "login-comp",
+    selector : "login",
     templateUrl: 'components/login/login.html'
 )
 class Login
@@ -17,12 +17,12 @@ class Login
     
     login ()
     {
-        jsonRequestQueryMap('/user/login', user)
-        .then((QueryMap obj) 
+        jsonRequestDecoded('/user/login', user, IdResp)
+        .then((IdResp obj) 
         {
             if (obj.success)
             {
-                dom.window.localStorage['id'] = obj.id;
+                storage['id'] = obj.id;
                 dom.window.location.href = '#/home';
             }
             else

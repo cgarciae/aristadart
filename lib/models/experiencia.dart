@@ -5,7 +5,7 @@ class Experiencia
 {
     
 
-    @Field() List<View> vistas = [];
+    @Field() List<Vista> vistas = [];
     
     Build (_){}
     Put ([_]){}

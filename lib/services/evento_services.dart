@@ -35,37 +35,50 @@ newEvent(@app.Attr() MongoDb dbConn)
 }
 
 @app.Route("/private/save/evento", methods: const[app.POST])
-saveEvent(@app.Attr() MongoDb dbConn, @Decode() Evento evento) 
+@Encode()
+Future<IdResp> saveEvent(@app.Attr() MongoDb dbConn, @Decode() Evento evento) 
 {
     var id = StringToId(evento.id);
         
     return dbConn.update(Col.evento, where.id(id), evento)
-    .then((_) => {
-        'success' : true,
-        'id' : evento.id
-    });   
+    .then((_) => new IdResp()
+        ..success = true
+        ..id = evento.id
+    );   
 }
 
 @app.Route("/private/get/evento/:id")
 @Encode()
-getEvento(@app.Attr() MongoDb dbConn, String id)
+Future<Evento> getEvento(@app.Attr() MongoDb dbConn, String id)
 {
     var eventoId = StringToId(id);
     
     return dbConn.findOne(Col.evento, Evento, where.id(eventoId));
 }
 
+
+
 @app.Route("/private/delete/evento/:id")
+@Encode()
 deleteEvento(@app.Attr() MongoDb dbConn, String id)
 {
     var eventoId = StringToId(id);
     
-    return dbConn.remove(Col.evento, where.id(eventoId))
+    ObjectId userID = session['id'];
+    
+    return dbConn.collection (Col.user)
+            
+    .update (where.id (userID), modify.pull ('eventos', eventoId)).then((_)
+    {
+        return dbConn.remove(Col.evento, where.id(eventoId));
+    })
     .then((_)
     {
-        return { 'success' : true };
+        return new Resp()
+            ..success = true;
     });
 }
+
 
 @app.Route ('/all/evento')
 allEventos (@app.Attr() MongoDb dbConn)

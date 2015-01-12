@@ -1,63 +1,82 @@
 part of arista_client;
 
-void recipeBookRouteInitializer(Router router, RouteViewFactory views) 
+void recipeBookRouteInitializer(Router router, RouteViewFactory view) 
 {
-  views.configure({
-    'login': ngRoute(
-        path: '/login',
-        viewHtml: r'<login-comp></login-comp>',
-        defaultRoute: true,
-        enter: (_)
+    authenticate (String route, [Function onEnter])
+    {
+        return (RouteEnterEvent e)
         {
-            getRequestQueryMap("/user/loggedin")
-            .then((QueryMap map) 
+            if (! loggedIn)
             {
-                if (map.success)
+                router.go('login', {});
+            }
+            else
+            {
+                if (onEnter != null)
+                    onEnter ();
+                
+                view (route) (e);
+            }
+        };
+    }
+    
+    view.configure(
+    {
+        'login': ngRoute(
+            path: '/login',
+            defaultRoute: true,
+            enter : (RouteEnterEvent e)
+            {
+                if (loggedIn)
                 {
                     router.go('home', {});
                 }
-            });
-        }),
+                else
+                {               
+                    view ('view/login_view.html') (e);
+                }
+            }),
         
-    'home': ngRoute(
+        'home': ngRoute
+        (
             path: '/home',
-            viewHtml: r'<home></home>'),
-            
-    'evento': ngRoute(
-            path: '/evento',
-            mount: 
+            enter: authenticate ('view/home_view.html')                  
+        ),
+                
+        'evento': ngRoute 
+        (
+            path: 'evento/:eventoID',
+            preEnter: (RoutePreEnterEvent e)
+            {   
+                var id = e.parameters['eventoID'];
+                
+                if (id == null)
+                    router.go('home', {});
+                
+            },
+            enter: authenticate ('view/evento_view.html'),
+
+            mount :
             {
-                'new' : ngRoute(
-                        path: '/new',
-                        viewHtml: r'<evento></evento>',
-                        enter: (RouteEnterEvent e)
-                        {
-                            
-                        }),
+                'view' : ngRoute 
+                (
+                    path: 'view/:vistaID',
+                    preEnter: (RoutePreEnterEvent e)
+                    {   
+                        var eventoID = e.parameters['eventoID'];
+                        var viewID = e.parameters['vistaID'];
                         
-                'edit' : ngRoute (
-                        path: '/:id',
-                        viewHtml: r'<evento></evento>',
-                        preEnter: (RoutePreEnterEvent e)
-                        {   
-                            var id = e.parameters['id'];
-                            
-                            if (id == null)
-                                router.go('home', {});
-                            
-                        },
-                        enter: (RouteEnterEvent e)
-                        {
-                            
-                        }),
-                        
-                                       
-                        
-                        
-                'default_view' : ngRoute(
-                        defaultRoute: true,
-                        enter: (RouteEnterEvent e) =>
-                            router.go('home', {}, replace: true))
-            })
+                        if (viewID == null || eventoID == null)
+                            router.go('home', {});
+                    },
+                    enter: authenticate ('view/view_view.html')
+                )
+            }
+        )
+        
   });
 }
+
+
+
+bool get loggedIn => storage['id'] != null;

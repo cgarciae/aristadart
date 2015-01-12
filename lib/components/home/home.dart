@@ -10,7 +10,7 @@ part of arista_client;
 class Home
 {
     
-    User user = new UserSecure();
+    User user = new User();
     List<Evento> eventos = [];
     
     Router router;
@@ -40,29 +40,54 @@ class Home
     
     nuevoEvento ()
     {
-        router.go('evento.new', {});
+        getRequestDecoded (IdResp, 'private/new/evento')
+        
+        .then (doIfSuccess ((resp) => addEventId (resp.id)));
+    }
+    
+    Future<Resp> addEventId  (String eventID)
+    {
+        var userID = storage['id'];
+        return getRequestDecoded(Resp, '/private/push/user/$userID/eventos/$eventID')
+        
+        .then (doIfSuccess ((resp)
+        {
+            var evento = new Evento()
+                ..id = eventID
+                ..nombre = 'Nuevo Evento'
+                ..descripcion = 'Descripcion';
+            
+            return saveEvento (evento);
+        }));
+    }
+    
+    saveEvento (Evento evento)
+    {
+        return saveInCollection('evento', evento)
+                
+        .then (doIfSuccess ((_) => eventos.add(evento)));
     }
     
     ver (Evento e)
     {
-        router.go('evento.edit', {'id': e.id});
+        router.go('evento', {'eventoID': e.id});
     }
     
     eliminar (Evento e, dom.MouseEvent event)
     {
         event.stopImmediatePropagation();
         
-        getRequestQueryMap('/private/delete/evento/${e.id}').then((QueryMap res)
+        deleteFromCollection ('evento', e.id)
+        .then(doIfSuccess((Resp resp)
         {
-            if (res.success)
-            {
-                eventos.remove(e);
-            }
-            else
-            {
-                dom.window.alert("Failed to delete event");
-            }
-        });
+            return removeEvento (e);
+        }));
+    }
+    
+    Future removeEvento (Evento e)
+    {
+        return pullIDfromList('user', storage['id'], 'eventos', e.id)
+        .then(doIfSuccess ((Resp resp) => eventos.remove(e)));
     }
 }
 

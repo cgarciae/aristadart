@@ -5,7 +5,14 @@
 </head>
 <body>
 
-<ng-view></ng-view>
+<div style="width: 66%; min-width: 600px; margin: 0 auto;">
+    <div align="right" ng-if="LoggedIn">
+        <button ng-click="logout()">Logout</button>
+    </div>
+    
+    
+    <ng-view></ng-view>
+</div>
 
 <script type="application/dart" src="main.dart"></script>
 <script type="text/javascript" src="packages/browser/dart.js"></script>
