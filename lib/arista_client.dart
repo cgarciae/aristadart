@@ -10,7 +10,7 @@ import 'package:redstone/query_map.dart';
 import 'package:fp/fp.dart';
 
 part 'components/evento/evento.dart';
-part 'components/view/view.dart';
+part 'components/vista/vista.dart';
 part 'components/login/login.dart';
 part 'components/home/home.dart';
 part 'routing/router.dart';

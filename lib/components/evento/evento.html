@@ -4,7 +4,8 @@
     <div>Nombre: <input type="text" ng-model="evento.nombre"></div>
     <div>Descripcion <input type="text" ng-model='evento.descripcion'></div>
     <br>
-    <div ng-repeat="vista in vistas">
+    <div ng-repeat="vista in vistas"
+         ng-click="ver (vista)">
         <button ng-click="eliminar (vista, $event)">X</button>
         <span style="font-weight: bold;">{{vista.icon.texto}}</span>
         <br><br>

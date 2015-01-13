@@ -45,7 +45,7 @@ void recipeBookRouteInitializer(Router router, RouteViewFactory view)
                 
         'evento': ngRoute 
         (
-            path: 'evento/:eventoID',
+            path: '/evento/:eventoID',
             preEnter: (RoutePreEnterEvent e)
             {   
                 var id = e.parameters['eventoID'];
@@ -54,23 +54,58 @@ void recipeBookRouteInitializer(Router router, RouteViewFactory view)
                     router.go('home', {});
                 
             },
-            enter: authenticate ('view/evento_view.html'),
-
-            mount :
+            enter: authenticate ('view/evento_view.html')
+        ),
+        
+        'vista' : ngRoute
+        (
+            path: '/vista/:eventoID/:vistaID',
+            preEnter: (RoutePreEnterEvent e)
+            {   
+                e.parameters.keys.forEach(print);
+                
+                var eventoID = e.parameters['eventoID'];
+                var viewID = e.parameters['vistaID'];
+                
+                if (viewID == null || eventoID == null)
+                {
+                    dom.window.alert("eventoID $eventoID, viewID $viewID");
+                    router.go('home', {});
+                }
+            },
+            enter: authenticate ('view/vista_view.html')
+        ),
+        
+        'A' : ngRoute 
+        (
+            path : '/A/:parA',
+            enter: (RouteEnterEvent e)
             {
-                'view' : ngRoute 
+                print ('ENTERED A');
+                e.parameters.keys.forEach(print);
+            },
+            mount: 
+            {
+                'B' : ngRoute
                 (
-                    path: 'view/:vistaID',
-                    preEnter: (RoutePreEnterEvent e)
-                    {   
-                        var eventoID = e.parameters['eventoID'];
-                        var viewID = e.parameters['vistaID'];
-                        
-                        if (viewID == null || eventoID == null)
-                            router.go('home', {});
-                    },
-                    enter: authenticate ('view/view_view.html')
+                    path: '/B/:parB',
+                    enter: (RouteEnterEvent e)
+                    {
+                        print ('ENTERED B');
+                        e.parameters.keys.forEach(print);
+                    }
                 )
+            }
+        
+        ),
+        
+        'B' : ngRoute
+        (
+            path: '/A/:A/B/:B',
+            enter: (RouteEnterEvent e)
+            {
+                print ('BBB');
+                e.parameters.keys.forEach(print);
             }
         )
         

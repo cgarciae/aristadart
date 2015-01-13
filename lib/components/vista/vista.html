@@ -1,0 +1,30 @@
+<div>
+    <button ng-click='save()'>Save</button>
+    
+    <div>Nombre: <input type="text" ng-model="vista.icon.texto"></div>
+    <br>
+    <div ng-switch="vista.type__">
+        <div ng-switch-when="ConstruccionRAJS, Assembly-CSharp">
+            <div style="font-weight: bold;">
+                Construccion RA
+            </div>
+        </div>
+        <div ng-switch-when="InfoContactoJS, Assembly-CSharp">
+            <div style="font-weight: bold;">
+                Informacion y Contacto
+            </div>
+        </div>
+        <div ng-switch-default>
+            <h3>Tipo de Vista</h3> 
+            <div ng-repeat="tipo in tiposDeVista"
+                 ng-click="seleccionarTipo (tipo)"
+                 style="border: 1px solid; border-radius: 10px; padding: 10px 10px 10px 10px; margin-bottom: 10px;">
+                 
+                 <div style="font-weight: bold;">{{tipo.nombre}}</div>
+                 <div style="font-style: italic;">{{tipo.descripcion}}</div>
+                 <br>
+            </div>
+        </div>
+    </div>
+    
+</div>

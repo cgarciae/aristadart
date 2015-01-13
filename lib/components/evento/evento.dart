@@ -52,18 +52,11 @@ class EventoVista
     
     save ()
     {
-        jsonRequestDecoded('private/save/evento', evento, Resp)
-        .then((Resp resp)
+        saveInCollection('evento', evento)
+        .then(doIfSuccess((Resp resp)
         {
-            if (resp.success)
-            {
-                router.go('home', {});
-            }
-            else
-            {
-                dom.window.alert('Save Failed');
-            }
-        });
+            router.go('home', {});
+        }));
     }
     
     nuevaVista ()
@@ -120,6 +113,16 @@ class EventoVista
             vistas.remove (v);
             evento.viewIds.remove (v.id);
         }));
+    }
+    
+    ver (Vista v)
+    {
+        //dom.window.alert("evento.id = ${evento.id}");
+        router.go ('vista',
+        {
+            'eventoID' : evento.id,
+            'vistaID' : v.id
+        });
     }
 }
 
