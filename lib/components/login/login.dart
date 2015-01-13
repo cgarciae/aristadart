@@ -3,7 +3,8 @@ part of arista_client;
 @Component
 (
     selector : "login",
-    templateUrl: 'components/login/login.html'
+    templateUrl: 'components/login/login.html',
+    useShadowDom: false
 )
 class Login
 {
