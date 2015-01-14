@@ -12,7 +12,6 @@ class VistaVista
     Vista vista = new Vista();
     String eventoID;
     
-    
     List<TipoDeVista> tiposDeVista = const 
     [
         const TipoDeVista (
@@ -51,6 +50,7 @@ class VistaVista
             getFromCollection (VistaResp, 'vista', id).then (doIfSuccess ((VistaResp resp)
             {
                 vista = resp.vista;
+                icono = vista.icon.urlTextura.split(r'/').last;
             }));
         }
     }
