@@ -4,14 +4,16 @@ class Vista
 {
     //Info general
     @Id() String id;
-    
     @Field() String type__;
     @Field() TextureGUI icon = new TextureGUI();
 
-    //Info expecifica
+    //ConstruccionRA
     @Field() ObjetoUnity modelo;
     @Field() AristaImageTarget target;
+    @Field() List<ElementoConstruccion> cuartos;
     
+    //InfoContacto
+    @Field() List<ElementoContacto> elementosContacto;
     
 }
 
