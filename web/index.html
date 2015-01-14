@@ -7,38 +7,34 @@
     <script src="js/vendor/modernizr.js"></script>
 </head>
 <body>
-
-<div class="icon-bar five-up">
-    <div class="inner-wrap">
-        <nav class="tab-bar">
-            <section class="left-big">
-                <a class="left-off-canvas-toggle menu-icon" href="#">
-                    <span></span>
-                </a>
-            </section>
-            <ul class="title-area">
-                 <li class="name">
-                    <!--<h1 class="title">ARISTA</h1>-->
-                        <div class="large-3 columns">
-                         <h1>
-                            ARISTA CLIENT
-                         </h1>
-                         </div>
-                 </li>
-            </ul>
-        </nav>
+<!--
+<nav class="icon-bar five-up">
+    <a class="item menu-icon">
+        <img src="https://cdn4.iconfinder.com/data/icons/wirecons-free-vector-icons/32/menu-alt-512.png" >
+    </a>
+    <section class="middle tab-bar-section">
+        <h1 class="title">Arista Client</h1>
+    </section>   
+        
+</nav>
+-->
+<nav class="tab-bar">
+    <div class="left-small">
+        <a class="item menu-icon">
+            <span>
+            </span>
+        </a>
     </div>
+  <div class="middle tab-bar-section"> Arista Client </div>
+</nav>
+
+<br>
+
+<div align="right" ng-if="LoggedIn">
+    <button ng-click="logout()">Logout</button>
 </div>
 
-<div style="width: 66%; min-width: 600px; margin: 0 auto;">
-    <div align="right" ng-if="LoggedIn">
-        <button ng-click="logout()">Logout</button>
-    </div>
-    
-       
-    
-    <ng-view></ng-view>
-</div>
+<ng-view></ng-view>
 
 <script type="application/dart" src="main.dart"></script>
 <script type="text/javascript" src="packages/browser/dart.js"></script>
