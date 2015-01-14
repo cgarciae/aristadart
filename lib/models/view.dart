@@ -14,3 +14,8 @@ class Vista
     
     
 }
+
+class VistaExportable extends Vista
+{
+    
+}
