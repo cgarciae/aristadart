@@ -5,16 +5,14 @@ part of arista_server;
 //A public service. Anyone can create a new user
 @app.Route("/new/user", methods: const[app.POST])
 @Encode()
-addUser(@app.Attr() MongoDb dbConn, @Decode() CompleteUser user) 
-{
-    user.username = user.username.trim();
-    
-    return dbConn.findOne (Col.user, CompleteUser, {"username": user.username})
-    .then((CompleteUser foundUser) 
+addUser(@app.Attr() MongoDb dbConn, @Decode() UserComplete user) 
+{   
+    return dbConn.findOne (Col.user, UserComplete, {"email": user.email})
+    .then((UserComplete foundUser) 
     {
         if (foundUser != null)
         {
-            return new Resp()
+            return new IdResp()
                 ..success = false
                 ..error = "User Exists";
         }    
@@ -37,9 +35,9 @@ addUser(@app.Attr() MongoDb dbConn, @Decode() CompleteUser user)
 login(@app.Attr() MongoDb dbConn, @Decode() UserSecure user)
 {   
     
-    if (user.username == null || user.password == null)
+    if (user.email == null || user.password == null)
     {
-        return new Resp()
+        return new IdResp()
             ..success = false
             ..error = "WRONG_USER_OR_PASSWORD";
     }
@@ -47,13 +45,13 @@ login(@app.Attr() MongoDb dbConn, @Decode() UserSecure user)
     user.password = encryptPassword(user.password);
     
     
-    return dbConn.findOne('user', User, {"username": user.username, "password": user.password})
-    .then((User foundUser)
+    return dbConn.findOne('user', UserAdmin, {"email": user.email, "password": user.password})
+    .then((UserAdmin foundUser)
     {
         //User doesnt exist
         if (foundUser == null)
         {
-            return new Resp()
+            return new IdResp()
                 ..success = false
                 ..error = "WRONG USERNAME OR PASSWORD";
         }
@@ -84,8 +82,8 @@ panelInfo (@app.Attr() MongoDb dbConn)
     
     var userId = session['id'];
     
-    return dbConn.findOne(Col.user, User, where.id(userId))
-    .then((User user)
+    return dbConn.findOne(Col.user, UserAdmin, where.id(userId))
+    .then((UserAdmin user)
     {
     
         var eventIds = user.eventos.map(StringToId).toList();
@@ -120,7 +118,7 @@ isLoggedIn()
 @Encode()
 listUsers(@app.Attr() MongoDb dbConn) {
   
-  return dbConn.find('user', User);
+  return dbConn.find('user', UserAdmin);
   
 }
 

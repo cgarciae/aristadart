@@ -1,0 +1,20 @@
+<form>
+    <fieldset>
+        <legend>Registro</legend>
+        
+        <h4>
+            Ingresa los datos para registrarte en ARISTA 
+        </h4>
+    
+        <div>Nombre: <input type="text" ng-model="user.nombre"></div>
+        <div>Apellido: <input type="text" ng-model="user.apellido"></div>
+        <div>Email: <input type="text" ng-model="user.email"></div>
+        <div>Contraseña: <input type="password" ng-model="user.password"></div>
+        <div>
+            Repetir Constraseña: <input type="password" ng-model="password2">
+            {{passwordStatus}}
+            
+        </div>
+        <button ng-click="registrar()" >Registrar</button>
+    </fieldset>
+</form>

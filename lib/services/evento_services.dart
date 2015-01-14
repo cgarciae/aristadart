@@ -56,6 +56,15 @@ Future<Evento> getEvento(@app.Attr() MongoDb dbConn, String id)
     return dbConn.findOne(Col.evento, Evento, where.id(eventoId));
 }
 
+@app.Route("/private/get2/evento/:id")
+@Encode()
+Future<EventoExportable> getEvento2(@app.Attr() MongoDb dbConn, String id)
+{
+    var eventoId = StringToId(id);
+    
+    return dbConn.findOne(Col.evento, EventoExportable, where.id(eventoId));
+}
+
 
 
 @app.Route("/private/delete/evento/:id")
@@ -81,27 +90,39 @@ deleteEvento(@app.Attr() MongoDb dbConn, String id)
 
 
 @app.Route ('/all/evento')
+@Encode()
 allEventos (@app.Attr() MongoDb dbConn)
 {
-    dbConn.find(Col.evento, Evento)
-    .then((List<Evento> eventos)
+    return dbConn.find(Col.evento, Evento);
+}
+
+@app.Route ('/export/evento/:id')
+@Encode()
+exportEvento (@app.Attr() MongoDb dbConn, String id)
+{
+    var eventoId = StringToId(id);
+    
+    return dbConn.findOne(Col.evento, EventoExportable, where.id(eventoId)).then((EventoExportable evento)
     {
-       eventos.map(F.getField(#id)).forEach(print); 
-       
-       var s = r'''{
-            "_id": "ObjectId(\"54ada37d79a0869c1e635daf\")",
-            "imagenPreview": {
-                "urlTextura": "",
-                "texto": "",
-                "type__": "TextureGUIJS, Assembly-CSharp"
-            },
-            "nombre": "test",
-            "descripcion": "",
-            "type__": "EventoJS, Assembly-CSharp",
-            "url": "http://localhost:8080/id/54ada37d79a0869c1e635daf"
-        }''';
-       
-       print ("Evento ID ${decodeJson(s, Evento).id}");
-       
+        print ('1 Numero vistas ${evento.viewIds.length}');
+        evento.viewIds.forEach(print);
+        
+        return BuildEvento(dbConn, evento);
+    });
+//    .then((EventoExportable evento)
+//    {
+//        
+//    });
+}
+
+Future<EventoExportable> BuildEvento (MongoDb dbConn, EventoExportable evento)
+{
+    var objIDs = evento.viewIds.map(StringToId).toList();
+    
+    print ('2 Numero vistas ${objIDs.length}');
+    
+    return dbConn.find (Col.vista, VistaExportable, where.oneFrom('_id', objIDs)).then((List<VistaExportable> vistas)
+    {
+        return evento..vistas = vistas;
     });
 }

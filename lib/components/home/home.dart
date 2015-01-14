@@ -5,7 +5,8 @@ part of arista_client;
 @Component
 (
     selector : "home",
-    templateUrl: 'components/home/home.html'
+    templateUrl: 'components/home/home.html',
+    useShadowDom: false
 )
 class Home
 {

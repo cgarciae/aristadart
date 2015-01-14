@@ -16,3 +16,8 @@ class Evento
     @Field() String get url => localHost + "/id/$id";
 
 }
+
+class EventoExportable extends Evento
+{
+    @Field() List<VistaExportable> vistas;
+}

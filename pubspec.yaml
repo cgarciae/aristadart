@@ -15,6 +15,7 @@ transformers:
 - angular:
     html_files:
     - lib/components/login/login.html
+    - lib/components/login/nuevo_usuario.html
     - lib/components/home/home.html
     - lib/components/evento/evento.html
     - lib/components/vista/vista.html

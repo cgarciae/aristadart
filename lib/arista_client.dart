@@ -12,6 +12,7 @@ import 'package:fp/fp.dart';
 part 'components/evento/evento.dart';
 part 'components/vista/vista.dart';
 part 'components/login/login.dart';
+part 'components/login/nuevo_usuario.dart';
 part 'components/home/home.dart';
 part 'routing/router.dart';
 
@@ -94,10 +95,10 @@ Future<QueryMap> jsonRequestQueryMap (String path, Object obj)
     .then((Map m) => new QueryMap (m));
 }
 
-Future<dynamic> jsonRequestDecoded (String path, Object obj, Type type)
+Future<dynamic> jsonRequestDecoded (String path, Object obj, Type responseType)
 {
     return jsonRequestString(path, obj)
-    .then((json) => decodeJson(json, type));
+    .then((json) => decodeJson(json, responseType));
 }
 
 Future<Resp> saveInCollection (String collection, Object obj)
@@ -117,7 +118,7 @@ Function doIfSuccess ([Function f])
         if (resp.success)
         {
             if (f != null)
-                f (resp);
+                return f (resp);
         }
         else
         {

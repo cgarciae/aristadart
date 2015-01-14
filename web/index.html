@@ -7,17 +7,6 @@
     <script src="js/vendor/modernizr.js"></script>
 </head>
 <body>
-<!--
-<nav class="icon-bar five-up">
-    <a class="item menu-icon">
-        <img src="https://cdn4.iconfinder.com/data/icons/wirecons-free-vector-icons/32/menu-alt-512.png" >
-    </a>
-    <section class="middle tab-bar-section">
-        <h1 class="title">Arista Client</h1>
-    </section>   
-        
-</nav>
--->
 <nav class="tab-bar">
     <div class="left-small">
         <a class="item menu-icon">
@@ -29,12 +18,19 @@
 </nav>
 
 <br>
+<div class="panel clearfix large-8 small-centered columns">
+    <h3 class="text-center">
+        Bienvenido a ARISTA Web Client
+    </h3>
+        <a href="#" ng-click="logout()" class="button radius right" ng-if="LoggedIn">
+                Logout
+        </a>
+        </div>
 
-<div align="right" ng-if="LoggedIn">
-    <button ng-click="logout()">Logout</button>
-</div>
 
-<ng-view></ng-view>
+<form class="large-8 small-centered columns">
+    <ng-view></ng-view>
+</form>
 
 <script type="application/dart" src="main.dart"></script>
 <script type="text/javascript" src="packages/browser/dart.js"></script>
