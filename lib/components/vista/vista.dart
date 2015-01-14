@@ -3,7 +3,8 @@ part of arista_client;
 @Component
 (
     selector : "vista",
-    templateUrl: 'components/vista/vista.html'
+    templateUrl: 'components/vista/vista.html',
+    useShadowDom: false
 )
 class VistaVista
 {

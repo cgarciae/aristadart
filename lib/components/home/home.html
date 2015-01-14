@@ -11,10 +11,8 @@
         </div>
         <br>
         <div class="row">
-            <ul class="no-bullet">
-                <li ng-repeat="evento in eventos" 
+            <div ng-repeat="evento in eventos" 
                                     ng-click="ver (evento)">
-                    <div class="large-4 columns">
                         <div class="panel">
                             <a ng-click="eliminar (evento, $event)" class="button alert round right tiny">X</a>
                             
@@ -28,9 +26,7 @@
                             <i>{{evento.descripcion}}</i>
                         
                         </div>
-                    </div>
-                </li>
-            </ul>
+                </div>
         </div>
     
         <div class="clearfix">

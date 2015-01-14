@@ -1,16 +1,34 @@
-<div>
-    <button ng-click='save()'>Save</button>
-    
-    <div>Nombre: <input type="text" ng-model="evento.nombre"></div>
-    <div>Descripcion <input type="text" ng-model='evento.descripcion'></div>
+<fieldset>
+    <legend>EDICIÓN EVENTO</legend>
+    <br>
+    <h3 class="text-center">
+        <h3>
+            Ingresa el contenido de tu evento
+        </h3>
+    </h3>
+    <br>
+    <div class="row">
+    <div class="large-6 small-centered columns">
+        
+    <div class="large-12">
+        <label>Nombre:</label>
+        <input type="text" ng-model="evento.nombre">
+    </div>
+    <br>
+    <div class=large-12">
+        <label>Descripcion </label>
+        <textarea ng-model='evento.descripcion'></textarea>
+    </div>
     <br>
     <div ng-repeat="vista in vistas"
          ng-click="ver (vista)">
         <button ng-click="eliminar (vista, $event)">X</button>
-        <span style="font-weight: bold;">{{vista.icon.texto}}</span>
+        <b>{{vista.icon.texto}}</b>
         <br><br>
     </div>
     <br>
-    <input type="button" ng-click='nuevaVista()' value="Nueva Vista">
-            
-</div>
+    <a class="button radius small right expand" ng-click='nuevaVista()'>Nueva Vista</a> 
+    <a class="button radius right" ng-click='save()'>Save</a>
+    </div>  
+    </div>         
+</fieldset>
