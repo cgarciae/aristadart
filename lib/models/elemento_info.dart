@@ -4,6 +4,13 @@ class ElementoInfo
 {
     @Field() String type__;
     
-    //Telefono
-    @Field() String telefono;
+    //TituloInfoJS
+    @Field() String titulo;
+    
+    //ImagenInfoJS
+    @Field() String url;
+    
+    //InfoTextoJS
+    //titulo
+    @Field() String descripcion;
 }

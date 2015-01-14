@@ -14,7 +14,15 @@ class Vista
     
     //InfoContacto
     @Field() List<ElementoContacto> elementosContacto;
+    @Field() List<ElementoInfo> elementosInfo;
     
+    //Multimedia
+    @Field() List<TextureGUI> textures;
+    
+    //MapaConstruccion
+    @Field() String center;
+    @Field() int zoom;
+    @Field() String texto;
 }
 
 class VistaExportable extends Vista
