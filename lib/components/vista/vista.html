@@ -2,13 +2,22 @@
     <button ng-click='save()'>Save</button>
     
     <div>Nombre: <input type="text" ng-model="vista.icon.texto"></div>
-    <select ng-model="vista.icon.urlTextura">
-        <option>LlamarContactoJS, Assembly-CSharp</option>
-        <option>otra, Assembly-CSharp</option>
+    <select ng-model="icono">
+        <option>Ubicacion</option>
+        <option>3D</option>
+        <option>Info</option>
+        <option>Galeria</option>
     </select>
-        <div ng-switch-when="ConstruccionRAJS, Assembly-CSharp">
-        <div>Url Icono: <input type="text" ng-model="vista.icon.urlTextura"></div>
+    <div class="row collapse">
+        <div class="small-5 large-2 columns">
+            <span class="prefix">URL Icono </span>
+        </div>
+        <div class="small-9 large-10 columns">
+          <input type="text" ng-model="vista.icon.urlTextura">
+        </div>
     </div>
+        <!-- falta el icono--> 
+    
     <br>
     <div ng-switch="vista.type__">
         <div ng-switch-when="ConstruccionRAJS, Assembly-CSharp">
