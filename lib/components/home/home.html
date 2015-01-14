@@ -4,23 +4,33 @@
             Hola <b> {{user.nombre}}  {{user.apellido}}! </b>
         </h3>
         <br>
-        <h1>Eventos</h1>
         <div class="row">
-            <div class="large-4 columns">
-                <div class="panel">
-                    <ul class="no-bullet">
-                        <li ng-repeat="evento in eventos" 
-                            ng-click="ver (evento)">
+          <div class="small-11 small-centered columns">
+            <h1>Eventos</h1>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+            <ul class="no-bullet">
+                <li ng-repeat="evento in eventos" 
+                                    ng-click="ver (evento)">
+                    <div class="large-4 columns">
+                        <div class="panel">
                             <a ng-click="eliminar (evento, $event)" class="button alert round right tiny">X</a>
+                            
                             <br>
+                            
                             <b>{{evento.nombre}}</b>
+                            
+                            <br> 
+                            
                             <br>
                             <i>{{evento.descripcion}}</i>
-                            <br>
-                        </li>
-                    </ul>
-                </div>
-            </div>
+                        
+                        </div>
+                    </div>
+                </li>
+            </ul>
         </div>
     
         <div class="clearfix">
