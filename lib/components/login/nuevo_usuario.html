@@ -1,0 +1,14 @@
+<div>
+
+    <div>Nombre: <input type="text" ng-model="user.nombre"></div>
+    <div>Apellido: <input type="text" ng-model="user.apellido"></div>
+    <div>Email: <input type="text" ng-model="user.email"></div>
+    <div>Contraseña: <input type="password" ng-model="user.password"></div>
+    <div>
+        Repetir Constraseña: <input type="password" ng-model="password2">
+        {{passwordStatus}}
+        
+    </div>
+    <button ng-click="registrar()" >Registrar</button>
+    
+</div>

@@ -1,27 +1,37 @@
 part of arista;
 
-class BasicUser
+class User
 {
     @Id() String id;
-    @Field() String username;
+    @Field() String nombre;
+    @Field() String apellido;
     @Field() String email;
     
     @ReferenceId() List<String> eventos = [];
 }
 
-class User extends BasicUser
+class _Admin
 {
     @Field() bool admin;
 }
 
-class UserSecure extends BasicUser
+class _Password
 {
     @Field() String password;
 }
 
-class CompleteUser extends BasicUser
+class UserAdmin extends User with _Admin
 {
-    @Field() bool admin;
-    @Field() String password;
+    
+}
+
+class UserSecure extends User with _Password
+{
+    
+}
+
+class UserComplete extends User with _Admin, _Password
+{
+    
 } 
 

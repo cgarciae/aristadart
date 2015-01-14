@@ -22,7 +22,8 @@ void recipeBookRouteInitializer(Router router, RouteViewFactory view)
     
     view.configure(
     {
-        'login': ngRoute(
+        'login': ngRoute
+        (
             path: '/login',
             defaultRoute: true,
             enter : (RouteEnterEvent e)
@@ -35,7 +36,16 @@ void recipeBookRouteInitializer(Router router, RouteViewFactory view)
                 {               
                     view ('view/login_view.html') (e);
                 }
-            }),
+            },
+            mount: 
+            {
+                'nuevo' : ngRoute
+                (
+                    path: '/nuevo',
+                    enter: view ('view/nuevo_usuario_view.html')
+                )
+            }
+        ),
         
         'home': ngRoute
         (

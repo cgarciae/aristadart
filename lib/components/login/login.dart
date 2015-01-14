@@ -9,29 +9,29 @@ class Login
 {
     
     UserSecure user = new UserSecure();
+    Router router;
     
-    Login ()
+    bool nuevo = false;
+    
+    Login (this.router)
     {
         
     }
     
     login ()
     {
-        jsonRequestDecoded('/user/login', user, IdResp)
-        .then((IdResp obj) 
+        jsonRequestDecoded('/user/login', user, IdResp).then(doIfSuccess((IdResp obj) 
         {
-            if (obj.success)
-            {
-                storage['id'] = obj.id;
-                dom.window.location.href = '#/home';
-            }
-            else
-            {
-                dom.window.alert(obj.error);
-            }
-        });
+            storage['id'] = obj.id;
+            router.go('home', {});
+        }));
     }
     
+    nuevoUsuario()
+    {
+        nuevo = true;
+        router.go ('login.nuevo', {});
+    }
     
 }
 
