@@ -1,16 +1,36 @@
-<div> 
-Hola {{user.nombre}} {{user.apellido}}!
-
-<h1>Eventos</h1>
-    <div ng-repeat="evento in eventos" 
-        ng-click="ver (evento)">
-        <button ng-click="eliminar (evento, $event)">X</button>
-        <span style="font-weight: bold;">{{evento.nombre}}</span>
-        <section style="font-style: italic;">{{evento.descripcion}}</section>
+<fieldset>
         <br>
-    </div>
+        <h3 class="text-center">
+            Hola <b> {{user.nombre}}  {{user.apellido}}! </b>
+        </h3>
+        <br>
+        <div class="row">
+          <div class="small-11 small-centered columns">
+            <h1>Eventos</h1>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+            <div ng-repeat="evento in eventos" 
+                                    ng-click="ver (evento)">
+                        <div class="panel">
+                            <a ng-click="eliminar (evento, $event)" class="button alert round right tiny">X</a>
+                            
+                            <br>
+                            
+                            <b>{{evento.nombre}}</b>
+                            
+                            <br> 
+                            
+                            <br>
+                            <i>{{evento.descripcion}}</i>
+                        
+                        </div>
+                </div>
+        </div>
     
-   
-  <input type="button" ng-click='nuevoEvento()' value="Nuevo Evento">
+        <div class="clearfix">
+            <a ng-click='nuevoEvento()' class="button radius right">Nuevo Evento</a>
+        </div>
   
-</div>
+</fieldset>

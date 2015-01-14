@@ -3,7 +3,8 @@ part of arista_client;
 @Component
 (
     selector : "evento",
-    templateUrl: 'components/evento/evento.html'
+    templateUrl: 'components/evento/evento.html',
+    useShadowDom: false
 )
 class EventoVista
 {

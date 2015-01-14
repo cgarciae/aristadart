@@ -3,7 +3,8 @@ part of arista_client;
 @Component
 (
     selector : "nuevo-usuario",
-    templateUrl: 'components/login/nuevo_usuario.html'
+    templateUrl: 'components/login/nuevo_usuario.html',
+    useShadowDom: false
 )
 class NuevoUsuario
 {

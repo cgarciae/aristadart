@@ -2,17 +2,35 @@
 <html ng-app>
 <head>
     <title>Arista Client</title>
+    <link rel="stylesheet" href="css/foundation.css" />
+    <link rel="stylesheet" href="css/arista.css" />
+    <script src="js/vendor/modernizr.js"></script>
 </head>
 <body>
-
-<div style="width: 66%; min-width: 600px; margin: 0 auto;">
-    <div align="right" ng-if="LoggedIn">
-        <button ng-click="logout()">Logout</button>
+<nav class="tab-bar">
+    <div class="left-small">
+        <a class="item menu-icon">
+            <span>
+            </span>
+        </a>
     </div>
-    
-    
+  <div class="middle tab-bar-section"> Arista Client </div>
+</nav>
+
+<br>
+<div class="panel clearfix large-8 small-centered columns">
+    <h3 class="text-center">
+        Bienvenido a ARISTA Web Client
+    </h3>
+        <a href="#" ng-click="logout()" class="button radius right" ng-if="LoggedIn">
+                Logout
+        </a>
+        </div>
+
+
+<form class="large-8 small-centered columns">
     <ng-view></ng-view>
-</div>
+</form>
 
 <script type="application/dart" src="main.dart"></script>
 <script type="text/javascript" src="packages/browser/dart.js"></script>
