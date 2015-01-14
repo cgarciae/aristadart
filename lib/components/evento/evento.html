@@ -8,7 +8,7 @@
     </h3>
     <br>
     <div class="row">
-    <div class="large-6 small-centered columns">
+    <div class="large-8 small-centered columns">
         
     <div class="large-12">
         <label>Nombre:</label>
@@ -19,6 +19,16 @@
         <label>Descripcion </label>
         <textarea ng-model='evento.descripcion'></textarea>
     </div>
+    
+    <div class="row collapse">
+        <div class="small-5 large-2 columns">
+            <span class="prefix">URL Imagén </span>
+        </div>
+        <div class="small-9 large-10 columns">
+          <input type="text" ng-model="evento.imagenPreview.urlTextura">
+        </div>
+        <img alt={{evento.descripcion}} ng-src="{{evento.imagenPreview.urlTextura}}">   
+    </div> 
     <br>
     <div ng-repeat="vista in vistas"
          ng-click="ver (vista)">
