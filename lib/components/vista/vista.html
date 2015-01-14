@@ -2,11 +2,18 @@
     <button ng-click='save()'>Save</button>
     
     <div>Nombre: <input type="text" ng-model="vista.icon.texto"></div>
+    <select ng-model="vista.icon.urlTextura">
+        <option>LlamarContactoJS, Assembly-CSharp</option>
+        <option>otra, Assembly-CSharp</option>
+    </select>
+        <div ng-switch-when="ConstruccionRAJS, Assembly-CSharp">
+        <div>Url Icono: <input type="text" ng-model="vista.icon.urlTextura"></div>
+    </div>
     <br>
     <div ng-switch="vista.type__">
         <div ng-switch-when="ConstruccionRAJS, Assembly-CSharp">
-            <div style="font-weight: bold;">
-                Construccion RA
+            <div>
+                <b>Construccion RA</b>
             </div>
         </div>
         <div ng-switch-when="InfoContactoJS, Assembly-CSharp">
