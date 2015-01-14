@@ -71,6 +71,14 @@ class VistaVista
         vista.type__ = tipo.type__;
     }
     
+    String _icono = '';
+    void set icono (String opcion)
+    {
+        _icono = opcion;
+        vista.icon.urlTextura = "HG/Materials/App/$opcion";
+    }
+    String get icono => _icono;
+    
 }
 
 class TipoDeVista
