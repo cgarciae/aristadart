@@ -1,4 +1,5 @@
 <fieldset>
+    <legend>EDICIÓN VISTA</legend>
     <a class="button radius right" ng-click='save()'>Save</a>
     
     <br>
@@ -7,37 +8,31 @@
     <br>
     
     
-    <div class="large-8 columns">
-        <ul class="small-block-grid-3">
+    <div class="large-5 columns">
+        <ul class="small-block-grid-2">
         
         <li>
-            <div>
-                <label>Nombre:</label>
-                <input class="small-4" type="text" ng-model="vista.icon.texto">
-            </div>
+            <label>Nombre:</label>
+            <input class="small-4" type="text" ng-model="vista.icon.texto">
         </li>
-            <li>
-                <br>
-                    <select ng-model="icono">
-                        <option>Ubicacion</option>
-                        <option>3D</option>
-                        <option>Info</option>
-                        <option>Galeria</option>
-                    </select>
-             </li>
-             <li>
-                 <img alt="Icono" ng-src="{{urlIcono}}" class="gray-b max-width">
-                     
-            </li>
+        <li>
+            <br>
+            <select ng-model="icono">
+                <option>Ubicacion</option>
+                <option>3D</option>
+                <option>Info</option>
+                <option>Galeria</option>
+            </select>
+            <img alt="Icono" ng-src="{{urlIcono}}" class="gray-b">
+         </li>
+             
         </ul> 
-    </div>   
-    
-        <!-- falta el icono--> 
-    
+    </div>
     <br>
     <hr>
     <br>
     <div ng-switch="vista.type__">
+        
         <div ng-switch-when="ConstruccionRAJS, Assembly-CSharp">
             <div>
                 <b>Construccion RA</b>
@@ -49,16 +44,19 @@
             </div>
         </div>
         <div ng-switch-default>
-            <h3>Tipo de Vista</h3> 
-            <div ng-repeat="tipo in tiposDeVista"
-                 ng-click="seleccionarTipo (tipo)"
-                 style="border: 1px solid; border-radius: 10px; padding: 10px 10px 10px 10px; margin-bottom: 10px;">
-                 
-                 <div style="font-weight: bold;">{{tipo.nombre}}</div>
-                 <div style="font-style: italic;">{{tipo.descripcion}}</div>
-                 <br>
-            </div>
+            <h3>Escoge el Tipo de Vista</h3>
+            <br>
+            <ul class="small-block-grid-3">
+                    <li ng-repeat="tipo in tiposDeVista"
+                         ng-click="seleccionarTipo (tipo)"
+                         class="panel boxes">
+                            
+                            <b>{{tipo.nombre}}</b>
+                            <br>   
+                            <i>{{tipo.descripcion}}</i>
+                            <br>
+                    </li>
+            </ul>
         </div>
     </div>
-    
 </fieldset>
