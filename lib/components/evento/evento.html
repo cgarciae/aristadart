@@ -30,13 +30,18 @@
         <img alt={{evento.descripcion}} ng-src="{{evento.imagenPreview.urlTextura}}">   
     </div> 
     <br>
-    <div ng-repeat="vista in vistas"
-         ng-click="ver (vista)">
-        <img alt="Icono" ng-src="{{iconoURL (vista)}}">
-        <button ng-click="eliminar (vista, $event)">X</button>
-        <b>{{vista.icon.texto}}</b>
-        <br><br>
+    <div class="row">
+        <div ng-repeat="vista in vistas"
+             ng-click="ver (vista)">
+             <div class="panel">
+                <img alt="Icono" ng-src="{{iconoURL (vista)}}">
+                <button ng-click="eliminar (vista, $event)">X</button>
+                <b>{{vista.icon.texto}}</b>
+                <br>
+            </div>
+        </div>
     </div>
+    
     <br>
     <a class="button radius small right expand" ng-click='nuevaVista()'>Nueva Vista</a> 
     <a class="button radius right" ng-click='save()'>Save</a>
