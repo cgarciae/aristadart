@@ -32,6 +32,7 @@
     <br>
     <div ng-repeat="vista in vistas"
          ng-click="ver (vista)">
+        <img alt="Icono" ng-src="{{iconoURL (vista)}}">
         <button ng-click="eliminar (vista, $event)">X</button>
         <b>{{vista.icon.texto}}</b>
         <br><br>

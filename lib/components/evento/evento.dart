@@ -125,5 +125,17 @@ class EventoVista
             'vistaID' : v.id
         });
     }
+    
+    String iconoURL (Vista v)
+    {
+        if ((v.icon.urlTextura != null) && (v.icon.urlTextura != ''))
+        {
+            var opcion = v.icon.urlTextura.split(r'/').last;
+            
+            return 'images/webapp/${opcion}.png';
+        }
+        
+        return 'images/webapp/missing_image.png';
+    }
 }
 
