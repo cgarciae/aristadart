@@ -60,8 +60,7 @@ Future<dom.HttpRequest> jsonRequest (String path, Object obj)
 {
     return dom.HttpRequest.request(path, method: "POST", 
             requestHeaders: {"content-type": "application/json"}, 
-            sendData: encodeJson(obj));
-            
+            sendData: encodeJson(obj));         
 }
 
 Future<Object> jsonRequestObject (String path, Object obj)
@@ -99,6 +98,48 @@ Future<dynamic> jsonRequestDecoded (String path, Object obj, Type responseType)
 {
     return jsonRequestString(path, obj)
     .then((json) => decodeJson(json, responseType));
+}
+
+Future<dom.HttpRequest> dataRequest (String path, dynamic data)
+{
+    
+    
+    dom.FormData formData = new dom.FormData();
+    formData.appendBlob('file', data, 'test.png');
+    
+//    final dom.HttpRequest req = new dom.HttpRequest();
+//    
+//    req.open ("POST", path);
+//    req.send (formData);
+//    
+//    return req.onReadyStateChange.toList().then((_) => req);
+    
+    return dom.HttpRequest.request (path, method: "POST", 
+               sendData: formData);
+}
+
+Future<dom.HttpRequest> formRequest (String path, dom.FormElement form)
+{
+    
+    return dom.HttpRequest.request (path,
+            method: "POST", 
+            sendData: new dom.FormData (form));
+}
+
+Future<dynamic> formRequestDecoded (String path, dom.FormElement form, Type responseType)
+{
+    return formRequest(path, form).then((dom.HttpRequest req)
+    {
+        return decodeJson(req.responseText, responseType);
+    });      
+}
+
+Future<dynamic> dataRequestDecoded (String path, dynamic data, Type responseType)
+{
+    return dataRequest(path, data).then((dom.HttpRequest req)
+    {
+        return decodeJson(req.responseText, responseType);
+    });      
 }
 
 Future<Resp> saveInCollection (String collection, Object obj)

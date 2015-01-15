@@ -15,5 +15,17 @@
         <br>
         <br>
         <ng-view></ng-view>
+        
+        
+        
+        <form enctype="multipart/form-data" method="POST" ng-click="upload($event)">
+             Choose a file to upload: <input name="file" type="file" /><br />
+        </form> 
+        
+        <form enctype="multipart/form-data" action="upload" method="POST">
+             Choose a file to upload: <input name="file" type="file" /><br />
+            <input type="submit" value="Upload File" />
+        </form> 
+        
     </div> 
 </div>

@@ -29,3 +29,22 @@ Future<Resp> pushIdToList(@app.Attr() MongoDb dbConn, String collection, String 
             ..success = true;
     });
 }
+
+@app.Route("/upload", methods: const [app.POST], allowMultipartRequest: true)
+@Encode()
+upload(@app.Body(app.FORM) Map file)
+{
+    
+    print (file);
+    
+    HttpBodyFileUpload f = file['file'];
+    
+    print (f);
+    
+    print (f.runtimeType);
+    
+    print(file.runtimeType);
+    
+    return new Resp()
+        ..success = (file != null);
+}

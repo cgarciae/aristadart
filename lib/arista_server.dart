@@ -9,6 +9,7 @@ import 'package:mongo_dart/mongo_dart.dart';
 import 'package:redstone_mapper/mapper.dart';
 import 'package:redstone/query_map.dart';
 import 'package:redstone_mapper/plugin.dart';
+import 'package:redstone/server.dart';
 import 'utils.dart';
 import 'authorization.dart';
 import 'package:fp/fp.dart' as F;
