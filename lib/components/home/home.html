@@ -13,20 +13,19 @@
         <div class="row">
             <div ng-repeat="evento in eventos" 
                                     ng-click="ver (evento)">
-                        <div class="panel">
-                            <a ng-click="eliminar (evento, $event)" class="button secondary right tiny">X</a>
-                            
-                            <br>
-                            
-                            <b>{{evento.nombre}}</b>
-                            
-                            <br> 
-                            
-                            <br>
-                            <i>{{evento.descripcion}}</i>
+                    <div class="panel control-width boxes">
+                        <a ng-click="eliminar (evento, $event)" class="button disabled right tiny">X</a>
                         
-                        </div>
+                        <br>
+                        
+                        <b>{{evento.nombre}}</b>
+                        
+                        <br> 
+                        
+                        <br>
+                        <i>{{evento.descripcion}}</i>
                 </div>
+            </div>
         </div>
     
         <div class="clearfix">

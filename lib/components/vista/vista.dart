@@ -76,8 +76,10 @@ class VistaVista
     {
         _icono = opcion;
         vista.icon.urlTextura = "HG/Materials/App/$opcion";
+        urlIcono = 'images/webapp/${opcion}.png';
     }
     String get icono => _icono;
+    String urlIcono = '';
     
 }
 

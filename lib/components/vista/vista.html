@@ -1,23 +1,41 @@
 <fieldset>
-    <button ng-click='save()'>Save</button>
+    <a class="button radius right" ng-click='save()'>Save</a>
     
-    <div>Nombre: <input type="text" ng-model="vista.icon.texto"></div>
-    <select ng-model="icono">
-        <option>Ubicacion</option>
-        <option>3D</option>
-        <option>Info</option>
-        <option>Galeria</option>
-    </select>
-    <div class="row collapse">
-        <div class="small-5 large-2 columns">
-            <span class="prefix">URL Icono </span>
-        </div>
-        <div class="small-9 large-10 columns">
-          <input type="text" ng-model="vista.icon.urlTextura">
-        </div>
-    </div>
+    <br>
+    <br>
+    <br>
+    <br>
+    
+    
+    <div class="large-8 columns">
+        <ul class="small-block-grid-3">
+        
+        <li>
+            <div>
+                <label>Nombre:</label>
+                <input class="small-4" type="text" ng-model="vista.icon.texto">
+            </div>
+        </li>
+            <li>
+                <br>
+                    <select ng-model="icono">
+                        <option>Ubicacion</option>
+                        <option>3D</option>
+                        <option>Info</option>
+                        <option>Galeria</option>
+                    </select>
+             </li>
+             <li>
+                 <img alt="Icono" ng-src="{{urlIcono}}" class="gray-b max-width">
+                     
+            </li>
+        </ul> 
+    </div>   
+    
         <!-- falta el icono--> 
     
+    <br>
+    <hr>
     <br>
     <div ng-switch="vista.type__">
         <div ng-switch-when="ConstruccionRAJS, Assembly-CSharp">
