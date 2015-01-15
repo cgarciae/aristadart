@@ -35,27 +35,93 @@
         
         <div ng-switch-when="ConstruccionRAJS, Assembly-CSharp">
             <div>
-                <b>Construccion RA</b>
+                <br>
+                <h2>Edición Vista Construcción RA</h2>
+                <br>
+                <div class="large-4 columns">
+                    <div class="panel">
+                        <h3> Icono </h3>
+                        <ul class="no-bullet">
+                            <li><label>Imagen:</label> <input type="text" ng-model="vista.icon.urlTextura"></li>
+                            <li><label>Nombre:</label> <input type="text" ng-model="vista.icon.texto"></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="large-4 columns">
+                    <div class="panel">
+                        <h3> Modelo </h3>
+                        <ul class="no-bullet">
+                            <li><label>URL:</label> <input type="text" ng-model="vista.modelo.url_objeto"></li>
+                            <li><label>Versión:</label> <input type="number" ng-model="vista.modelo.version"></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="large-4 columns">
+                    <div class="panel">
+                        <h3> Target </h3>
+                        <ul class="no-bullet">
+                            <li><label>URL:</label> <input type="text" ng-model="vista.target.url"></li>
+                            <li><label>Versión:</label> <input type="number" ng-model="vista.target.version"></li>
+                        </ul>
+                    </div>
+                </div>
+               <hr>
+               <br>
             </div>
         </div>
         <div ng-switch-when="InfoContactoJS, Assembly-CSharp">
-            <div style="font-weight: bold;">
-                Informacion y Contacto
-            </div>
+            <div class="large-4 columns">
+                                <div class="panel">
+                                    <h3>Elementos Información </h3>
+                                    <div ng-repeat="info in vista.elementosInfo" >
+                                        <div ng-switch="info.type__">
+                                            <div ng-switch-when="TituloInfoJS, Assembly-CSharp">
+                                                <hr>
+                                                <label>Titulo:</label> <input type="text" ng-model="info.titulo">
+                                            </div>
+                                            <div ng-switch-when="ImagenInfoJS, Assembly-CSharp">
+                                                <hr>
+                                                <label>Url Imágen:</label> <input type="text" ng-model="info.url">                                                
+                                            </div>
+                                            <div ng-switch-when="InfoTextoJS, Assembly-CSharp">
+                                                <hr>
+                                                <label>Titulo:</label> <input type="text" ng-model="info.titulo">
+                                                <label>Descripción:</label> <input type="text" ng-model="info.descripcion">
+                                            </div>
+                                            <div ng-switch-default>
+                                                <select ng-model="info.type__">
+                                                    <option>TituloInfoJS, Assembly-CSharp</option>
+                                                    <option>ImagenInfoJS, Assembly-CSharp</option>
+                                                    <option>InfoTextoJS, Assembly-CSharp</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <br>
+                                    <ul class="button-group radius brigth">
+                                        <!--<a class="brigth button small" ng-click="vista.NuevoElementoInfo ()">+ Información</a>-->  
+                                    </ul> 
+                                </div>
+                            </div>
         </div>
         <div ng-switch-default>
-            <h3>Escoge el Tipo de Vista</h3>
+            
             <br>
-            <ul class="small-block-grid-3">
-                    <li ng-repeat="tipo in tiposDeVista"
-                         ng-click="seleccionarTipo (tipo)"
-                         class="panel boxes">
-                            
-                            <b>{{tipo.nombre}}</b>
-                            <br>   
-                            <i>{{tipo.descripcion}}</i>
-                            <br>
-                    </li>
+            <a class="button radius left" data-dropdown="drop1"
+               aria-controls="drop1" aria-expanded="false"
+               data-options="align:left">
+                Escoge el Tipo de Vista &raquo;
+            </a>
+            <ul id="drop1" class="f-dropdown" data-dropdown-content aria-hidden="true" tabindex="-1">
+              <li ng-repeat="tipo in tiposDeVista"
+                 ng-click="seleccionarTipo (tipo)"
+                 class="panel boxes">
+                    <b>{{tipo.nombre}}</b>
+                    <br>   
+                    <i>{{tipo.descripcion}}</i>
+                    <br>
+               </li>
             </ul>
         </div>
     </div>
