@@ -54,6 +54,15 @@ class VistaVista
                 )
      ];
     
+    List<TipoElementoContacto> tiposElementoContacto = const
+    [
+        const TipoElementoContacto (
+                'LlamarContactoJS, Assembly-CSharp' ,
+                'Contactar',
+                'Permite llamar con un toque'
+        )
+    ];
+    
     
     VistaVista (RouteProvider routeProvider, this.router) 
     {
@@ -100,10 +109,10 @@ class VistaVista
         vista.type__ = tipo.type__;
     }
     
-    seleccionarTipoElementoInfo (ElementoInfo tipo, ElementoInfo info)
+    seleccionarTipoElemento (dynamic tipo, dynamic elem)
     {
-        info.type__ = tipo.type__;
-    }
+        elem.type__ = tipo.type__;
+    } 
     
     String _icono = '';
     void set icono (String opcion)
@@ -133,6 +142,12 @@ class VistaVista
     }
     
     void EliminarElemento (ElementoConstruccion elem, List<ElementoConstruccion> listElem)
+    {
+        listElem.remove(elem);        
+        
+    }
+    
+    void EliminarInfo (ElementoInfo elem, List<ElementoInfo> listElem)
     {
         listElem.remove(elem);        
         

@@ -96,7 +96,7 @@
                             <li ng-repeat="elemento in vista.cuartos"> 
                                 <ul class="large-3 columns no-bullet panel">
                                     
-                                     <a class="button secondary right tiny" ng-click="EliminarElemento(elemento, vista.cuartos)">x</a>
+                                    <a class="button secondary right tiny" ng-click="EliminarElemento(elemento, vista.cuartos)">x</a>
                                     
                                     <li><label>ID:</label> {{elemento.id}}</li>
                                     <li><label>Nombre:</label> <input type="text" ng-model="elemento.nombre"></li>
@@ -138,10 +138,21 @@
                                 <label>Telefono:</label> <input type="text" ng-model="contacto.telefono">
                             </div>
                             <div ng-switch-default>
-                                <select ng-model="contacto.type__">
-                                    <option>LlamarContactoJS, Assembly-CSharp</option>
-                                    <option>otra, Assembly-CSharp</option>
-                                </select>
+                                <a class="button radius left" data-dropdown="dropContacto"
+                                   aria-controls="dropContacto" aria-expanded="false"
+                                   data-options="align:left">
+                                    Escoge el Tipo de Elemento Contacto &raquo;
+                                </a>
+                                <ul id="dropContacto" class="f-dropdown" data-dropdown-content aria-hidden="true" tabindex="-1">
+                                  <li ng-repeat="tipo in tiposElementoContacto"
+                                     ng-click="seleccionarTipoElemento (tipo, contacto)"
+                                     class="panel boxes">
+                                        <b>{{tipo.nombre}}</b>
+                                        <br>   
+                                        <i>{{tipo.descripcion}}</i>
+                                        <br>
+                                   </li>
+                                </ul>
                             </div>
                         </div>
                     </div>
@@ -156,17 +167,17 @@
                 <div class="panel">
                     <h3>Elementos Información </h3>
                     <div ng-repeat="info in vista.elementosInfo" >
+                    <hr>
+                    <a class="button secondary right tiny" ng-click="EliminarInfo( info, vista.elementosInfo)">x</a>
+                    <br>
                         <div ng-switch="info.type__">
                             <div ng-switch-when="TituloInfoJS, Assembly-CSharp">
-                                <hr>
                                 <label>Titulo:</label> <input type="text" ng-model="info.titulo">
                             </div>
                             <div ng-switch-when="ImagenInfoJS, Assembly-CSharp">
-                                <hr>
                                 <label>Url Imágen:</label> <input type="text" ng-model="info.url">                                                
                             </div>
                             <div ng-switch-when="InfoTextoJS, Assembly-CSharp">
-                                <hr>
                                 <label>Titulo:</label> <input type="text" ng-model="info.titulo">
                                 <label>Descripción:</label> <input type="text" ng-model="info.descripcion">
                             </div>
@@ -179,7 +190,7 @@
                                 </a>
                                 <ul id="dropInfo" class="f-dropdown" data-dropdown-content aria-hidden="true" tabindex="-1">
                                   <li ng-repeat="tipo in tiposElementoInfo"
-                                     ng-click="seleccionarTipoElementoInfo (tipo, info)"
+                                     ng-click="seleccionarTipoElemento (tipo, info)"
                                      class="panel boxes">
                                         <b>{{tipo.nombre}}</b>
                                         <br>   
@@ -187,11 +198,6 @@
                                         <br>
                                    </li>
                                 </ul>
-                                <!--<select ng-model="info.type__">
-                                    <option>TituloInfoJS, Assembly-CSharp</option>
-                                    <option>ImagenInfoJS, Assembly-CSharp</option>
-                                    <option>InfoTextoJS, Assembly-CSharp</option>
-                                </select> -->
                             </div>
                         </div>
                     </div>
