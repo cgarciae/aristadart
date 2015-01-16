@@ -24,6 +24,18 @@ class Vista
     @Field() String center;
     @Field() int zoom;
     @Field() String texto;
+    
+    void NuevoElementoContacto (){
+        if(elementosContacto == null)
+            elementosContacto =[];
+        elementosContacto.add(new ElementoContacto());
+    }
+    
+    void NuevoElementoInfo (){
+        if(elementosInfo == null)
+                    elementosInfo =[];
+        elementosInfo.add(new ElementoInfo());
+    }
 }
 
 class VistaExportable extends Vista

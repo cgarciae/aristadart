@@ -11,7 +11,9 @@ class VistaVista
     Router router;
     Vista vista = new Vista()
        ..muebles = []
-       ..cuartos = [];
+       ..cuartos = []
+       ..elementosContacto = []
+       ..elementosInfo = [];
     String eventoID;
     
     List<TipoDeVista> tiposDeVista = const 

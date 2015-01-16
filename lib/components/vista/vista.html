@@ -118,40 +118,75 @@
             </div>
         </div>
         <div ng-switch-when="InfoContactoJS, Assembly-CSharp">
+            <h2>Edición Vista Info + Contacto</h2>
+            <br>
             <div class="large-4 columns">
-                                <div class="panel">
-                                    <h3>Elementos Información </h3>
-                                    <div ng-repeat="info in vista.elementosInfo" >
-                                        <div ng-switch="info.type__">
-                                            <div ng-switch-when="TituloInfoJS, Assembly-CSharp">
-                                                <hr>
-                                                <label>Titulo:</label> <input type="text" ng-model="info.titulo">
-                                            </div>
-                                            <div ng-switch-when="ImagenInfoJS, Assembly-CSharp">
-                                                <hr>
-                                                <label>Url Imágen:</label> <input type="text" ng-model="info.url">                                                
-                                            </div>
-                                            <div ng-switch-when="InfoTextoJS, Assembly-CSharp">
-                                                <hr>
-                                                <label>Titulo:</label> <input type="text" ng-model="info.titulo">
-                                                <label>Descripción:</label> <input type="text" ng-model="info.descripcion">
-                                            </div>
-                                            <div ng-switch-default>
-                                                <select ng-model="info.type__">
-                                                    <option>TituloInfoJS, Assembly-CSharp</option>
-                                                    <option>ImagenInfoJS, Assembly-CSharp</option>
-                                                    <option>InfoTextoJS, Assembly-CSharp</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <hr>
-                                    <br>
-                                    <ul class="button-group radius brigth">
-                                        <!--<a class="brigth button small" ng-click="vista.NuevoElementoInfo ()">+ Información</a>-->  
-                                    </ul> 
-                                </div>
+                <div class="panel">
+                    <h3> Icono </h3>
+                    <ul class="no-bullet">
+                        <li><label>Imagen:</label> <input type="text" ng-model="vista.icon.urlTextura"></li>
+                        <li><label>Nombre:</label> <input type="text" ng-model="vista.icon.texto"></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="large-4 columns">
+                <div class="panel">
+                    <h3>Elementos Contacto </h3>
+                    <div ng-repeat="contacto in vista.elementosContacto" >
+                        <div ng-switch="contacto.type__">
+                            <div ng-switch-when="LlamarContactoJS, Assembly-CSharp">
+                                <label>Telefono:</label> <input type="text" ng-model="contacto.telefono">
                             </div>
+                            <div ng-switch-default>
+                                <select ng-model="contacto.type__">
+                                    <option>LlamarContactoJS, Assembly-CSharp</option>
+                                    <option>otra, Assembly-CSharp</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <br>
+                    <ul class="button-group radius brigth">
+                        <a class="brigth button small" ng-click="vista.NuevoElementoContacto ()">+ Contacto</a>  
+                    </ul> 
+                </div>
+            </div>
+           <div class="large-4 columns">
+                <div class="panel">
+                    <h3>Elementos Información </h3>
+                    <div ng-repeat="info in vista.elementosInfo" >
+                        <div ng-switch="info.type__">
+                            <div ng-switch-when="TituloInfoJS, Assembly-CSharp">
+                                <hr>
+                                <label>Titulo:</label> <input type="text" ng-model="info.titulo">
+                            </div>
+                            <div ng-switch-when="ImagenInfoJS, Assembly-CSharp">
+                                <hr>
+                                <label>Url Imágen:</label> <input type="text" ng-model="info.url">                                                
+                            </div>
+                            <div ng-switch-when="InfoTextoJS, Assembly-CSharp">
+                                <hr>
+                                <label>Titulo:</label> <input type="text" ng-model="info.titulo">
+                                <label>Descripción:</label> <input type="text" ng-model="info.descripcion">
+                            </div>
+                            <div ng-switch-default>
+                                <select ng-model="info.type__">
+                                    <option>TituloInfoJS, Assembly-CSharp</option>
+                                    <option>ImagenInfoJS, Assembly-CSharp</option>
+                                    <option>InfoTextoJS, Assembly-CSharp</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <br>
+                    <ul class="button-group radius brigth">
+                        <a class="brigth button small" ng-click="vista.NuevoElementoInfo ()">+ Información</a>  
+                    </ul> 
+                </div>
+            </div>
+            <hr>
         </div>
         <div ng-switch-default>
             
