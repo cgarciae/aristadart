@@ -9,7 +9,9 @@ part of arista_client;
 class VistaVista
 {
     Router router;
-    Vista vista = new Vista();
+    Vista vista = new Vista()
+       ..muebles = []
+       ..cuartos = [];
     String eventoID;
     
     List<TipoDeVista> tiposDeVista = const 
@@ -80,6 +82,29 @@ class VistaVista
     }
     String get icono => _icono;
     String urlIcono = '';
+    
+        
+    void NuevoMueble ()
+    {
+        if (vista.muebles == null)
+            vista.muebles = [];
+        vista.muebles.add(new ElementoConstruccion());
+        
+    }
+    
+    void NuevoCuarto ()
+    {
+        if (vista.cuartos == null)
+                    vista.cuartos = [];
+        vista.cuartos.add(new ElementoConstruccion());
+        
+    }
+    
+    void EliminarElemento (ElementoConstruccion elem, List<ElementoConstruccion> listElem)
+    {
+        listElem.remove(elem);        
+        
+    }
     
 }
 

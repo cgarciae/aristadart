@@ -11,6 +11,7 @@ class Vista
     @Field() ObjetoUnity modelo;
     @Field() AristaImageTarget target;
     @Field() List<ElementoConstruccion> cuartos;
+    @Field() List<ElementoConstruccion> muebles;
     
     //InfoContacto
     @Field() List<ElementoContacto> elementosContacto;

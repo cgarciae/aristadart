@@ -65,6 +65,54 @@
                         </ul>
                     </div>
                 </div>
+                <div class="large-12 columns">
+                    <fieldset>
+                        <legend> Muebles</legend> <p>{{vista.muebles.length}} Muebles</p>
+                        <ul class="no-bullet">
+                            <li ng-repeat="elemento in vista.muebles"> 
+                                <ul class="large-3 columns no-bullet panel">
+                                    
+                                     <a class="button secondary right tiny" ng-click="EliminarElemento(elemento, vista.muebles)">x</a>
+                                    
+                                    <li><label>ID:</label> {{elemento.id}}</li>
+                                    <li><label>Nombre:</label> <input type="text" ng-model="elemento.nombre"></li>
+                                    <li><label>Titulo:</label> <input type="text" ng-model="elemento.titulo"></li>
+                                    <li><label>URL Imágen:</label> <input type="text" ng-model="elemento.urlImagen"></li>
+                                    <li><label>Texto:</label> <textarea type="text" ng-model="elemento.texto"></textarea></li>
+                                </ul>
+                            </li>   
+                        </ul>
+                        <hr>
+                        <br>
+                        <ul class="button-group radius brigth">
+                            <a class="brigth button small" ng-click="NuevoMueble()">Nuevo Mueble</a>
+                        </ul>
+                   </fieldset>
+               </div>
+               <div class="large-12 columns">
+                    <fieldset>
+                        <legend> Cuartos</legend> <p>{{vista.cuartos.length}} Cuartos</p>
+                        <ul class="no-bullet">
+                            <li ng-repeat="elemento in vista.cuartos"> 
+                                <ul class="large-3 columns no-bullet panel">
+                                    
+                                     <a class="button secondary right tiny" ng-click="EliminarElemento(elemento, vista.cuartos)">x</a>
+                                    
+                                    <li><label>ID:</label> {{elemento.id}}</li>
+                                    <li><label>Nombre:</label> <input type="text" ng-model="elemento.nombre"></li>
+                                    <li><label>Titulo:</label> <input type="text" ng-model="elemento.titulo"></li>
+                                    <li><label>URL Imágen:</label> <input type="text" ng-model="elemento.urlImagen"></li>
+                                    <li><label>Texto:</label> <textarea type="text" ng-model="elemento.texto"></textarea></li>
+                                </ul>
+                            </li>   
+                        </ul>
+                        <hr>
+                        <br>
+                        <ul class="button-group radius brigth">
+                            <a class="brigth button small" ng-click="NuevoCuarto()">Nuevo Cuarto</a>
+                        </ul>
+                   </fieldset>
+               </div>
                <hr>
                <br>
             </div>
