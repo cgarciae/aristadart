@@ -16,9 +16,6 @@ class VistaVista
        ..elementosInfo = [];
     String eventoID;
     
-    ElementoInfo infoElem = new ElementoInfo();
-    ElementoContacto contacto = new ElementoContacto();
-    
     List<TipoDeVista> tiposDeVista = const 
     [
         const TipoDeVista (
@@ -103,9 +100,9 @@ class VistaVista
         vista.type__ = tipo.type__;
     }
     
-    seleccionarTipoElementoInfo (ElementoInfo tipo)
+    seleccionarTipoElementoInfo (ElementoInfo tipo, ElementoInfo info)
     {
-        infoElem.type__ = tipo.type__;
+        info.type__ = tipo.type__;
     }
     
     String _icono = '';

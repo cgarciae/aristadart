@@ -156,7 +156,7 @@
                 <div class="panel">
                     <h3>Elementos Información </h3>
                     <div ng-repeat="info in vista.elementosInfo" >
-                        <div ng-switch="infoElem.type__">
+                        <div ng-switch="info.type__">
                             <div ng-switch-when="TituloInfoJS, Assembly-CSharp">
                                 <hr>
                                 <label>Titulo:</label> <input type="text" ng-model="info.titulo">
@@ -179,7 +179,7 @@
                                 </a>
                                 <ul id="dropInfo" class="f-dropdown" data-dropdown-content aria-hidden="true" tabindex="-1">
                                   <li ng-repeat="tipo in tiposElementoInfo"
-                                     ng-click="seleccionarTipoElementoInfo (tipo)"
+                                     ng-click="seleccionarTipoElementoInfo (tipo, info)"
                                      class="panel boxes">
                                         <b>{{tipo.nombre}}</b>
                                         <br>   
