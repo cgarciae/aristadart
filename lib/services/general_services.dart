@@ -32,19 +32,57 @@ Future<Resp> pushIdToList(@app.Attr() MongoDb dbConn, String collection, String 
 
 @app.Route("/upload", methods: const [app.POST], allowMultipartRequest: true)
 @Encode()
-upload(@app.Body(app.FORM) Map file)
+upload(@app.Body(app.FORM) Map form)
 {
     
-    print (file);
+    print (form);
     
-    HttpBodyFileUpload f = file['file'];
+    HttpBodyFileUpload f = form['file'];
     
     print (f);
     
     print (f.runtimeType);
     
-    print(file.runtimeType);
+    print (f.filename);
     
-    return new Resp()
-        ..success = (file != null);
+    return new Directory(('../web/images/uploads')).create(recursive: true).then((Directory dir)
+    {
+        var url = '${dir.path}/${f.filename}';
+        
+        return new File(url).writeAsBytes(f.content)
+                .then((_) => url.replaceAll('../web/', ''));
+    })
+    .then((String urlCorregida)
+    {
+        return new UrlResp()
+            ..success = (form != null)
+            ..url = urlCorregida;
+    });
+}
+
+@app.Route('/write')
+@Encode()
+writeFile()
+{
+    final string = 'Dart!';
+
+    var encodedData = UTF8.encode(string);
+
+    return new Directory(('../web/test')).create(recursive: true).then((Directory dir)
+    {
+        return new File('${dir.path}/file.txt')
+            .writeAsBytes(encodedData);
+    })
+    .then((File file) => file.readAsBytes())
+    .then((data) 
+    {
+      // Decode to a string, and print.
+      print(UTF8.decode(data)); // Prints 'Dart!'.
+    })
+    .then((_)
+    {
+        return new Resp()
+            ..success = true;
+    });
+    
 }
