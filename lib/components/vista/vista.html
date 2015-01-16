@@ -156,7 +156,7 @@
                 <div class="panel">
                     <h3>Elementos Información </h3>
                     <div ng-repeat="info in vista.elementosInfo" >
-                        <div ng-switch="info.type__">
+                        <div ng-switch="infoElem.type__">
                             <div ng-switch-when="TituloInfoJS, Assembly-CSharp">
                                 <hr>
                                 <label>Titulo:</label> <input type="text" ng-model="info.titulo">
@@ -171,11 +171,27 @@
                                 <label>Descripción:</label> <input type="text" ng-model="info.descripcion">
                             </div>
                             <div ng-switch-default>
-                                <select ng-model="info.type__">
+                                <br>
+                                <a class="button radius left" data-dropdown="dropInfo"
+                                   aria-controls="dropInfo" aria-expanded="false"
+                                   data-options="align:left">
+                                    Escoge el Tipo de Elemento Información &raquo;
+                                </a>
+                                <ul id="dropInfo" class="f-dropdown" data-dropdown-content aria-hidden="true" tabindex="-1">
+                                  <li ng-repeat="tipo in tiposElementoInfo"
+                                     ng-click="seleccionarTipoElementoInfo (tipo)"
+                                     class="panel boxes">
+                                        <b>{{tipo.nombre}}</b>
+                                        <br>   
+                                        <i>{{tipo.descripcion}}</i>
+                                        <br>
+                                   </li>
+                                </ul>
+                                <!--<select ng-model="info.type__">
                                     <option>TituloInfoJS, Assembly-CSharp</option>
                                     <option>ImagenInfoJS, Assembly-CSharp</option>
                                     <option>InfoTextoJS, Assembly-CSharp</option>
-                                </select>
+                                </select> -->
                             </div>
                         </div>
                     </div>
@@ -189,7 +205,6 @@
             <hr>
         </div>
         <div ng-switch-default>
-            
             <br>
             <a class="button radius left" data-dropdown="drop1"
                aria-controls="drop1" aria-expanded="false"
@@ -198,7 +213,7 @@
             </a>
             <ul id="drop1" class="f-dropdown" data-dropdown-content aria-hidden="true" tabindex="-1">
               <li ng-repeat="tipo in tiposDeVista"
-                 ng-click="seleccionarTipo (tipo)"
+                 ng-click="seleccionarTipoVista (tipo)"
                  class="panel boxes">
                     <b>{{tipo.nombre}}</b>
                     <br>   
