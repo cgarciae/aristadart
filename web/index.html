@@ -4,8 +4,9 @@
     <title>Arista Client</title>
     <link rel="stylesheet" href="css/foundation.css" />
     <link rel="stylesheet" href="css/arista.css" />
-    <script src="js/vendor/modernizr.js"></script>
+    <script src="/js/vendor/modernizr.js"></script>
 </head>
+
 <body>
 <nav class="tab-bar">
     <div class="left-small">
@@ -28,11 +29,41 @@
         </div>
 
 
-<form class="large-8 small-centered columns">
-    <ng-view></ng-view>
+    <form class="large-8 small-centered columns">
+        <ng-view></ng-view>
+    </form>
+    
+    
+    <span class="hide"><a data-dropdown="dropInfo" aria-controls="drop1" aria-expanded="false"></a>
+        <ul id="dropInfo" class="f-dropdown" data-dropdown-content aria-hidden="true" tabindex="-1">
+          <li><a href="#">This is a link</a></li>
+        </ul>
+    </span>
+    
+    <form class="hide" data-abide>
+  <div class="password-field">
+    <label>Password <small>required</small>
+      <input type="password" id="password" required pattern="[a-zA-Z]+">
+    </label>
+    <small class="error">Your password must match the requirements</small>
+  </div>
+  <div class="password-confirmation-field">
+    <label>Confirm Password <small>required</small>
+      <input type="password" required pattern="[a-zA-Z]+" data-equalto="password">
+    </label>
+    <small class="error">The password did not match</small>
+  </div>
+  <button type="submit">Submit</button>
 </form>
-
-<script type="application/dart" src="main.dart"></script>
-<script type="text/javascript" src="packages/browser/dart.js"></script>
+    
+    
+    <script src="/js/vendor/jquery.js"></script>
+    <script src="/js/vendor/fastclick.js"></script>
+    <script src="/js/foundation.min.js"></script>
+    <script>
+      $(document).foundation();
+    </script>
+    <script type="application/dart" src="main.dart"></script>
+    <script type="text/javascript" src="packages/browser/dart.js"></script>
 </body>
 </html>

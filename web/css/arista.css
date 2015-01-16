@@ -1,0 +1,20 @@
+.brigth{
+    text-align: right;
+}
+
+.max-width{
+    height:70px;
+    width:auto;
+}
+
+.control-width{
+    width:100% !important;
+}
+
+.boxes:hover, .boxes:focus{
+    box-shadow: 0 0 6px 1px rgba(0, 140, 186, 0.5);
+}
+
+.gray-b{
+    background-color: #d8d8d8;
+}
