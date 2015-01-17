@@ -32,6 +32,12 @@ class VistaVista
                 'MultimediaJS, Assembly-CShar',
                 'Multimedia',
                 'Vista para carrusel de y imagenes, proximamente videos'
+                ),
+                
+        const TipoDeVista (
+                'MapaConstruccionJS, Assembly-CSharp',
+                'Ubicación',
+                'Muestra la ubicación de tu proyecto facilmente'
                 )
      ];
     
@@ -141,13 +147,7 @@ class VistaVista
         
     }
     
-    void EliminarElemento (ElementoConstruccion elem, List<ElementoConstruccion> listElem)
-    {
-        listElem.remove(elem);        
-        
-    }
-    
-    void EliminarInfo (ElementoInfo elem, List<ElementoInfo> listElem)
+    void EliminarElemento (dynamic elem, List<dynamic> listElem)
     {
         listElem.remove(elem);        
         

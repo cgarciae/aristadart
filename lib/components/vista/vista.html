@@ -32,90 +32,87 @@
     <hr>
     <br>
     <div ng-switch="vista.type__">
-        
         <div ng-switch-when="ConstruccionRAJS, Assembly-CSharp">
-            <div>
-                <br>
-                <h2>Edición Vista Construcción RA</h2>
-                <br>
-                <div class="large-4 columns">
-                    <div class="panel">
-                        <h3> Icono </h3>
-                        <ul class="no-bullet">
-                            <li><label>Imagen:</label> <input type="text" ng-model="vista.icon.urlTextura"></li>
-                            <li><label>Nombre:</label> <input type="text" ng-model="vista.icon.texto"></li>
-                        </ul>
-                    </div>
+            <br>
+            <h2>Edición Vista Construcción RA</h2>
+            <br>
+            <div class="large-4 columns">
+                <div class="panel">
+                    <h3> Icono </h3>
+                    <ul class="no-bullet">
+                        <li><label>Imagen:</label> <input type="text" ng-model="vista.icon.urlTextura"></li>
+                        <li><label>Nombre:</label> <input type="text" ng-model="vista.icon.texto"></li>
+                    </ul>
                 </div>
-                <div class="large-4 columns">
-                    <div class="panel">
-                        <h3> Modelo </h3>
-                        <ul class="no-bullet">
-                            <li><label>URL:</label> <input type="text" ng-model="vista.modelo.url_objeto"></li>
-                            <li><label>Versión:</label> <input type="number" ng-model="vista.modelo.version"></li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="large-4 columns">
-                    <div class="panel">
-                        <h3> Target </h3>
-                        <ul class="no-bullet">
-                            <li><label>URL:</label> <input type="text" ng-model="vista.target.url"></li>
-                            <li><label>Versión:</label> <input type="number" ng-model="vista.target.version"></li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="large-12 columns">
-                    <fieldset>
-                        <legend> Muebles</legend> <p>{{vista.muebles.length}} Muebles</p>
-                        <ul class="no-bullet">
-                            <li ng-repeat="elemento in vista.muebles"> 
-                                <ul class="large-3 columns no-bullet panel">
-                                    
-                                     <a class="button secondary right tiny" ng-click="EliminarElemento(elemento, vista.muebles)">x</a>
-                                    
-                                    <li><label>ID:</label> {{elemento.id}}</li>
-                                    <li><label>Nombre:</label> <input type="text" ng-model="elemento.nombre"></li>
-                                    <li><label>Titulo:</label> <input type="text" ng-model="elemento.titulo"></li>
-                                    <li><label>URL Imágen:</label> <input type="text" ng-model="elemento.urlImagen"></li>
-                                    <li><label>Texto:</label> <textarea type="text" ng-model="elemento.texto"></textarea></li>
-                                </ul>
-                            </li>   
-                        </ul>
-                        <hr>
-                        <br>
-                        <ul class="button-group radius brigth">
-                            <a class="brigth button small" ng-click="NuevoMueble()">Nuevo Mueble</a>
-                        </ul>
-                   </fieldset>
-               </div>
-               <div class="large-12 columns">
-                    <fieldset>
-                        <legend> Cuartos</legend> <p>{{vista.cuartos.length}} Cuartos</p>
-                        <ul class="no-bullet">
-                            <li ng-repeat="elemento in vista.cuartos"> 
-                                <ul class="large-3 columns no-bullet panel">
-                                    
-                                    <a class="button secondary right tiny" ng-click="EliminarElemento(elemento, vista.cuartos)">x</a>
-                                    
-                                    <li><label>ID:</label> {{elemento.id}}</li>
-                                    <li><label>Nombre:</label> <input type="text" ng-model="elemento.nombre"></li>
-                                    <li><label>Titulo:</label> <input type="text" ng-model="elemento.titulo"></li>
-                                    <li><label>URL Imágen:</label> <input type="text" ng-model="elemento.urlImagen"></li>
-                                    <li><label>Texto:</label> <textarea type="text" ng-model="elemento.texto"></textarea></li>
-                                </ul>
-                            </li>   
-                        </ul>
-                        <hr>
-                        <br>
-                        <ul class="button-group radius brigth">
-                            <a class="brigth button small" ng-click="NuevoCuarto()">Nuevo Cuarto</a>
-                        </ul>
-                   </fieldset>
-               </div>
-               <hr>
-               <br>
             </div>
+            <div class="large-4 columns">
+                <div class="panel">
+                    <h3> Modelo </h3>
+                    <ul class="no-bullet">
+                        <li><label>URL:</label> <input type="text" ng-model="vista.modelo.url_objeto"></li>
+                        <li><label>Versión:</label> <input type="number" ng-model="vista.modelo.version"></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="large-4 columns">
+                <div class="panel">
+                    <h3> Target </h3>
+                    <ul class="no-bullet">
+                        <li><label>URL:</label> <input type="text" ng-model="vista.target.url"></li>
+                        <li><label>Versión:</label> <input type="number" ng-model="vista.target.version"></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="large-12 columns">
+                <fieldset>
+                    <legend> Muebles</legend> <p>{{vista.muebles.length}} Muebles</p>
+                    <ul class="no-bullet">
+                        <li ng-repeat="elemento in vista.muebles"> 
+                            <ul class="large-3 columns no-bullet panel">
+                                
+                                 <a class="button secondary right tiny" ng-click="EliminarElemento(elemento, vista.muebles)">x</a>
+                                
+                                <li><label>ID:</label> {{elemento.id}}</li>
+                                <li><label>Nombre:</label> <input type="text" ng-model="elemento.nombre"></li>
+                                <li><label>Titulo:</label> <input type="text" ng-model="elemento.titulo"></li>
+                                <li><label>URL Imágen:</label> <input type="text" ng-model="elemento.urlImagen"></li>
+                                <li><label>Texto:</label> <textarea type="text" ng-model="elemento.texto"></textarea></li>
+                            </ul>
+                        </li>   
+                    </ul>
+                    <hr>
+                    <br>
+                    <ul class="button-group radius brigth">
+                        <a class="brigth button small" ng-click="NuevoMueble()">Nuevo Mueble</a>
+                    </ul>
+               </fieldset>
+           </div>
+           <div class="large-12 columns">
+                <fieldset>
+                    <legend> Cuartos</legend> <p>{{vista.cuartos.length}} Cuartos</p>
+                    <ul class="no-bullet">
+                        <li ng-repeat="elemento in vista.cuartos"> 
+                            <ul class="large-3 columns no-bullet panel">
+                                
+                                <a class="button secondary right tiny" ng-click="EliminarElemento(elemento, vista.cuartos)">x</a>
+                                
+                                <li><label>ID:</label> {{elemento.id}}</li>
+                                <li><label>Nombre:</label> <input type="text" ng-model="elemento.nombre"></li>
+                                <li><label>Titulo:</label> <input type="text" ng-model="elemento.titulo"></li>
+                                <li><label>URL Imágen:</label> <input type="text" ng-model="elemento.urlImagen"></li>
+                                <li><label>Texto:</label> <textarea type="text" ng-model="elemento.texto"></textarea></li>
+                            </ul>
+                        </li>   
+                    </ul>
+                    <hr>
+                    <br>
+                    <ul class="button-group radius brigth">
+                        <a class="brigth button small" ng-click="NuevoCuarto()">Nuevo Cuarto</a>
+                    </ul>
+               </fieldset>
+           </div>
+           <hr>
+           <br>
         </div>
         <div ng-switch-when="InfoContactoJS, Assembly-CSharp">
             <h2>Edición Vista Info + Contacto</h2>
@@ -133,6 +130,9 @@
                 <div class="panel">
                     <h3>Elementos Contacto </h3>
                     <div ng-repeat="contacto in vista.elementosContacto" >
+                        <hr>
+                        <a class="button secondary right tiny" ng-click="EliminarElemento( contacto, vista.elementosContacto)">x</a>
+                        <br>
                         <div ng-switch="contacto.type__">
                             <div ng-switch-when="LlamarContactoJS, Assembly-CSharp">
                                 <label>Telefono:</label> <input type="text" ng-model="contacto.telefono">
@@ -168,7 +168,7 @@
                     <h3>Elementos Información </h3>
                     <div ng-repeat="info in vista.elementosInfo" >
                     <hr>
-                    <a class="button secondary right tiny" ng-click="EliminarInfo( info, vista.elementosInfo)">x</a>
+                    <a class="button secondary right tiny" ng-click="EliminarElemento( info, vista.elementosInfo)">x</a>
                     <br>
                         <div ng-switch="info.type__">
                             <div ng-switch-when="TituloInfoJS, Assembly-CSharp">
@@ -206,6 +206,62 @@
                     <ul class="button-group radius brigth">
                         <a class="brigth button small" ng-click="vista.NuevoElementoInfo ()">+ Información</a>  
                     </ul> 
+                </div>
+            </div>
+            <hr>
+        </div>
+        <div ng-switch-when="MultimediaJS, Assembly-CShar">
+            <h2>Edición Multimedia</h2>
+                            <br>
+                            <div class="large-4 columns">
+                                <div class="panel">
+                                    <h3> Icono </h3>
+                                    <ul class="no-bullet">
+                                        <li><label>Imagen:</label> <input type="text" ng-model="vista.icon.urlTextura"></li>
+                                        <li><label>Nombre:</label> <input type="text" ng-model="vista.icon.texto"></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="large-8 columns">
+                                <div class="panel">
+                                    <h3> Texturas </h3>
+                                    <div ng-repeat="textura in vista.textures" >
+                                        <hr>
+                                        <a class="button secondary right tiny" ng-click="EliminarElemento( textura, vista.textures)">x</a>
+                                        <br>
+                                        <ul class="no-bullet">
+                                            <li><label>Imagen:</label> <input type="text" ng-model="textura.urlTextura"></li>
+                                            <li><label>Descripción:</label> <input type="text" ng-model="textura.texto"></li>
+                                        </ul>
+                                    </div>
+                                     <hr>
+                                    <br>
+                                    <ul class="button-group radius brigth">
+                                        <a class="brigth button small" ng-click="vista.NuevaTextura ()">+ Textura</a>  
+                                    </ul> 
+                                </div>
+                            </div>
+                            <hr>
+        </div>
+        <div ng-switch-when="MapaConstruccionJS, Assembly-CSharp">
+            <h2>Edición Mapa Construción</h2>
+            <br>
+            <div class="large-4 columns">
+                <div class="panel">
+                    <h3> Icono </h3>
+                    <ul class="no-bullet">
+                        <li><label>Imagen:</label> <input type="text" ng-model="vista.icon.urlTextura"></li>
+                        <li><label>Nombre:</label> <input type="text" ng-model="vista.icon.texto"></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="large-4 columns">
+                <div class="panel">
+                    <ul class="no-bullet">
+                        <li><label>Centro:</label> <input type="text" ng-model="vista.center"></li>
+                        <li><label>Zoom:</label> <input type="number" ng-model="vista.zoom"></li>
+                        <li><label>Descripción:</label> <input type="text" ng-model="vista.texto"></li>
+                    </ul>
                 </div>
             </div>
             <hr>
