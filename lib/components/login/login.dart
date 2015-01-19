@@ -11,7 +11,6 @@ class Login extends ShadowRootAware
     
     UserSecure user = new UserSecure();
     Router router;
-    String url = '';
     
     bool nuevo = false;
     
@@ -20,16 +19,6 @@ class Login extends ShadowRootAware
         
     }
     
-    upload (dom.MouseEvent event)
-    {
-        dom.FormElement form = event.target as dom.FormElement;
-        
-        formRequestDecoded('upload', form, UrlResp).then((UrlResp resp)
-        {
-            print (resp.success);
-            url = resp.url;
-        });
-    }
     
       onShadowRoot(dom.ShadowRoot root){}
 //    {
