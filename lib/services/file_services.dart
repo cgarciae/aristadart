@@ -7,10 +7,17 @@ getFile(@app.Attr() MongoDb dbConn, String fileID)
     ObjectId objID = StringToId(fileID);
             
     return gridFS.findOne(where.id(objID)).then((GridOut gridOut)
-    {        
-        var stream = getData (gridOut);
+    {
+        if (gridOut == null)
+        {
+            return {'success' : false};
+        }
         
-        return new shelf.Response.ok (stream, headers: { "Content-Type": gridOut.contentType }); // You'll have to set the content-type of the file
+        return new shelf.Response.ok 
+        (
+            getData (gridOut), 
+            headers: { "Content-Type": gridOut.contentType }
+        );
     });
 }
 
@@ -39,31 +46,33 @@ deleteFile(@app.Attr() MongoDb dbConn, String fileID)
 {
     var fs = new GridFS (dbConn.innerConn);
 
-    return deleteFiles(fs, where.id(new ObjectId.fromHexString(fileID))).then((_)
-        => new Resp()
-            ..success = true);
+    return deleteFiles (fs, where.id(new ObjectId.fromHexString(fileID))).then((_)
+    {
+        return new Resp()
+            ..success = true;
+    });
 }
 
 @app.Route("/private/update/file/:fileID", methods: const [app.POST], allowMultipartRequest: true)
 @Encode()
 updateFile(@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, String fileID)
 {
+    HttpBodyFileUpload file = form ['file'];
+    var gridFS = new GridFS (dbConn.innerConn);
+    var input = new Stream.fromIterable([file.content]);
+        
+    var gridIn = gridFS.createFile(input, file.filename)
+        ..id = StringToId (fileID)
+        ..contentType = file.contentType.value;
+    
     return deleteFile(dbConn, fileID).then((Resp resp)
     {
-        HttpBodyFileUpload file = form ['file'];
-        var gridFS = new GridFS (dbConn.innerConn);
-        var input = new Stream.fromIterable([file.content]);
-            
-        var gridIn = gridFS.createFile(input, file.filename)
-            ..id = StringToId(fileID)
-            ..contentType = file.contentType.value;
-        
         return gridIn.save();
     })
     .then((res)
     {
         return new IdResp()
             ..success = true
-            ..id = fileID;
+            ..id = gridIn.id.toHexString();
     });
 }

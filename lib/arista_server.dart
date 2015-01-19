@@ -38,9 +38,10 @@ class Col
 
 Future<List<dynamic>> deleteFiles (GridFS fs, dynamic fileSelector)
 {
-    return fs.files.find(fileSelector).toList()
-    .then((List<Map> list)
-        => list.map(F.getByKey('_id')).toList())
+    return fs.files.find (fileSelector).toList().then((List<Map> list)
+    {
+        return list.map(F.getByKey('_id')).toList();
+    })
     .then((List list)
     {
         var removeFiles = fs.files.remove(where.oneFrom('_id', list));
