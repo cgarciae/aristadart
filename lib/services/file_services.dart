@@ -35,11 +35,35 @@ newFile(@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form)
 
 @app.Route("/private/delete/file/:fileID")
 @Encode()
-testDeleteFile(@app.Attr() MongoDb dbConn, String fileID)
+deleteFile(@app.Attr() MongoDb dbConn, String fileID)
 {
     var fs = new GridFS (dbConn.innerConn);
 
     return deleteFiles(fs, where.id(new ObjectId.fromHexString(fileID))).then((_)
         => new Resp()
             ..success = true);
+}
+
+@app.Route("/private/update/file/:fileID", methods: const [app.POST], allowMultipartRequest: true)
+@Encode()
+updateFile(@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, String fileID)
+{
+    return deleteFile(dbConn, fileID).then((Resp resp)
+    {
+        HttpBodyFileUpload file = form ['file'];
+        var gridFS = new GridFS (dbConn.innerConn);
+        var input = new Stream.fromIterable([file.content]);
+            
+        var gridIn = gridFS.createFile(input, file.filename)
+            ..id = StringToId(fileID)
+            ..contentType = file.contentType.value;
+        
+        return gridIn.save();
+    })
+    .then((res)
+    {
+        return new IdResp()
+            ..success = true
+            ..id = fileID;
+    });
 }
