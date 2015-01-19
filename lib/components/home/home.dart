@@ -13,6 +13,7 @@ class Home
     
     User user = new User();
     List<Evento> eventos = [];
+    String url = '';
     
     Router router;
     
@@ -89,6 +90,17 @@ class Home
     {
         return pullIDfromList('user', storage['id'], 'eventos', e.id)
         .then(doIfSuccess ((Resp resp) => eventos.remove(e)));
+    }
+    
+    upload (dom.MouseEvent event)
+    {
+        dom.FormElement form = (event.target as dom.ButtonElement).parent as dom.FormElement;
+        
+        formRequestDecoded('private/new/file', form, IdResp).then((IdResp resp)
+        {
+            print (resp.success);
+            url = 'public/get/file/${resp.id}';
+        });
     }
 }
 
