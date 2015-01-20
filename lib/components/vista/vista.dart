@@ -9,11 +9,7 @@ part of arista_client;
 class VistaVista
 {
     Router router;
-    Vista vista = new Vista()
-       ..muebles = []
-       ..cuartos = []
-       ..elementosContacto = []
-       ..elementosInfo = [];
+    Vista vista = new Vista();
     String eventoID;
     
     List<TipoDeVista> tiposDeVista = const 
@@ -113,6 +109,23 @@ class VistaVista
     seleccionarTipoVista (TipoDeVista tipo)
     {
         vista.type__ = tipo.type__;
+        switch(vista.type__){
+            case 'ConstruccionRAJS, Assembly-CSharp':
+                vista
+                    ..muebles = []
+                    ..cuartos = []
+                    ..modelo = new ObjetoUnity()
+                    ..target = new AristaImageTarget();
+                break;
+            case 'InfoContactoJS, Assembly-CSharp':
+                vista
+                    ..elementosContacto = []
+                    ..elementosInfo = [];
+                break;
+            default:
+                break;
+                
+        }
     }
     
     seleccionarTipoElemento (dynamic tipo, dynamic elem)
@@ -151,6 +164,38 @@ class VistaVista
     {
         listElem.remove(elem);        
         
+    }
+    
+    guardarUrlObjeto(String s){
+        vista.modelo.url_objeto = s;
+    }
+    
+    upload (dom.MouseEvent event, String urlObjeto, Function guardar)
+    {
+        String url = '';
+        
+        if(urlObjeto == null || urlObjeto == ""){
+            
+            url = 'private/new/file';
+            print("no existe, new");
+        }else{
+            
+            url = "private/update/file/${urlObjeto.split('/').last}";
+            print("actualizo");
+        }   
+    
+        dom.FormElement form = (event.target as dom.ButtonElement).parent as dom.FormElement;
+                    
+        formRequestDecoded(url, form, IdResp).then((IdResp resp)
+        {   
+            print (resp.success);
+            guardar('public/get/file/${resp.id}');
+            return saveInCollection('vista', vista);
+        }).then((Resp resp)
+        {
+            if(resp.success)
+                dom.window.location.reload(); 
+        });
     }
     
 }
