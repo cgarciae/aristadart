@@ -40,7 +40,7 @@ main()
 }
 
 @app.Interceptor(r'/.*')
-handleResponseHeader() 
+handleResponseHeader()
 {
     if (app.request.method == "OPTIONS") 
     {
