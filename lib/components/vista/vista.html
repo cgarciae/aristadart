@@ -4,21 +4,22 @@
     
     <br>
     <hr>
+    <div class="large-2 columns" ng-if="vista.type__ != null && vista.type__ != ''">
+        <div class="panel">
+            <h3> Icono </h3>
+            <ul class="no-bullet">
+                <li><img alt="Icono" ng-src="{{urlIcono}}" class="gray-b">
+                <li><label>Nombre:</label> <input type="text" ng-model="vista.icon.texto"></li>
+            </ul>
+        </div>
+    </div>
     <br>
     <div ng-switch="vista.type__">
         <div ng-switch-when="ConstruccionRAJS, Assembly-CSharp">
             <br>
             <h2>Edición Vista Construcción RA</h2>
             <br>
-            <div class="large-2 columns">
-                <div class="panel">
-                    <h3> Icono </h3>
-                    <ul class="no-bullet">
-                        <li><img alt="Icono" ng-src="{{urlIcono}}" class="gray-b">
-                        <li><label>Nombre:</label> <input type="text" ng-model="vista.icon.texto"></li>
-                    </ul>
-                </div>
-            </div>
+            
             <div class="large-4 columns">
                 <div class="panel">
                     <h3> Modelo </h3>
