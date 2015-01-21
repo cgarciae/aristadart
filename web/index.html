@@ -1,10 +1,12 @@
 <!DOCTYPE html>
-<html ng-app>
+<html ng-app class="no-js" lang="en">
 <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Arista Client</title>
-    <link rel="stylesheet" href="css/foundation.css" />
     <link rel="stylesheet" href="css/arista.css" />
-    <script src="/js/vendor/modernizr.js"></script>
+    <link rel="stylesheet" href="css/foundation.css" />
+    <script src="js/vendor/modernizr.js"></script>
 </head>
 
 <body>
@@ -34,19 +36,20 @@
     </form>
     
     
-    <span class="hide"><a data-dropdown="dropInfo" aria-controls="drop1" aria-expanded="false"></a>
-        <ul id="dropInfo" class="f-dropdown" data-dropdown-content aria-hidden="true" tabindex="-1">
+      <a data-options="align:left" data-dropdown="dropInfo" aria-controls="drop1" aria-expanded="true"></a>
+        <ul id="dropInfo" class="f-dropdown" data-dropdown-content aria-hidden="false" tabindex="-1">
           <li><a href="#">This is a link</a></li>
         </ul>
-    </span>
+        <h1>Hola mundo</h1>
     
-    <script src="/js/vendor/jquery.js"></script>
+   
     <script src="/js/vendor/fastclick.js"></script>
-    <script src="/js/foundation.min.js"></script>
+    <script src="js/vendor/jquery.js"></script>
+    <script src="js/foundation.min.js"></script>
+    <script type="application/dart" src="main.dart"></script>
+    <script type="text/javascript" src="packages/browser/dart.js"></script>
     <script>
       $(document).foundation();
     </script>
-    <script type="application/dart" src="main.dart"></script>
-    <script type="text/javascript" src="packages/browser/dart.js"></script>
 </body>
 </html>
