@@ -4,6 +4,8 @@ import 'dart:io';
 import 'dart:convert';
 import 'arista.dart';
 import 'dart:async';
+import 'package:http/http.dart' as http;
+import 'package:crypto/crypto.dart' as crypto;
 import 'package:redstone/server.dart' as app;
 import 'package:redstone_mapper_mongo/manager.dart';
 import 'package:mongo_dart/mongo_dart.dart';
@@ -22,6 +24,7 @@ part 'services/vista_services.dart';
 part 'services/general_services.dart';
 part 'services/file_services.dart';
 part 'services/test_services.dart';
+part 'services/vuforia_services.dart';
 
 ObjectId StringToId (String id) => new ObjectId.fromHexString(id);
 

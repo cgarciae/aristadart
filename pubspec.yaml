@@ -5,6 +5,7 @@ dependencies:
   browser: any
   di: any
   fp: any
+  http: any
   mongo_dart: any
   redstone: any
   redstone_mapper: any
