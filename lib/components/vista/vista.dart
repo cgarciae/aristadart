@@ -116,11 +116,19 @@ class VistaVista
                     ..cuartos = []
                     ..modelo = new ObjetoUnity()
                     ..target = new AristaImageTarget();
+                icono = "3D";
                 break;
             case 'InfoContactoJS, Assembly-CSharp':
                 vista
                     ..elementosContacto = []
                     ..elementosInfo = [];
+                icono = "info";
+                break;
+            case 'MultimediaJS, Assembly-CShar':
+                icono = "Galeria";
+                break;
+            case 'MapaConstruccionJS, Assembly-CSharp':
+                icono = "Ubicacion";
                 break;
             default:
                 break;
@@ -166,11 +174,27 @@ class VistaVista
         
     }
     
-    guardarUrlObjeto(String s){
+    guardarUrlObjeto(String s, _){
         vista.modelo.url_objeto = s;
     }
     
-    upload (dom.MouseEvent event, String urlObjeto, Function guardar)
+    guardarUrlTarget(String s, _){
+        vista.target.url = s;
+    }
+    
+    guardarUrlImagenElemento(String s, elemento){
+        elemento.urlImagen = s;
+    }
+    
+    guardarUrlInfo(String s, info){
+        info.url = s;
+    }
+    
+    guardarUrlTextura(String s, textura){
+        textura.urlTextura = s;
+    }
+    
+    upload (dom.MouseEvent event, String urlObjeto, Function guardar, [dynamic elemento])
     {
         String url = '';
         
@@ -189,7 +213,7 @@ class VistaVista
         formRequestDecoded(url, form, IdResp).then((IdResp resp)
         {   
             print (resp.success);
-            guardar('public/get/file/${resp.id}');
+            guardar('public/get/file/${resp.id}', elemento);
             return saveInCollection('vista', vista);
         }).then((Resp resp)
         {
