@@ -137,5 +137,33 @@ class EventoVista
         
         return 'images/webapp/missing_image.png';
     }
+    
+    upload (dom.MouseEvent event)
+    {
+        String url = '';
+        
+        if(evento.imagenPreview.urlTextura == null || evento.imagenPreview.urlTextura == ""){
+            
+            url = 'private/new/file';
+            print("no existe, new");
+        }else{
+            
+            url = "private/update/file/${evento.imagenPreview.urlTextura.split('/').last}";
+            print("actualizo");
+        }   
+
+        dom.FormElement form = (event.target as dom.ButtonElement).parent as dom.FormElement;
+                    
+        formRequestDecoded(url, form, IdResp).then((IdResp resp)
+        {   
+            print (resp.success);
+            evento.imagenPreview.urlTextura = 'public/get/file/${resp.id}';
+            return saveInCollection('evento', evento);
+        }).then((Resp resp)
+        {
+            if(resp.success)
+                dom.window.location.reload(); 
+        });
+    }
 }
 

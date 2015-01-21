@@ -27,8 +27,15 @@
         <div class="small-9 large-10 columns">
           <input type="text" ng-model="evento.imagenPreview.urlTextura">
         </div>
+        <form enctype="multipart/form-data" method="POST">
+             Choose a file to upload: <input name="file" type="file"><br>
+             <button ng-click="upload ($event)">Upload</button>
+        </form> 
         <img alt={{evento.descripcion}} ng-src="{{evento.imagenPreview.urlTextura}}">   
-    </div> 
+    </div>
+    <hr> 
+    <br>
+    <h2>Vistas</h2>
     <br>
         <div class="row">
             <div ng-repeat="vista in vistas"

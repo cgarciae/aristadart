@@ -92,15 +92,15 @@ class Home
         .then(doIfSuccess ((Resp resp) => eventos.remove(e)));
     }
     
-    upload (dom.MouseEvent event)
-    {
-        dom.FormElement form = (event.target as dom.ButtonElement).parent as dom.FormElement;
-        
-        formRequestDecoded('private/new/file', form, IdResp).then((IdResp resp)
-        {
-            print (resp.success);
-            url = 'public/get/file/${resp.id}';
-        });
-    }
+//    upload (dom.MouseEvent event)
+//    {
+//        dom.FormElement form = (event.target as dom.ButtonElement).parent as dom.FormElement;
+//        
+//        formRequestDecoded('private/new/file', form, IdResp).then((IdResp resp)
+//        {
+//            print (resp.success);
+//            url = 'public/get/file/${resp.id}';
+//        });
+//    }
 }
 

@@ -9,11 +9,7 @@ part of arista_client;
 class VistaVista
 {
     Router router;
-    Vista vista = new Vista()
-       ..muebles = []
-       ..cuartos = []
-       ..elementosContacto = []
-       ..elementosInfo = [];
+    Vista vista = new Vista();
     String eventoID;
     
     List<TipoDeVista> tiposDeVista = const 
@@ -32,6 +28,12 @@ class VistaVista
                 'MultimediaJS, Assembly-CShar',
                 'Multimedia',
                 'Vista para carrusel de y imagenes, proximamente videos'
+                ),
+                
+        const TipoDeVista (
+                'MapaConstruccionJS, Assembly-CSharp',
+                'Ubicación',
+                'Muestra la ubicación de tu proyecto facilmente'
                 )
      ];
     
@@ -53,6 +55,15 @@ class VistaVista
                 'Vista para carrusel de y imagenes, proximamente videos'
                 )
      ];
+    
+    List<TipoElementoContacto> tiposElementoContacto = const
+    [
+        const TipoElementoContacto (
+                'LlamarContactoJS, Assembly-CSharp' ,
+                'Contactar',
+                'Permite llamar con un toque'
+        )
+    ];
     
     
     VistaVista (RouteProvider routeProvider, this.router) 
@@ -98,12 +109,37 @@ class VistaVista
     seleccionarTipoVista (TipoDeVista tipo)
     {
         vista.type__ = tipo.type__;
+        switch(vista.type__){
+            case 'ConstruccionRAJS, Assembly-CSharp':
+                vista
+                    ..muebles = []
+                    ..cuartos = []
+                    ..modelo = new ObjetoUnity()
+                    ..target = new AristaImageTarget();
+                icono = "3D";
+                break;
+            case 'InfoContactoJS, Assembly-CSharp':
+                vista
+                    ..elementosContacto = []
+                    ..elementosInfo = [];
+                icono = "info";
+                break;
+            case 'MultimediaJS, Assembly-CShar':
+                icono = "Galeria";
+                break;
+            case 'MapaConstruccionJS, Assembly-CSharp':
+                icono = "Ubicacion";
+                break;
+            default:
+                break;
+                
+        }
     }
     
-    seleccionarTipoElementoInfo (ElementoInfo tipo, ElementoInfo info)
+    seleccionarTipoElemento (dynamic tipo, dynamic elem)
     {
-        info.type__ = tipo.type__;
-    }
+        elem.type__ = tipo.type__;
+    } 
     
     String _icono = '';
     void set icono (String opcion)
@@ -132,10 +168,58 @@ class VistaVista
         
     }
     
-    void EliminarElemento (ElementoConstruccion elem, List<ElementoConstruccion> listElem)
+    void EliminarElemento (dynamic elem, List<dynamic> listElem)
     {
         listElem.remove(elem);        
         
+    }
+    
+    guardarUrlObjeto(String s, _){
+        vista.modelo.url_objeto = s;
+    }
+    
+    guardarUrlTarget(String s, _){
+        vista.target.url = s;
+    }
+    
+    guardarUrlImagenElemento(String s, elemento){
+        elemento.urlImagen = s;
+    }
+    
+    guardarUrlInfo(String s, info){
+        info.url = s;
+    }
+    
+    guardarUrlTextura(String s, textura){
+        textura.urlTextura = s;
+    }
+    
+    upload (dom.MouseEvent event, String urlObjeto, Function guardar, [dynamic elemento])
+    {
+        String url = '';
+        
+        if(urlObjeto == null || urlObjeto == ""){
+            
+            url = 'private/new/file';
+            print("no existe, new");
+        }else{
+            
+            url = "private/update/file/${urlObjeto.split('/').last}";
+            print("actualizo");
+        }   
+    
+        dom.FormElement form = (event.target as dom.ButtonElement).parent as dom.FormElement;
+                    
+        formRequestDecoded(url, form, IdResp).then((IdResp resp)
+        {   
+            print (resp.success);
+            guardar('public/get/file/${resp.id}', elemento);
+            return saveInCollection('vista', vista);
+        }).then((Resp resp)
+        {
+            if(resp.success)
+                dom.window.location.reload(); 
+        });
     }
     
 }

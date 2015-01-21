@@ -36,6 +36,12 @@ class Vista
                     elementosInfo =[];
         elementosInfo.add(new ElementoInfo());
     }
+    
+    void NuevaTextura (){
+        if(textures == null)
+                            textures =[];
+        textures.add(new TextureGUI());
+    }
 }
 
 class VistaExportable extends Vista
