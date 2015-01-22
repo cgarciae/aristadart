@@ -25,8 +25,8 @@
             <br>
             
             <div class="large-6 columns">
-                <div class="panel">
-                    <h3> Modelo </h3>
+                <fieldset>
+                    <legend> Modelo </legend>
                     <ul class="no-bullet">
                         <li class = "large-5 columns"><label>URL:</label> <input type="text" ng-model="vista.modelo.url_objeto"></li>
                         <li class = "large-7 columns">
@@ -39,16 +39,16 @@
                             </p>
                             </form>
                         </li>
-                        <li><label>Versión:</label> <input type="number" ng-model="vista.modelo.version"></li>
+                       <!-- <li><label>Versión:</label> <input type="number" ng-model="vista.modelo.version"></li> -->
                     </ul>
-                </div>
+                </fieldset>
             </div>
-            <div class="large-6 columns">
-                <div class="panel">
-                    <h3> Target </h3>
+            <div class="row large-6 columns">
+                <fieldset>
+                    <legend> Target </legend>
                     <ul class="no-bullet">
-                        <li class = "large-3 columns"><label>URL:</label> <input type="text" ng-model="vista.target.url"></li>
-                        <li class = "large-6 columns">
+                        <li class = "large-5 columns"><label>URL:</label> <input type="text" ng-model="vista.target.url"></li>
+                        <li class = "large-7 columns">
                             <form enctype="multipart/form-data" method="POST">
                                  Choose a file to upload: <input name="file" type="file"><br>
                                  <button class="button tiny" ng-click="upload ($event, vista.target.url, guardarUrlTarget )">Upload</button>
@@ -58,9 +58,9 @@
                             </p>
                             </form>
                         </li>
-                        <li class = "large-2 columns"><label>Versión:</label> <input type="number" ng-model="vista.target.version"></li>
+                       <!-- <li class = "large-3 columns"><label>Versión:</label> <input type="number" ng-model="vista.target.version"></li> -->
                     </ul>
-                </div>
+                </fieldset>
             </div>
             <div class="large-12 columns">
                 <fieldset>
@@ -79,8 +79,7 @@
                                     <form enctype="multipart/form-data" method="POST">
                                          Choose a file to upload: <input name="file" type="file"><br>
                                          <button class="button tiny" ng-click="upload ($event, elemento.urlImagen, guardarUrlImagenElemento, elemento )">Upload</button>
-                                         <p class="button tiny" ng-href = "{{elemento.urlImagen}}" 
-                                        target="_blank">
+                                         <p target="_blank"class="button radius tiny" ng-href = "{{elemento.urlImagen}}">
                                         Download
                                     </p>
                                     </form>
@@ -92,10 +91,8 @@
                     </ul>
                     <hr>
                     <br>
-                    <ul class="button-group radius brigth">
-                        <a class="brigth button small" ng-click="NuevoMueble()">Nuevo Mueble</a>
-                    </ul>
-               </fieldset>
+                    <a class="button small radius right" ng-click="NuevoMueble()">Nuevo Mueble</a>
+                </fieldset>
            </div>
            <div class="large-12 columns">
                 <fieldset>
@@ -127,9 +124,7 @@
                     </ul>
                     <hr>
                     <br>
-                    <ul class="button-group radius brigth">
-                        <a class="brigth button small" ng-click="NuevoCuarto()">Nuevo Cuarto</a>
-                    </ul>
+                    <a class="button small radius right" ng-click="NuevoCuarto()">Nuevo Cuarto</a>
                </fieldset>
            </div>
            <hr>
