@@ -1,8 +1,8 @@
 <fieldset>
         <br>
-        <h3 class="text-center">
+        <h4 class="text-center">
             Hola <b> {{user.nombre}}  {{user.apellido}}! </b>
-        </h3>
+        </h4>
         <br>
         <div class="row">
           <div class="small-11 small-centered columns">
@@ -14,7 +14,8 @@
             <div ng-repeat="evento in eventos" 
                                     ng-click="ver (evento)">
                     <div class="panel control-width boxes">
-                        <a ng-click="eliminar (evento, $event)" class="button disabled right tiny">X</a>
+                        <a ng-click="eliminar (evento, $event)"
+                           class="button secondary right tiny">X</a>
                         
                         <br>
                         
