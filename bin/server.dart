@@ -4,6 +4,8 @@ import 'package:aristadart/arista.dart';
 import '../lib/arista_server.dart';
 
 import 'dart:io';
+import 'dart:convert' as conv;
+import 'package:crypto/crypto.dart' as crypto;
 import 'package:redstone/server.dart' as app;
 import 'package:redstone_mapper/plugin.dart';
 import 'package:redstone_mapper/mapper.dart';
@@ -37,6 +39,10 @@ main()
      
     app.setupConsoleLog();
     app.start(port: 9090);
+    
+    var key = "a26b48430ac02696539b02957f0830572eaa4c6a";
+    
+    print (crypto.CryptoUtils.bytesToHex(conv.UTF8.encode(key)));
 }
 
 @app.Interceptor(r'/.*')

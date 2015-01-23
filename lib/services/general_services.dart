@@ -66,7 +66,7 @@ writeFile()
 {
     final string = 'Dart!';
 
-    var encodedData = UTF8.encode(string);
+    var encodedData = conv.UTF8.encode(string);
 
     return new Directory(('../web/test')).create(recursive: true).then((Directory dir)
     {
@@ -77,7 +77,7 @@ writeFile()
     .then((data) 
     {
       // Decode to a string, and print.
-      print(UTF8.decode(data)); // Prints 'Dart!'.
+      print(conv.UTF8.decode(data)); // Prints 'Dart!'.
     })
     .then((_)
     {

@@ -5,47 +5,35 @@ addTarget (String path, List<int> data, String contentType)
     
 }
 
-String hashMd5Hex (body) => body;
+createSignature (String body, String path, String date, {String type : "application/json", String verb : "POST"}) 
+{
+      var hash = md5hash (body);
+      
+      print (hash);
+      
+      var stringToSign = '$verb\n$hash\n$type\n$date\n$path';
+      
+      print(stringToSign);
 
-createStringToSign (String body) 
+      var server_secret_key = "a26b48430ac02696539b02957f0830572eaa4c6a";
+      var signature = base64_HMAC_SHA1(server_secret_key, stringToSign);
+
+    return signature;
+}
+
+String md5hash (String body)
+{
+    var md5 = new crypto.MD5()
+        ..add(conv.UTF8.encode (body));
+    
+    return crypto.CryptoUtils.bytesToHex (md5.close());
+}
+
+String base64_HMAC_SHA1 (String hexKey, String stringToSign)
 {
     
-    var content = [65, 66, 67];
-      var md5 = new crypto.MD5();
-      md5.add(content);
-
-      var verb = 'GET';
-      var hash = crypto.CryptoUtils.bytesToHex(md5.close());
-      
-      var type = 'text/plain';
-      var date = HttpDate.format(new DateTime.now());
-      var path = '/request/path';
-      var stringToSign = '$verb\n$hash\n$type\n$date\n$path';
-      print(stringToSign);
-      print('');
-
-      var key = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-      var hmac = new crypto.HMAC(new crypto.SHA1(), key);
-      
-      hmac.add(content);
-      print(crypto.CryptoUtils.bytesToBase64(hmac.close()));
-      
-      
-    http.post("");
+    var hmac = new crypto.HMAC(new crypto.SHA1(), conv.UTF8.encode (hexKey))
+        ..add(conv.UTF8.encode (stringToSign));
     
-    var req = new http.Request ("POST", new Uri (path: "www.algo.com/algo"));
-    
-    new DateTime.now();
-    
-    var newLine = '\n';
-
-    var stringToSign =
-
-        req.method + newLine +
-        hashMd5Hex(body) + newLine +
-        req.headers + newLine +
-        req.headers.date.toString() + newLine +
-        req.uri.path;
-
-    return stringToSign;
+    return crypto.CryptoUtils.bytesToBase64(hmac.close());
 }
