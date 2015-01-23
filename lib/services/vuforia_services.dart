@@ -1,17 +1,100 @@
 part of arista_server;
 
-addTarget (String path, List<int> data, String contentType)
+Future<Map> uploadImageToVuforia (List<int> imageData, String metadata)
 {
+    var base64Image = crypto.CryptoUtils.bytesToBase64 (imageData);
+    var metadataBytes = crypto.CryptoUtils.bytesToBase64 (metadata.codeUnits);
     
+    String body = conv.JSON.encode
+    ({
+        "name": metadata,
+        "width" : 1.0,
+        "image" : base64Image,
+        "application_metadata" : metadataBytes
+    });
+    
+    return makeVuforiaRequest("POST", "/targets", body, "application/json").send()
+    
+    .then((http.StreamedResponse resp)
+    {
+        print ("Request headers ${resp.request.headers}");
+        print ("Response headers ${resp.headers}");
+        
+        return resp.stream.toList();
+    })
+    .then (flatten).then((List<int> list)
+    {   
+        return bytesToJSON (list);
+    });
 }
 
-createSignature (String body, String path, String date, {String type : "application/json", String verb : "POST"}) 
+@app.Route("/private/new/vuforiaimage/:eventoID", methods: const [app.POST], allowMultipartRequest: true)
+@Encode()
+newImageVuforia(@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, String eventoID)
+{
+    HttpBodyFileUpload file = form ['file'];
+    
+    var gridFS = new GridFS (dbConn.innerConn);
+    var input = new Stream.fromIterable([file.content]);
+    var gridIn = gridFS.createFile(input, file.filename)
+        ..contentType = file.contentType.value;
+    
+    
+            
+    return gridIn.save()
+            
+    .then((_) => uploadImageToVuforia (file.content, eventoID))
+            
+    .then (MapToQueryMap).then((QueryMap map)
+    {
+        print (map);
+        
+        if (map.result_code == "TargetCreated")
+        {
+            var imageID = gridIn.id.toHexString();
+            String targetID = map.target_id;
+            
+            return createRecoTarget (dbConn, eventoID, imageID, targetID);
+        }
+        else
+        {
+            //TODO: delete image from MongoDB
+            return new Resp()
+                ..success = false
+                ..error = map.result_code;
+        }
+    });
+}
+
+Future<RecoTargetResp> createRecoTarget (MongoDb dbConn, String eventoID, String imageID, String targetID)
+{
+    var recoTarget = new AristaCloudRecoTargetComplete()
+        ..imageId = imageID
+        ..targetId = targetID
+        ..id = new ObjectId().toHexString();
+        
+    return dbConn.insert (Col.recoTarget, recoTarget)
+    
+    .then((_) => dbConn.update 
+    (
+        Col.evento, 
+        where.id (StringToId (eventoID)), 
+        modify.set ('cloudRecoTargetId', recoTarget.id))
+    )
+    .then((_) => new RecoTargetResp()
+        ..success = true
+        ..recoTargetID = recoTarget.id
+        ..imageID = imageID
+        ..targetID = targetID);
+}
+
+createSignature (String verb, String path, String body, String contentType, String date) 
 {
       var hash = md5hash (body);
       
       print (hash);
       
-      var stringToSign = '$verb\n$hash\n$type\n$date\n$path';
+      var stringToSign = '$verb\n$hash\n$contentType\n$date\n$path';
       
       print(stringToSign);
 
@@ -37,3 +120,24 @@ String base64_HMAC_SHA1 (String hexKey, String stringToSign)
     
     return crypto.CryptoUtils.bytesToBase64(hmac.close());
 }
+
+http.Request makeVuforiaRequest (String verb, String path, String body, String contentType)
+{
+    String date = HttpDate.format(new DateTime.now());
+    String accessKey = "8524c879ec19a80b912f989c33091af8ddd7ea8c";
+   
+    String signature = createSignature (verb, path, body, contentType, date);
+    
+    Map<String,String> headers = 
+    {
+        "Authorization" : "VWS ${accessKey}:${signature}",
+        "Content-Type" : contentType,
+        "Date" : date
+    };
+    
+    return new http.Request (verb, new Uri.https("vws.vuforia.com", path))
+        ..headers.addAll(headers)
+        ..body = body;
+}
+
+

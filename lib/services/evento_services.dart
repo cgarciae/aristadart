@@ -21,7 +21,8 @@ newEvent(@app.Attr() MongoDb dbConn)
         var userId = session['id'];
         
         return dbConn.collection(Col.user)
-        .update(where.id(userId), {r'$push': {'eventos' : eventoId}});
+        
+        .update (where.id(userId), modify.push ('eventos', eventoId));
     })
     
     .then((_)
@@ -40,7 +41,8 @@ Future<IdResp> saveEvent(@app.Attr() MongoDb dbConn, @Decode() Evento evento)
 {
     var id = StringToId(evento.id);
         
-    return dbConn.update(Col.evento, where.id(id), evento)
+    return dbConn.update (Col.evento, where.id (id), evento)
+            
     .then((_) => new IdResp()
         ..success = true
         ..id = evento.id

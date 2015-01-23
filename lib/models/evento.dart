@@ -10,6 +10,7 @@ class Evento
     @Field() String get url => localHost + "/export/evento/$id";
     
     @ReferenceId() List<String> viewIds = [];
+    @ReferenceId() String cloudRecoTargetId;
 }
 
 class EventoExportable extends Evento

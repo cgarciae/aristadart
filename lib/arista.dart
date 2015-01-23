@@ -5,6 +5,7 @@ import 'package:redstone_mapper_mongo/metadata.dart';
 import 'package:redstone/query_map.dart';
 import 'dart:convert';
 import 'dart:async';
+import 'package:fp/fp.dart' as F;
 
 part 'models/evento.dart';
 part 'models/texture_gui.dart';
@@ -37,6 +38,7 @@ Map ObjectToMap (dynamic obj)
 }
 
 QueryMap NewQueryMap () => new QueryMap(new Map());
+QueryMap MapToQueryMap (Map map) => new QueryMap(map);
 
 class Resp
 {
@@ -63,3 +65,12 @@ class UrlResp extends Resp
 {
     @Field() String url;
 }
+
+class RecoTargetResp extends Resp
+{
+    @Field() String recoTargetID;
+    @Field() String imageID;
+    @Field() String targetID;
+}
+
+List flatten (List<List> list) => list.expand(F.identity).toList();

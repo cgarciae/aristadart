@@ -37,6 +37,7 @@ class Col
     static String user = 'user';
     static String evento = 'evento';
     static String vista = 'vista';
+    static String recoTarget = 'recoTarget';
 }
 
 Future<List<dynamic>> deleteFiles (GridFS fs, dynamic fileSelector)
@@ -77,3 +78,5 @@ Stream<List<int>> getData (GridOut gridOut)
     
     return controller.stream;
 }
+
+Function bytesToJSON = F.compose([conv.JSON.decode, conv.UTF8.decode]);

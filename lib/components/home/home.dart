@@ -49,26 +49,16 @@ class Home
     
     Future<Resp> addEventId  (String eventID)
     {
-        var userID = storage['id'];
-        return getRequestDecoded(Resp, '/private/push/user/$userID/eventos/$eventID')
-        
-        .then (doIfSuccess ((resp)
-        {
-            var evento = new Evento()
+        var evento = new Evento()
                 ..id = eventID
                 ..nombre = 'Nuevo Evento'
                 ..descripcion = 'Descripcion';
+        
+        eventos.add(evento);
             
-            return saveEvento (evento);
-        }));
+        return saveInCollection('evento', evento);
     }
     
-    saveEvento (Evento evento)
-    {
-        return saveInCollection('evento', evento)
-                
-        .then (doIfSuccess ((_) => eventos.add(evento)));
-    }
     
     ver (Evento e)
     {

@@ -9,3 +9,14 @@ class AristaImageTarget
     
     AristaImageTarget.New ({this.url, this.version});
 }
+
+class AristaCloudRecoTarget
+{
+    @Id() String id;
+}
+
+class AristaCloudRecoTargetComplete extends AristaCloudRecoTarget
+{
+    @ReferenceId() String imageId;
+    @Field() String targetId;
+}
