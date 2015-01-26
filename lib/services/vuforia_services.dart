@@ -1,6 +1,6 @@
 part of arista_server;
 
-Future<Map> uploadImageToVuforia (List<int> imageData, String metadata)
+Future<Map> uploadImageToVuforia (String method, String path, List<int> imageData, String metadata)
 {
     var base64Image = crypto.CryptoUtils.bytesToBase64 (imageData);
     var metadataBytes = crypto.CryptoUtils.bytesToBase64 (metadata.codeUnits);
@@ -13,7 +13,7 @@ Future<Map> uploadImageToVuforia (List<int> imageData, String metadata)
         "application_metadata" : metadataBytes
     });
     
-    return makeVuforiaRequest("POST", "/targets", body, "application/json").send()
+    return makeVuforiaRequest(method, path, body, ContType.applicationJson).send()
     
     .then((http.StreamedResponse resp)
     {
@@ -28,22 +28,35 @@ Future<Map> uploadImageToVuforia (List<int> imageData, String metadata)
     });
 }
 
+Future<Map> streamResponseToJSON (http.StreamedResponse resp)
+{
+    
+    return resp.stream.toList()
+            
+    .then (flatten)
+    
+    .then ((List<int> list)
+    {
+        print (list);
+        
+        return bytesToJSON (list);
+    });
+}
+
 @app.Route("/private/new/vuforiaimage/:eventoID", methods: const [app.POST], allowMultipartRequest: true)
 @Encode()
 newImageVuforia(@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, String eventoID)
 {
     HttpBodyFileUpload file = form ['file'];
-    
     var gridFS = new GridFS (dbConn.innerConn);
     var input = new Stream.fromIterable([file.content]);
     var gridIn = gridFS.createFile(input, file.filename)
         ..contentType = file.contentType.value;
     
-    
             
     return gridIn.save()
             
-    .then((_) => uploadImageToVuforia (file.content, eventoID))
+    .then((_) => uploadImageToVuforia (Method.POST, "/targets", file.content, eventoID))
             
     .then (MapToQueryMap).then((QueryMap map)
     {
@@ -63,6 +76,84 @@ newImageVuforia(@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, String
                 ..success = false
                 ..error = map.result_code;
         }
+    });
+}
+
+@app.Route("/private/update/vuforiaimage/:eventoID", methods: const [app.POST], allowMultipartRequest: true)
+@Encode()
+updateImageVuforia(@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, String eventoID)
+{
+    String targetID;
+    String imageID;
+    String cloudRecoID;
+    
+    HttpBodyFileUpload file = form ['file'];
+    
+    return dbConn.findOne
+    (
+        Col.evento,
+        Evento,
+        where.id (StringToId (eventoID))
+    )
+    .then ((Evento evento)
+    {
+        if (evento == null)
+            return new Resp()
+                ..success = false
+                ..error = "Evento not found";
+        
+        eventoID = evento.id;
+        cloudRecoID = evento.cloudRecoTargetId;
+        
+        return dbConn.findOne
+        (
+            Col.recoTarget,
+            AristaCloudRecoTargetComplete, 
+            where.id (StringToId (cloudRecoID))
+        );
+    })
+    .then ((resp)
+    {
+        if (resp is Resp)
+            return resp;
+        
+        var reco = resp as AristaCloudRecoTargetComplete;
+        
+        if (reco == null)
+            return new Resp ()
+                ..success = false
+                ..error = "Not found";
+        
+        targetID = reco.targetId;
+        imageID = reco.imageId;
+        
+        return updateFile (dbConn, form, imageID);
+    })
+    .then ((Resp resp)
+    {
+        if (! resp.success)
+            return resp;
+        
+        return uploadImageToVuforia (Method.PUT, "/targets/${targetID}", file.content, eventoID);
+    })
+    .then((dynamic resp)
+    {
+        if (resp is Resp)
+           return resp;
+        
+        var map = MapToQueryMap (resp);
+        
+        if (map.result_code == "TargetCreated" || map.result_code == "Success")
+        {
+            return new Resp()
+                ..success = true;
+        }
+        else
+        {
+            return new Resp()
+                ..success = false
+                ..error = map.result_code;
+        }        
     });
 }
 

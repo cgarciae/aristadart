@@ -32,13 +32,26 @@ HttpSession get session => app.request.session;
 
 const String ADMIN = "ADMIN";
 
-class Col
+abstract class Col
 {
     static String user = 'user';
     static String evento = 'evento';
     static String vista = 'vista';
     static String recoTarget = 'recoTarget';
 }
+
+abstract class ContType
+{
+    static String applicationJson = "application/json";
+}
+
+abstract class Method
+{
+    static String POST = "POST";
+    static String PUT = "PUT";
+    static String GET = "GET";
+}
+
 
 Future<List<dynamic>> deleteFiles (GridFS fs, dynamic fileSelector)
 {
@@ -79,4 +92,4 @@ Stream<List<int>> getData (GridOut gridOut)
     return controller.stream;
 }
 
-Function bytesToJSON = F.compose([conv.JSON.decode, conv.UTF8.decode]);
+Future<Map> bytesToJSON (List<int> list) => conv.JSON.decode (conv.UTF8.decode (list));

@@ -55,7 +55,7 @@ deleteFile(@app.Attr() MongoDb dbConn, String fileID)
 
 @app.Route("/private/update/file/:fileID", methods: const [app.POST], allowMultipartRequest: true)
 @Encode()
-updateFile(@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, String fileID)
+Future<Resp> updateFile(@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, String fileID)
 {
     HttpBodyFileUpload file = form ['file'];
     var gridFS = new GridFS (dbConn.innerConn);
