@@ -50,6 +50,7 @@ abstract class Method
     static String POST = "POST";
     static String PUT = "PUT";
     static String GET = "GET";
+    static String DELETE = "DELETE";
 }
 
 
