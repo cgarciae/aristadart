@@ -161,31 +161,6 @@ updateImageVuforia(@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, Str
     });
 }
 
-@app.Route("/private/neworupdate/vuforiaimage/:eventoID", methods: const [app.POST], allowMultipartRequest: true)
-@Encode()
-newOrUpdateImageVuforia(@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, String eventoID)
-{
-    return dbConn.findOne
-    (
-        Col.evento,
-        Evento,
-        where.id(StringToId(eventoID))
-    )
-    .then((Evento evento)
-    {
-        if (evento == null)
-            return new Resp()
-                ..success = false
-                ..error = "Evento not found";
-        
-        if (evento.cloudRecoTargetId == null || evento.cloudRecoTargetId == "")
-            return newImageVuforia(dbConn, form, eventoID);
-        
-        
-        return updateImageVuforia(dbConn, form, eventoID);
-    });
-}
-
 @app.Route("/public/get/vuforiatarget/:eventoID")
 @Encode()
 Future<Resp> getVuforiaTarget(@app.Attr() MongoDb dbConn, String eventoID)
