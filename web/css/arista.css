@@ -19,6 +19,10 @@
     background-color: #d8d8d8;
 }
 
-.s5ze-th{
+.size-th{
     max-height:200px;
+}
+
+.sombra{
+    box-shadow: inset 1px 1px 0 rgba(0,0,0,.1),inset 0 -1px 0 rgba(0,0,0,.07);
 }

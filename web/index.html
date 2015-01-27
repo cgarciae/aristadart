@@ -7,35 +7,36 @@
     <link rel="stylesheet" href="css/arista.css" />
     <link rel="stylesheet" href="css/foundation.css" />
     <script src="js/vendor/modernizr.js"></script>
+    
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400,600' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
 </head>
 
-<body>
-<nav class="tab-bar">
-    <div class="left-small">
-        <a class="item menu-icon">
-            <span>
-            </span>
+<body style="background-color:#e6e4e3">
+    <nav style= "background-color:#517dbe" class="tab-bar">
+        <div class="left-small">
+            <a class="item menu-icon">
+                <span>
+                </span>
+            </a>
+        </div>
+      <div class="middle tab-bar-section">!Bienvenidos a ARISTA Client </div>
+      <div  class = "right tab-bar-section">
+        <a  href="#" ng-click="logout()"
+               class="button radius right tiny"
+               ng-if="LoggedIn">
+                    Logout
         </a>
-    </div>
-  <div class="middle tab-bar-section"> Arista Client </div>
-</nav>
-
-<br>
-<div class="large-8 large-offset-3 columns">
-    <h3 class="text-right">
-        !Bienvenidos a ARISTA!
-    </h3>
-        <a href="#" ng-click="logout()"
-           class="button radius right small"
-           ng-if="LoggedIn">
-                Logout
-        </a>
-</div>
+      </div>
+    </nav>
+    
+    <br>
 
 
-    <form class="large-8 small-centered columns">
+    <div class="large-8 small-centered columns" style="background-color:white" class="sombra">
+        <br>
         <ng-view></ng-view>
-    </form>
+    </div>
     
        
     
