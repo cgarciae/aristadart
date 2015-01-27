@@ -37,7 +37,7 @@ Future<Map> streamResponseToJSON (http.StreamedResponse resp)
     
     .then ((List<int> list)
     {
-        print (list);
+        print (list.runtimeType);
         
         return bytesToJSON (list);
     });
@@ -47,6 +47,8 @@ Future<Map> streamResponseToJSON (http.StreamedResponse resp)
 @Encode()
 newImageVuforia(@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, String eventoID)
 {
+    String imageID;
+    
     HttpBodyFileUpload file = form ['file'];
     var gridFS = new GridFS (dbConn.innerConn);
     var input = new Stream.fromIterable([file.content]);
@@ -64,17 +66,19 @@ newImageVuforia(@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, String
         
         if (map.result_code == "TargetCreated")
         {
-            var imageID = gridIn.id.toHexString();
+            imageID = gridIn.id.toHexString();
             String targetID = map.target_id;
             
             return createRecoTarget (dbConn, eventoID, imageID, targetID);
         }
         else
         {
-            //TODO: delete image from MongoDB
-            return new Resp()
+            return deleteFile (dbConn, imageID)
+                    
+            .then((_) => new Resp()
                 ..success = false
-                ..error = map.result_code;
+                ..error = map.result_code
+            );
         }
     });
 }
@@ -157,6 +161,75 @@ updateImageVuforia(@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, Str
     });
 }
 
+@app.Route("/private/neworupdate/vuforiaimage/:eventoID", methods: const [app.POST], allowMultipartRequest: true)
+@Encode()
+newOrUpdateImageVuforia(@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, String eventoID)
+{
+    return dbConn.findOne
+    (
+        Col.evento,
+        Evento,
+        where.id(StringToId(eventoID))
+    )
+    .then((Evento evento)
+    {
+        if (evento == null)
+            return new Resp()
+                ..success = false
+                ..error = "Evento not found";
+        
+        if (evento.cloudRecoTargetId == null || evento.cloudRecoTargetId == "")
+            return newImageVuforia(dbConn, form, eventoID);
+        
+        
+        return updateImageVuforia(dbConn, form, eventoID);
+    });
+}
+
+@app.Route("/public/get/vuforiatarget/:eventoID")
+@Encode()
+Future<Resp> getVuforiaTarget(@app.Attr() MongoDb dbConn, String eventoID)
+{
+    return dbConn.findOne
+    (
+        Col.evento,
+        Evento,
+        where.id (StringToId (eventoID))
+    )
+    .then((Evento evento)
+    {
+        if (evento == null)
+            return new Resp()
+                ..success = false
+                ..error = "Evento not found";
+        
+        return dbConn.findOne
+        (
+            Col.recoTarget, 
+            AristaCloudRecoTargetComplete,
+            where.id (StringToId (evento.cloudRecoTargetId))
+        );
+    })
+    .then (ifDidntFail ((AristaCloudRecoTargetComplete reco)
+    {
+        return makeVuforiaRequest(Method.GET, "/targets/${reco.targetId}", "", "")
+                
+        .send().then (streamResponseToJSON).then (MapToQueryMap);
+    }))
+    .then (ifDidntFail ((QueryMap map)
+    {
+        if (map.result_code == "Success")
+            return new MapResp()
+                ..success = true
+                ..map = map;
+        
+        return new Resp()
+            ..success = false
+            ..error = map.result_code;
+    }));
+    
+}
+
 Future<RecoTargetResp> createRecoTarget (MongoDb dbConn, String eventoID, String imageID, String targetID)
 {
     var recoTarget = new AristaCloudRecoTargetComplete()
@@ -226,9 +299,15 @@ http.Request makeVuforiaRequest (String verb, String path, String body, String c
         "Date" : date
     };
     
-    return new http.Request (verb, new Uri.https("vws.vuforia.com", path))
-        ..headers.addAll(headers)
-        ..body = body;
+    var req = new http.Request (verb, new Uri.https("vws.vuforia.com", path))
+        ..headers.addAll(headers);
+    
+    print ("Body length ${body.length}");
+    
+    if (body != null && body.length > 0)
+        req.body = body;
+    
+    return req;
 }
 
 

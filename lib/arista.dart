@@ -26,6 +26,13 @@ class ListInt
     @Field() List<int> list;
 }
 
+Function decodeTo (Type type)
+{
+    return (String json)
+    {
+        return decodeJson(json, type);
+    };
+}
 
 dynamic MapToObject (Type type, Map map)
 {
@@ -71,6 +78,11 @@ class RecoTargetResp extends Resp
     @Field() String recoTargetID;
     @Field() String imageID;
     @Field() String targetID;
+}
+
+class MapResp extends Resp
+{
+    @Field() Map map;
 }
 
 List flatten (List<List> list) => list.expand(F.identity).toList();
