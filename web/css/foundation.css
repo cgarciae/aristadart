@@ -59,7 +59,9 @@ body {
   color: #222;
   padding: 0;
   margin: 0;
-  font-family: "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif;
+  /*font-family: "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif;
+  /*font-family: 'Open Sans', sans-serif;*/
+  font-family: "Lato", sans-serif;
   font-weight: normal;
   font-style: normal;
   line-height: 1.5;
@@ -1160,12 +1162,12 @@ button, .button {
   padding-bottom: 1.0625rem;
   padding-left: 2rem;
   font-size: 1rem;
-  background-color: #008CBA;
-  border-color: #007095;
+  background-color: #e3e050;
+  border-color: #B0AE3E;
   color: #FFFFFF;
   transition: background-color 300ms ease-out; }
   button:hover, button:focus, .button:hover, .button:focus {
-    background-color: #007095; }
+    background-color: #B0AE3E; }
   button:hover, button:focus, .button:hover, .button:focus {
     color: #FFFFFF; }
   button.secondary, .button.secondary {
