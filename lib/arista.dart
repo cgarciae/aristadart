@@ -86,3 +86,16 @@ class MapResp extends Resp
 }
 
 List flatten (List<List> list) => list.expand(F.identity).toList();
+
+abstract class ContType
+{
+    static String applicationJson = "application/json";
+}
+
+abstract class Method
+{
+    static String POST = "POST";
+    static String PUT = "PUT";
+    static String GET = "GET";
+    static String DELETE = "DELETE";
+}

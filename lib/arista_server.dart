@@ -40,19 +40,6 @@ abstract class Col
     static String recoTarget = 'recoTarget';
 }
 
-abstract class ContType
-{
-    static String applicationJson = "application/json";
-}
-
-abstract class Method
-{
-    static String POST = "POST";
-    static String PUT = "PUT";
-    static String GET = "GET";
-    static String DELETE = "DELETE";
-}
-
 
 Future<List<dynamic>> deleteFiles (GridFS fs, dynamic fileSelector)
 {
