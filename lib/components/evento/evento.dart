@@ -21,7 +21,7 @@ class EventoVista
         if (eventoID == null)
         {
             //Crear nuevo evento
-            getRequestQueryMap('private/new/evento').then((QueryMap res)
+            requestDecoded(IdResp, Method.POST, 'private/evento').then((IdResp res)
             {
                 if (res.success)
                 {
@@ -33,7 +33,7 @@ class EventoVista
         else
         {
             //Cargar evento
-            getRequestDecoded(Evento, "private/get/evento/$eventoID").then((Evento e)
+            requestDecoded(Evento, Method.GET, "private/get/evento/$eventoID").then((Evento e)
             {
                 evento = e;
                 
@@ -44,7 +44,7 @@ class EventoVista
     
     cargarVistas (String eventID)
     {
-        return getRequestDecoded(VistasResp, "private/get/evento/$eventID/vistas")
+        return requestDecoded(VistasResp, Method.GET,"private/get/evento/$eventID/vistas")
         .then(doIfSuccess((VistasResp resp)
         {
             vistas = resp.vistas;
@@ -62,8 +62,7 @@ class EventoVista
     
     nuevaVista ()
     {
-        getRequestDecoded (IdResp, 'private/new/vista')
-        
+        requestDecoded(IdResp, Method.POST, 'private/vista')
         .then (doIfSuccess ((resp) => addVistaId (resp.id)));
     }
     
@@ -141,23 +140,25 @@ class EventoVista
     upload (dom.MouseEvent event)
     {
         String url = '';
-        
+        var method = '';
         if(evento.imagenPreview.urlTextura == null || evento.imagenPreview.urlTextura == ""){
             
-            url = 'private/new/file';
+            url = 'private/file';
+            method = Method.POST;
             print("no existe, new");
         }else{
             
-            url = "private/update/file/${evento.imagenPreview.urlTextura.split('/').last}";
+            url = "private/file/${evento.imagenPreview.urlTextura.split('/').last}";
+            method = Method.PUT;
             print("actualizo");
         }   
 
         dom.FormElement form = (event.target as dom.ButtonElement).parent as dom.FormElement;
                     
-        formRequestDecoded(url, form, IdResp).then((IdResp resp)
+        requestDecoded(IdResp, method, url).then((IdResp resp)
         {   
             print (resp.success);
-            evento.imagenPreview.urlTextura = 'public/get/file/${resp.id}';
+            evento.imagenPreview.urlTextura = 'public/file/${resp.id}';
             return saveInCollection('evento', evento);
         }).then((Resp resp)
         {

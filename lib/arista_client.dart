@@ -72,6 +72,22 @@ Future<dynamic> requestQueryMap (String method, String path, [Object data])
     .then (MapToQueryMap);
 }
 
+Future<Resp> saveInCollection(String collection, Object obj){
+    return requestDecoded(Resp, Method.PUT, "private/$collection");
+}
+
+Future<Resp> deleteFromCollection(String collection, String id){
+    return requestDecoded(Resp, Method.DELETE, "private/$collection/$id");
+}
+
+Future<IdResp> newFromCollection (String collection){
+    return requestDecoded(IdResp, Method.POST, "private/$collection");
+}
+
+Future<dynamic> getFromCollection (Type tipo, String collection, String id){
+    return requestDecoded(tipo, Method.GET, "private/$collection/$id");
+}
+
 Function doIfSuccess ([Function f])
 {
     return (dynamic resp)
@@ -90,20 +106,10 @@ Function doIfSuccess ([Function f])
 
 Future<Resp> pushIDtoList (String collection, String objID, String fieldName, String referenceID)
 {
-    return getRequestDecoded (Resp, '/private/push/$collection/$objID/$fieldName/$referenceID');
+    return requestDecoded(Resp, Method.GET,'/private/push/$collection/$objID/$fieldName/$referenceID');
 }
 
 Future<Resp> pullIDfromList (String collection, String objID, String fieldName, String referenceID)
 {
-    return getRequestDecoded (Resp, '/private/pull/$collection/$objID/$fieldName/$referenceID');
-}
-
-Future<Resp> deleteFromCollection (String collection, String id)
-{
-    return getRequestDecoded(Resp, '/private/delete/$collection/$id');
-}
-
-Future<IdResp> newFromCollection (String collection)
-{
-    return getRequestDecoded(IdResp, '/private/new/$collection');
+    return requestDecoded(Resp, Method.GET,'/private/pull/$collection/$objID/$fieldName/$referenceID');
 }

@@ -2,7 +2,8 @@ part of arista_server;
 
 
 
-@app.Route("/private/new/evento")
+@app.Route("/private/evento",methods: const[app.POST])
+@Encode()
 newEvent(@app.Attr() MongoDb dbConn) {
     var evento = new Evento();
 
@@ -16,14 +17,13 @@ newEvent(@app.Attr() MongoDb dbConn) {
 
         return dbConn.collection(Col.user).update(where.id(userId), modify.push('eventos', eventoId));
     }).then((_) {
-        return {
-            'success': true,
-            'id': evento.id
-        };
+        return new IdResp()
+          ..success = true
+          ..id = evento.id;
     });
 }
 
-@app.Route("/private/save/evento", methods: const [app.POST])
+@app.Route("/private/evento", methods: const [app.PUT])
 @Encode()
 Future<IdResp> saveEvent(@app.Attr() MongoDb dbConn, @Decode() Evento evento) {
     var id = StringToId(evento.id);
@@ -33,7 +33,7 @@ Future<IdResp> saveEvent(@app.Attr() MongoDb dbConn, @Decode() Evento evento) {
             ..id = evento.id);
 }
 
-@app.Route("/private/get/evento/:id")
+@app.Route("/private/evento/:id", methods: const [app.GET])
 @Encode()
 Future<Evento> getEvento(@app.Attr() MongoDb dbConn, String id) {
     var eventoId = StringToId(id);
@@ -41,17 +41,7 @@ Future<Evento> getEvento(@app.Attr() MongoDb dbConn, String id) {
     return dbConn.findOne(Col.evento, Evento, where.id(eventoId));
 }
 
-@app.Route("/private/get2/evento/:id")
-@Encode()
-Future<EventoExportable> getEvento2(@app.Attr() MongoDb dbConn, String id) {
-    var eventoId = StringToId(id);
-
-    return dbConn.findOne(Col.evento, EventoExportable, where.id(eventoId));
-}
-
-
-
-@app.Route("/private/delete/evento/:id")
+@app.Route("/private/evento/:id", methods: const [app.DELETE])
 @Encode()
 deleteEvento(@app.Attr() MongoDb dbConn, String id) {
     var eventoId = StringToId(id);

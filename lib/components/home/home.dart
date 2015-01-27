@@ -24,7 +24,7 @@ class Home
     
     getUser ()
     {
-        getRequestDecoded (PanelInfo,'/private/user/panelinfo')
+        requestDecoded(PanelInfo, Method.GET,'/private/user/panelinfo')
         .then ((PanelInfo info)
         {
             user = info.user;
@@ -42,7 +42,7 @@ class Home
     
     nuevoEvento ()
     {
-        getRequestDecoded (IdResp, 'private/new/evento')
+        requestDecoded(IdResp, Method.POST, 'private/evento')
         
         .then (doIfSuccess ((resp) => addEventId (resp.id)));
     }

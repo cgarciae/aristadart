@@ -210,7 +210,7 @@ class VistaVista
     
         dom.FormElement form = (event.target as dom.ButtonElement).parent as dom.FormElement;
                     
-        formRequestDecoded(url, form, IdResp).then((IdResp resp)
+        requestDecoded(IdResp, Method.GET, url).then((IdResp resp)
         {   
             print (resp.success);
             guardar('public/get/file/${resp.id}', elemento);

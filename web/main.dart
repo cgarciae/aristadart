@@ -33,7 +33,7 @@ class MainController
     
     logout ()
     {
-        getRequestDecoded(Resp, 'user/logout').then((Resp resp)
+        requestDecoded(Resp, Method.GET,'user/logout').then((Resp resp)
         {
             if (resp.success)
             {

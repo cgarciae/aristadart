@@ -3,7 +3,7 @@ part of arista_server;
 
 
 //A public service. Anyone can create a new user
-@app.Route("/new/user", methods: const[app.POST])
+@app.Route("/user", methods: const[app.POST])
 @Encode()
 addUser(@app.Attr() MongoDb dbConn, @Decode() UserComplete user) 
 {   

@@ -1,6 +1,6 @@
 part of arista_server;
 
-@app.Route("/public/get/file/:fileID")
+@app.Route("/public/file/:fileID", methods: const [app.GET])
 getFile(@app.Attr() MongoDb dbConn, String fileID)
 {
     GridFS gridFS = new GridFS (dbConn.innerConn);
@@ -21,7 +21,7 @@ getFile(@app.Attr() MongoDb dbConn, String fileID)
     });
 }
 
-@app.Route("/private/new/file", methods: const [app.POST], allowMultipartRequest: true)
+@app.Route("/private/file", methods: const [app.POST], allowMultipartRequest: true)
 @Encode()
 newFile(@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form)
 {
@@ -40,7 +40,7 @@ newFile(@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form)
                 ..id = gridIn.id.toHexString());
 }
 
-@app.Route("/private/delete/file/:fileID")
+@app.Route("/private/file/:fileID", methods: const [app.DELETE])
 @Encode()
 Future<Resp> deleteFile(@app.Attr() MongoDb dbConn, String fileID)
 {
@@ -53,7 +53,7 @@ Future<Resp> deleteFile(@app.Attr() MongoDb dbConn, String fileID)
     });
 }
 
-@app.Route("/private/update/file/:fileID", methods: const [app.POST], allowMultipartRequest: true)
+@app.Route("/private/file/:fileID", methods: const [app.PUT], allowMultipartRequest: true)
 @Encode()
 Future<Resp> updateFile(@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, String fileID)
 {

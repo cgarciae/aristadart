@@ -27,7 +27,7 @@ Future<VistasResp> getVistas(@app.Attr() MongoDb dbConn, String id)
     });
 }
 
-@app.Route("/private/new/vista")
+@app.Route("/private/vista",methods: const[app.POST])
 @Encode()
 Future<VistasResp> addVista(@app.Attr() MongoDb dbConn)
 {
