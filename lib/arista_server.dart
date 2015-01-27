@@ -92,4 +92,24 @@ Stream<List<int>> getData (GridOut gridOut)
     return controller.stream;
 }
 
-Future<Map> bytesToJSON (List<int> list) => conv.JSON.decode (conv.UTF8.decode (list));
+Map bytesToJSON (List<int> list)
+{
+    var string = conv.UTF8.decode (list);
+    var map = conv.JSON.decode (string);
+    
+    print (string);
+    print (map);
+    
+    return map;
+}
+
+ifDidntFail (Function f)
+{
+    return (resp)
+    {
+        if (resp is Resp && resp.success == false)
+            return resp;
+        else
+            return f (resp);
+    };
+}

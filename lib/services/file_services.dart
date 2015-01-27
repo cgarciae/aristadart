@@ -42,7 +42,7 @@ newFile(@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form)
 
 @app.Route("/private/delete/file/:fileID")
 @Encode()
-deleteFile(@app.Attr() MongoDb dbConn, String fileID)
+Future<Resp> deleteFile(@app.Attr() MongoDb dbConn, String fileID)
 {
     var fs = new GridFS (dbConn.innerConn);
 

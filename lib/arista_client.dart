@@ -32,6 +32,46 @@ class ReqParam
 
 String reduceParams (List<ReqParam> params) =>  params.fold('?', (String acum, ReqParam elem) => (acum == '?' ? acum : acum + '&') + elem.formula);
 
+Future<dom.HttpRequest> makeRequest (String method, String path, [Object data])
+{
+    if (data == null)
+    {
+        return dom.HttpRequest.request
+        (
+            path,
+            method: method
+        );
+    }
+    else
+    {
+        return dom.HttpRequest.request
+        (
+            path,
+            method: method,
+            sendData: data
+        ); 
+    } 
+}
+
+Future<dynamic> requestString (String method, String path, [Object data])
+{
+    return makeRequest (method, path, data) 
+    .then (getField (#responseText));
+}
+
+Future<dynamic> requestDecoded (Type type, String method, String path, [Object data])
+{
+    return requestString (method, path, data)   
+    .then (decodeTo (type));
+}
+
+Future<dynamic> requestQueryMap (String method, String path, [Object data])
+{
+    return requestString (method, path, data)
+    .then (JSON.decode)
+    .then (MapToQueryMap);
+}
+
 Future<String> getRequestString (String path, [List<ReqParam> params = const []])
 {
     var paramString = reduceParams(params);
@@ -102,23 +142,7 @@ Future<dynamic> jsonRequestDecoded (String path, Object obj, Type responseType)
     .then((json) => decodeJson(json, responseType));
 }
 
-Future<dom.HttpRequest> dataRequest (String path, dynamic data)
-{
-    
-    
-    dom.FormData formData = new dom.FormData();
-    formData.appendBlob('file', data, 'test.png');
-    
-//    final dom.HttpRequest req = new dom.HttpRequest();
-//    
-//    req.open ("POST", path);
-//    req.send (formData);
-//    
-//    return req.onReadyStateChange.toList().then((_) => req);
-    
-    return dom.HttpRequest.request (path, method: "POST", 
-               sendData: formData);
-}
+
 
 Future<dom.HttpRequest> formRequest (String path, dom.FormElement form)
 {
@@ -131,14 +155,6 @@ Future<dom.HttpRequest> formRequest (String path, dom.FormElement form)
 Future<dynamic> formRequestDecoded (String path, dom.FormElement form, Type responseType)
 {
     return formRequest(path, form).then((dom.HttpRequest req)
-    {
-        return decodeJson(req.responseText, responseType);
-    });      
-}
-
-Future<dynamic> dataRequestDecoded (String path, dynamic data, Type responseType)
-{
-    return dataRequest(path, data).then((dom.HttpRequest req)
     {
         return decodeJson(req.responseText, responseType);
     });      
