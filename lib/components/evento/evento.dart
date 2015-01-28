@@ -131,14 +131,14 @@ class EventoVista
     {
         String url = '';
         var method = '';
-        if(evento.imagenPreview.urlTextura == null || evento.imagenPreview.urlTextura == ""){
+        if(evento.imagenPreview.path == null || evento.imagenPreview.path == ""){
             
             url = 'private/file';
             method = Method.POST;
             print("no existe, new");
         }else{
             
-            url = "private/file/${evento.imagenPreview.urlTextura.split('/').last}";
+            url = "private/file/${evento.imagenPreview.path.split('/').last}";
             method = Method.PUT;
             print("actualizo");
         }   
