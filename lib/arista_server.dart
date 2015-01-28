@@ -91,7 +91,7 @@ Map bytesToJSON (List<int> list)
     return map;
 }
 
-ifDidntFail (Function f)
+Function ifDidntFail (Function f)
 {
     return (resp)
     {
@@ -99,5 +99,18 @@ ifDidntFail (Function f)
             return resp;
         else
             return f (resp);
+    };
+}
+
+Function ifNotNull (String failMessage, dynamic f (dynamic))
+{
+    return (Object obj)
+    {
+        if (obj == null)
+            return new Resp()
+                ..success = false
+                ..error = failMessage;
+        
+        return f (obj);
     };
 }

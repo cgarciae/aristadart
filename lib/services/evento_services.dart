@@ -72,11 +72,11 @@ Future<Resp> activateEvento(@app.Attr() MongoDb dbConn, bool status, String even
     }).then((resp) {
         if (resp is Resp) return resp;
 
-        return dbConn.findOne(Col.recoTarget, AristaCloudRecoTargetComplete, where.id(StringToId(aristaRecoID)));
+        return dbConn.findOne(Col.recoTarget, AristaCloudRecoTarget, where.id(StringToId(aristaRecoID)));
     }).then((resp) {
         if (resp is Resp) return resp;
 
-        AristaCloudRecoTargetComplete reco = resp as AristaCloudRecoTargetComplete;
+        AristaCloudRecoTarget reco = resp as AristaCloudRecoTarget;
 
         String body = conv.JSON.encode({
             "active_flag": status

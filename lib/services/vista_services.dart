@@ -29,7 +29,7 @@ Future<VistasResp> getVistas(@app.Attr() MongoDb dbConn, String id)
 
 @app.Route("/private/vista",methods: const[app.POST])
 @Encode()
-Future<VistasResp> addVista(@app.Attr() MongoDb dbConn)
+Future<VistasResp> newVista(@app.Attr() MongoDb dbConn)
 {
         
     var vista = new Vista();
@@ -46,7 +46,7 @@ Future<VistasResp> addVista(@app.Attr() MongoDb dbConn)
 
 }
 
-@app.Route("/private/save/vista", methods: const[app.POST])
+@app.Route("/private/vista", methods: const[app.PUT])
 @Encode()
 Future<IdResp> saveVista(@app.Attr() MongoDb dbConn, @Decode() Vista vista)
 {
@@ -59,7 +59,7 @@ Future<IdResp> saveVista(@app.Attr() MongoDb dbConn, @Decode() Vista vista)
     ); 
 }
 
-@app.Route("/private/get/vista/:vistaID")
+@app.Route("/private/vista/:vistaID", methods: const [app.GET])
 @Encode()
 Future<IdResp> getVista(@app.Attr() MongoDb dbConn, String vistaID)
 {
@@ -83,7 +83,7 @@ Future<IdResp> getVista(@app.Attr() MongoDb dbConn, String vistaID)
     }); 
 }
 
-@app.Route("/private/delete/vista/:vistaID")
+@app.Route("/private/vista/:vistaID", methods: const [app.DELETE])
 @Encode()
 Future<IdResp> deleteVista(@app.Attr() MongoDb dbConn, String vistaID)
 {

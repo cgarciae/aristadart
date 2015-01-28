@@ -31,10 +31,10 @@ class NuevoUsuario
     {
         if (registrable)
         {
-            requestDecoded(IdResp, Method.POST, 'new/user', encodeJson(user)).then(doIfSuccess((IdResp resp)
+            jsonRequestDecoded(IdResp, Method.POST, 'new/user', user).then(doIfSuccess((IdResp resp)
             {
                 print ('NEW USER');
-                return requestDecoded(IdResp, Method.POST,'/user/login', encodeJson(user));
+                return jsonRequestDecoded(IdResp, Method.POST,'/user/login', user);
             }))
             .then(doIfSuccess((IdResp obj) 
             {

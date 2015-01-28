@@ -11,35 +11,23 @@ class EventoVista
     
     Evento evento = new Evento ();
     List<Vista> vistas = [];
+    String targetImageUrl = "";
     
     Router router;
     
     EventoVista (RouteProvider routeProvider, this.router) 
     {
         var eventoID = routeProvider.parameters['eventoID'];
-        
-        if (eventoID == null)
+
+        //Cargar evento
+        requestDecoded(Evento, Method.GET, "private/evento/$eventoID").then((Evento e)
         {
-            //Crear nuevo evento
-            requestDecoded(IdResp, Method.POST, 'private/evento').then((IdResp res)
-            {
-                if (res.success)
-                {
-                    evento.id = res.id;
-                }
-            });
+            evento = e;
             
-        }
-        else
-        {
-            //Cargar evento
-            requestDecoded(Evento, Method.GET, "private/get/evento/$eventoID").then((Evento e)
-            {
-                evento = e;
-                
-                return cargarVistas(e.id);
-            });
-        }
+            setTargetImage();
+            
+            return cargarVistas(e.id);
+        });
     }
     
     cargarVistas (String eventID)
@@ -62,8 +50,10 @@ class EventoVista
     
     nuevaVista ()
     {
-        requestDecoded(IdResp, Method.POST, 'private/vista')
-        .then (doIfSuccess ((resp) => addVistaId (resp.id)));
+        print (Method.POST);
+        newFromCollection ('vista').then (doIfSuccess ((resp) 
+            => addVistaId (resp.id))
+        );
     }
     
     Future<Resp> addVistaId  (String vistaID)
@@ -154,8 +144,9 @@ class EventoVista
         }   
 
         dom.FormElement form = (event.target as dom.ButtonElement).parent as dom.FormElement;
+        dom.FormData data = new dom.FormData (form);
                     
-        requestDecoded(IdResp, method, url).then((IdResp resp)
+        requestDecoded(IdResp, method, url, data: data).then((IdResp resp)
         {   
             print (resp.success);
             evento.imagenPreview.urlTextura = 'public/file/${resp.id}';
@@ -165,6 +156,51 @@ class EventoVista
             if(resp.success)
                 dom.window.location.reload(); 
         });
+    }
+    
+    uploadTarget (dom.MouseEvent event)
+    {
+        String url = 'private/vuforiaimage/${evento.id}';
+        var method = '';
+        
+        if (targetImageUrl == null || targetImageUrl == "")
+        {
+            method = Method.POST;
+            print("new");
+        }
+        else
+        {
+            method = Method.PUT;
+            print("actualizar");
+        }   
+
+        dom.FormElement form = (event.target as dom.ButtonElement).parent as dom.FormElement;
+                    
+        formRequestDecoded (RecoTargetResp, method, url, form).then (doIfSuccess ((RecoTargetResp resp)
+        {   
+            targetImageUrl = 'private/file/${resp.recoTarget.imageId}';
+        }))
+        .then ((_)
+        {
+            dom.window.location.reload(); 
+        });
+    }
+    
+    setTargetImage ()
+    {
+        if (evento.cloudRecoTargetId != null)
+        {
+            requestDecoded
+            (
+                RecoTargetResp, 
+                Method.GET, 
+                'public/cloudreco/${evento.cloudRecoTargetId}'
+            )
+            .then (doIfSuccess ((RecoTargetResp resp)
+            {
+                targetImageUrl = 'public/file/${resp.recoTarget.imageId}';
+            }));
+        }
     }
 }
 

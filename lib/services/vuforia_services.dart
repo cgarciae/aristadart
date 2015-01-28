@@ -43,7 +43,7 @@ Future<Map> streamResponseToJSON (http.StreamedResponse resp)
     });
 }
 
-@app.Route("/private/new/vuforiaimage/:eventoID", methods: const [app.POST], allowMultipartRequest: true)
+@app.Route("/private/vuforiaimage/:eventoID", methods: const [app.POST], allowMultipartRequest: true)
 @Encode()
 newImageVuforia(@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, String eventoID)
 {
@@ -83,7 +83,7 @@ newImageVuforia(@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, String
     });
 }
 
-@app.Route("/private/update/vuforiaimage/:eventoID", methods: const [app.POST], allowMultipartRequest: true)
+@app.Route("/private/vuforiaimage/:eventoID", methods: const [app.PUT], allowMultipartRequest: true)
 @Encode()
 updateImageVuforia(@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, String eventoID)
 {
@@ -112,7 +112,7 @@ updateImageVuforia(@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, Str
         return dbConn.findOne
         (
             Col.recoTarget,
-            AristaCloudRecoTargetComplete, 
+            AristaCloudRecoTarget, 
             where.id (StringToId (cloudRecoID))
         );
     })
@@ -121,7 +121,7 @@ updateImageVuforia(@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, Str
         if (resp is Resp)
             return resp;
         
-        var reco = resp as AristaCloudRecoTargetComplete;
+        var reco = resp as AristaCloudRecoTarget;
         
         if (reco == null)
             return new Resp ()
@@ -161,7 +161,7 @@ updateImageVuforia(@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, Str
     });
 }
 
-@app.Route("/public/get/vuforiatarget/:eventoID")
+@app.Route("/public/vuforiatarget/:eventoID", methods: const [app.GET])
 @Encode()
 Future<Resp> getVuforiaTarget(@app.Attr() MongoDb dbConn, String eventoID)
 {
@@ -181,11 +181,11 @@ Future<Resp> getVuforiaTarget(@app.Attr() MongoDb dbConn, String eventoID)
         return dbConn.findOne
         (
             Col.recoTarget, 
-            AristaCloudRecoTargetComplete,
+            AristaCloudRecoTarget,
             where.id (StringToId (evento.cloudRecoTargetId))
         );
     })
-    .then (ifDidntFail ((AristaCloudRecoTargetComplete reco)
+    .then (ifDidntFail ((AristaCloudRecoTarget reco)
     {
         return makeVuforiaRequest(Method.GET, "/targets/${reco.targetId}", "", "")
                 
@@ -193,6 +193,8 @@ Future<Resp> getVuforiaTarget(@app.Attr() MongoDb dbConn, String eventoID)
     }))
     .then (ifDidntFail ((QueryMap map)
     {
+        //TODO: Crear clase VuforiaTargetResp
+        
         if (map.result_code == "Success")
             return new MapResp()
                 ..success = true
@@ -205,9 +207,27 @@ Future<Resp> getVuforiaTarget(@app.Attr() MongoDb dbConn, String eventoID)
     
 }
 
+@app.Route("/public/cloudreco/:recoID", methods: const [app.GET])
+@Encode()
+Future<RecoTargetResp> getCloudRecoTarget(@app.Attr() MongoDb dbConn, String recoID)
+{
+    return dbConn.findOne
+    (
+        Col.recoTarget,
+        AristaCloudRecoTarget,
+        where.id(StringToId(recoID))
+    )
+    .then (ifNotNull("Cloud Reco not found", (AristaCloudRecoTarget reco)
+    {
+        return new RecoTargetResp()
+            ..success = true
+            ..recoTarget = reco;
+    }));
+}
+
 Future<RecoTargetResp> createRecoTarget (MongoDb dbConn, String eventoID, String imageID, String targetID)
 {
-    var recoTarget = new AristaCloudRecoTargetComplete()
+    var recoTarget = new AristaCloudRecoTarget()
         ..imageId = imageID
         ..targetId = targetID
         ..id = new ObjectId().toHexString();
@@ -222,9 +242,10 @@ Future<RecoTargetResp> createRecoTarget (MongoDb dbConn, String eventoID, String
     )
     .then((_) => new RecoTargetResp()
         ..success = true
-        ..recoTargetID = recoTarget.id
-        ..imageID = imageID
-        ..targetID = targetID);
+        ..recoTarget = (new AristaCloudRecoTarget()
+            ..id = recoTarget.id
+            ..imageId = imageID
+            ..targetId = targetID));
 }
 
 createSignature (String verb, String path, String body, String contentType, String date) 

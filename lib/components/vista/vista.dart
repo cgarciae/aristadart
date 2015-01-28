@@ -196,30 +196,37 @@ class VistaVista
     
     upload (dom.MouseEvent event, String urlObjeto, Function guardar, [dynamic elemento])
     {
-        String url = '';
+        String url = 'private/file';
+        String method;
         
         if(urlObjeto == null || urlObjeto == ""){
             
-            url = 'private/new/file';
+            url = 'private/file';
+            method = Method.POST;
             print("no existe, new");
-        }else{
-            
-            url = "private/update/file/${urlObjeto.split('/').last}";
+        }
+        else
+        {    
+            url += "/${urlObjeto.split('/').last}";
+            method = Method.PUT;
             print("actualizo");
         }   
     
         dom.FormElement form = (event.target as dom.ButtonElement).parent as dom.FormElement;
                     
-        requestDecoded(IdResp, Method.GET, url).then((IdResp resp)
+        formRequestDecoded(IdResp, method, url, form)
+        
+        .then(doIfSuccess((IdResp resp)
         {   
             print (resp.success);
-            guardar('public/get/file/${resp.id}', elemento);
+            guardar('public/file/${resp.id}', elemento);
             return saveInCollection('vista', vista);
-        }).then((Resp resp)
+        }))
+        
+        .then(doIfSuccess((Resp resp)
         {
-            if(resp.success)
-                dom.window.location.reload(); 
-        });
+            dom.window.location.reload(); 
+        }));
     }
     
 }

@@ -52,7 +52,8 @@ class Login extends ShadowRootAware
     
     login ()
     {
-        requestDecoded(IdResp, Method.POST, '/user/login', encodeJson(user)).then(doIfSuccess((IdResp obj) 
+        jsonRequestDecoded (IdResp, Method.POST, 'user/login', user)
+        .then (doIfSuccess((IdResp obj) 
         {
             storage['id'] = obj.id;
             router.go('home', {});

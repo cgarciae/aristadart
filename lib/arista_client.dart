@@ -18,8 +18,6 @@ part 'routing/router.dart';
 
 dom.Storage get storage => dom.window.localStorage;
 
-
-
 class ReqParam
 {
     String field;
@@ -32,48 +30,118 @@ class ReqParam
 
 String reduceParams (List<ReqParam> params) =>  params.fold('?', (String acum, ReqParam elem) => (acum == '?' ? acum : acum + '&') + elem.formula);
 
-Future<dom.HttpRequest> makeRequest (String method, String path, [Object data])
+Future<dom.HttpRequest> makeRequest (String method, String path, {dynamic data, Map headers})
 {
     if (data == null)
     {
-        return dom.HttpRequest.request
-        (
-            path,
-            method: method
-        );
+        if (headers == null)
+        {
+            return dom.HttpRequest.request
+            (
+                path,
+                method: method
+            );
+        }
+        else
+        {
+            return dom.HttpRequest.request
+            (
+                path,
+                method: method,
+                requestHeaders: headers
+            );
+        }
     }
     else
     {
-        return dom.HttpRequest.request
-        (
-            path,
-            method: method,
-            sendData: data
-        ); 
+        if (headers == null)
+        {
+            return dom.HttpRequest.request
+            (
+                path,
+                method: method,
+                sendData: data
+            );
+        }
+        else
+        {
+            return dom.HttpRequest.request
+            (
+                path,
+                method: method,
+                requestHeaders: headers,
+                sendData: data
+            );
+        }
     } 
 }
 
-Future<dynamic> requestString (String method, String path, [Object data])
+Future<dynamic> requestString (String method, String path, {dynamic data, Map headers})
 {
-    return makeRequest (method, path, data) 
+    return makeRequest (method, path, data: data, headers: headers) 
     .then (getField (#responseText));
 }
 
-Future<dynamic> requestDecoded (Type type, String method, String path, [Object data])
+Future<dynamic> requestDecoded (Type type, String method, String path, {dynamic data, Map headers})
 {
-    return requestString (method, path, data)   
+    return requestString (method, path, data: data, headers: headers)   
     .then (decodeTo (type));
 }
 
-Future<dynamic> requestQueryMap (String method, String path, [Object data])
+Future<QueryMap> requestQueryMap (String method, String path, {dynamic data, Map headers})
 {
-    return requestString (method, path, data)
+    return requestString (method, path, data: data, headers: headers)
     .then (JSON.decode)
     .then (MapToQueryMap);
 }
 
+Future<dynamic> formRequestDecoded (Type type, String method, String path, dom.FormElement form, {Map headers})
+{
+    return requestDecoded(type, method, path, data: new dom.FormData(form), headers: headers);
+}
+
+Future<QueryMap> formRequestQueryMap (Type type, String method, String path, dom.FormElement form, {Map headers})
+{
+    return requestQueryMap(method, path, data: new dom.FormData(form), headers: headers);
+}
+
+Map addJSONContentType (Map headers)
+{
+    var contentType = {'Content-Type' : ContType.applicationJson};
+        
+    if (headers != null)
+        headers.addAll (contentType);
+    else
+        headers = contentType;
+    
+    return headers;
+}
+
+Future<dynamic> jsonRequestDecoded (Type type, String method, String path, Object obj, {Map headers})
+{   
+    return requestDecoded
+    (
+        type, 
+        method, 
+        path, 
+        data: encodeJson(obj), 
+        headers: addJSONContentType(headers)
+    );
+}
+
+Future<QueryMap> jsonRequestQueryMap (Type type, String method, String path, Object obj, {Map headers})
+{
+    return requestQueryMap
+    (
+        method, 
+        path, 
+        data: encodeJson(obj), 
+        headers: addJSONContentType(headers)
+    );
+}
+
 Future<Resp> saveInCollection(String collection, Object obj){
-    return requestDecoded(Resp, Method.PUT, "private/$collection");
+    return jsonRequestDecoded(Resp, Method.PUT, "private/$collection", obj);
 }
 
 Future<Resp> deleteFromCollection(String collection, String id){
@@ -88,7 +156,7 @@ Future<dynamic> getFromCollection (Type tipo, String collection, String id){
     return requestDecoded(tipo, Method.GET, "private/$collection/$id");
 }
 
-Function doIfSuccess ([Function f])
+Function doIfSuccess ([dynamic f (dynamic)])
 {
     return (dynamic resp)
     {
@@ -99,7 +167,8 @@ Function doIfSuccess ([Function f])
         }
         else
         {
-            dom.window.alert(resp.error);
+            print (resp.error);
+            return resp;
         }
     };
 }

@@ -75,9 +75,7 @@ class UrlResp extends Resp
 
 class RecoTargetResp extends Resp
 {
-    @Field() String recoTargetID;
-    @Field() String imageID;
-    @Field() String targetID;
+    @Field() AristaCloudRecoTarget recoTarget;
 }
 
 class MapResp extends Resp
