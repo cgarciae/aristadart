@@ -200,14 +200,13 @@ class VistaVista
         String method;
         
         if(urlObjeto == null || urlObjeto == ""){
-            
-            url = 'private/file';
             method = Method.POST;
             print("no existe, new");
         }
         else
-        {    
-            url += "/${urlObjeto.split('/').last}";
+        {   
+            var id = urlObjeto.split('/').last;
+            url += "/${id}";
             method = Method.PUT;
             print("actualizo");
         }   

@@ -2,10 +2,10 @@ part of arista;
 
 class ObjetoUnity
 {
-    @Field () String url_objeto;
+    @Field () String path;
+    @Field() String get url_objeto => path != null && path != '' ? localHost + path : '';
     @Field () int version;
     
     ObjetoUnity ();
     
-    ObjetoUnity.New ({this.url_objeto, this.version});
 }
