@@ -149,7 +149,7 @@ class EventoVista
         requestDecoded(IdResp, method, url, data: data).then((IdResp resp)
         {   
             print (resp.success);
-            evento.imagenPreview.urlTextura = 'public/file/${resp.id}';
+            evento.imagenPreview.path = 'public/file/${resp.id}';
             return saveInCollection('evento', evento);
         }).then((Resp resp)
         {

@@ -7,7 +7,7 @@ class Evento
     @Field () String nombre = '';
     @Field () String descripcion = '';
     
-    @Field() String get url => localHost + "/export/evento/$id";
+    @Field() String get url => localHost + "export/evento/$id";
     
     @ReferenceId() List<String> viewIds = [];
     @ReferenceId() String cloudRecoTargetId;

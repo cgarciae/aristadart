@@ -2,7 +2,9 @@ part of arista;
 
 class TextureGUI
 {
-    @Field() String urlTextura = '';
+    @Field() String path = '';
+    
+    @Field() String get urlTextura => localHost + path;
 
     @Field() String texto = '';
 
