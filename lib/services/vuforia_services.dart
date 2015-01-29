@@ -1,6 +1,6 @@
 part of arista_server;
 
-Future<Map> uploadImageToVuforia (String method, String path, List<int> imageData, String metadata)
+Future<Map> uploadImageToVuforia (String method, String path, List<int> imageData, String metadata) async
 {
     var base64Image = crypto.CryptoUtils.bytesToBase64 (imageData);
     var metadataBytes = crypto.CryptoUtils.bytesToBase64 (metadata.codeUnits);
@@ -13,39 +13,26 @@ Future<Map> uploadImageToVuforia (String method, String path, List<int> imageDat
         "application_metadata" : metadataBytes
     });
     
-    return makeVuforiaRequest(method, path, body, ContType.applicationJson).send()
+    http.StreamedResponse resp = await makeVuforiaRequest(method, path, body, ContType.applicationJson).send();
     
-    .then((http.StreamedResponse resp)
-    {
-        print ("Request headers ${resp.request.headers}");
-        print ("Response headers ${resp.headers}");
+    print ("Request headers ${resp.request.headers}");
+    print ("Response headers ${resp.headers}");
         
-        return resp.stream.toList();
-    })
-    .then (flatten).then((List<int> list)
-    {   
-        return bytesToJSON (list);
-    });
+    return resp.stream.toList()
+        .then (flatten)
+        .then(bytesToJSON);
 }
 
 Future<Map> streamResponseToJSON (http.StreamedResponse resp)
 {
-    
     return resp.stream.toList()
-            
-    .then (flatten)
-    
-    .then ((List<int> list)
-    {
-        print (list.runtimeType);
-        
-        return bytesToJSON (list);
-    });
+        .then (flatten)
+        .then (bytesToJSON);
 }
 
 @app.Route("/private/vuforiaimage/:eventoID", methods: const [app.POST], allowMultipartRequest: true)
 @Encode()
-newImageVuforia(@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, String eventoID)
+newImageVuforia(@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, String eventoID) async
 {
     String imageID;
     
@@ -56,196 +43,172 @@ newImageVuforia(@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, String
         ..contentType = file.contentType.value;
     
             
-    return gridIn.save()
+    await gridIn.save();
             
-    .then((_) => uploadImageToVuforia (Method.POST, "/targets", file.content, eventoID))
-            
-    .then (MapToQueryMap).then((QueryMap map)
-    {
-        print (map);
+    QueryMap map = await uploadImageToVuforia
+    (
+         Method.POST, 
+         "/targets", 
+         file.content, 
+         eventoID
+     )
+    .then (MapToQueryMap);
         
-        if (map.result_code == "TargetCreated")
-        {
-            imageID = gridIn.id.toHexString();
-            String targetID = map.target_id;
-            
-            return createRecoTarget (dbConn, eventoID, imageID, targetID);
-        }
-        else
-        {
-            return deleteFile (dbConn, imageID)
-                    
-            .then((_) => new Resp()
-                ..success = false
-                ..error = map.result_code
-            );
-        }
-    });
+    print (map);
+        
+    if (map.result_code == "TargetCreated")
+    {
+        imageID = gridIn.id.toHexString();
+        String targetID = map.target_id;
+        
+        return createRecoTarget (dbConn, eventoID, imageID, targetID);
+    }
+    else
+    {
+        await deleteFile (dbConn, imageID);
+                
+        return new Resp()
+            ..success = false
+            ..error = map.result_code;
+    }
 }
 
 @app.Route("/private/vuforiaimage/:eventoID", methods: const [app.PUT], allowMultipartRequest: true)
 @Encode()
-updateImageVuforia(@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, String eventoID)
+updateImageVuforia(@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, String eventoID) async
 {
-    String targetID;
-    String imageID;
-    String cloudRecoID;
     
     HttpBodyFileUpload file = form ['file'];
     
-    return dbConn.findOne
+    Evento evento = await dbConn.findOne
     (
         Col.evento,
         Evento,
         where.id (StringToId (eventoID))
-    )
-    .then ((Evento evento)
+    );
+    
+    if (evento == null) return new Resp()
+        ..success = false
+        ..error = "Evento not found";
+    
+    var cloudRecoID = evento.cloudRecoTargetId;
+    
+    AristaCloudRecoTarget reco = await dbConn.findOne
+    (
+        Col.recoTarget,
+        AristaCloudRecoTarget, 
+        where.id (StringToId (cloudRecoID))
+    );
+        
+    if (reco == null) return new Resp ()
+        ..success = false
+        ..error = "Cloud Reco found";
+    
+    var targetID = reco.targetId;
+    var imageID = reco.imageId;
+    
+    Resp resp = await updateFile (dbConn, form, imageID);
+
+    if (! resp.success)
+        return resp;
+        
+    QueryMap map = await uploadImageToVuforia (Method.PUT, "/targets/${targetID}", file.content, eventoID)
+            .then(MapToQueryMap);
+        
+    if (map.result_code == "TargetCreated" || map.result_code == "Success")
     {
-        if (evento == null)
-            return new Resp()
-                ..success = false
-                ..error = "Evento not found";
-        
-        eventoID = evento.id;
-        cloudRecoID = evento.cloudRecoTargetId;
-        
-        return dbConn.findOne
-        (
-            Col.recoTarget,
-            AristaCloudRecoTarget, 
-            where.id (StringToId (cloudRecoID))
-        );
-    })
-    .then ((resp)
+        return new Resp()
+            ..success = true;
+    }
+    else
     {
-        if (resp is Resp)
-            return resp;
-        
-        var reco = resp as AristaCloudRecoTarget;
-        
-        if (reco == null)
-            return new Resp ()
-                ..success = false
-                ..error = "Not found";
-        
-        targetID = reco.targetId;
-        imageID = reco.imageId;
-        
-        return updateFile (dbConn, form, imageID);
-    })
-    .then ((Resp resp)
-    {
-        if (! resp.success)
-            return resp;
-        
-        return uploadImageToVuforia (Method.PUT, "/targets/${targetID}", file.content, eventoID);
-    })
-    .then((dynamic resp)
-    {
-        if (resp is Resp)
-           return resp;
-        
-        var map = MapToQueryMap (resp);
-        
-        if (map.result_code == "TargetCreated" || map.result_code == "Success")
-        {
-            return new Resp()
-                ..success = true;
-        }
-        else
-        {
-            return new Resp()
-                ..success = false
-                ..error = map.result_code;
-        }        
-    });
+        return new Resp()
+            ..success = false
+            ..error = map.result_code;
+    }
 }
 
 @app.Route("/public/vuforiatarget/:eventoID", methods: const [app.GET])
 @Encode()
-Future<Resp> getVuforiaTarget(@app.Attr() MongoDb dbConn, String eventoID)
+Future<Resp> getVuforiaTarget(@app.Attr() MongoDb dbConn, String eventoID) async
 {
-    return dbConn.findOne
+    Evento evento = await dbConn.findOne
     (
         Col.evento,
         Evento,
         where.id (StringToId (eventoID))
-    )
-    .then((Evento evento)
-    {
-        if (evento == null)
-            return new Resp()
-                ..success = false
-                ..error = "Evento not found";
-        
-        return dbConn.findOne
-        (
-            Col.recoTarget, 
-            AristaCloudRecoTarget,
-            where.id (StringToId (evento.cloudRecoTargetId))
-        );
-    })
-    .then (ifDidntFail ((AristaCloudRecoTarget reco)
-    {
-        return makeVuforiaRequest(Method.GET, "/targets/${reco.targetId}", "", "")
-                
-        .send().then (streamResponseToJSON).then (MapToQueryMap);
-    }))
-    .then (ifDidntFail ((QueryMap map)
-    {
-        //TODO: Crear clase VuforiaTargetResp
-        
-        if (map.result_code == "Success")
-            return new MapResp()
-                ..success = true
-                ..map = map;
-        
-        return new Resp()
-            ..success = false
-            ..error = map.result_code;
-    }));
+    );
     
+    if (evento == null) return new Resp()
+        ..success = false
+        ..error = "Evento not found";
+    
+    AristaCloudRecoTarget reco = await dbConn.findOne
+    (
+        Col.recoTarget, 
+        AristaCloudRecoTarget,
+        where.id (StringToId (evento.cloudRecoTargetId))
+    );
+    
+    QueryMap map = await makeVuforiaRequest(Method.GET, "/targets/${reco.targetId}", "", "")
+        .send()
+        .then (streamResponseToJSON)
+        .then (MapToQueryMap);
+
+    //TODO: Crear clase VuforiaTargetResp
+    
+    if (map.result_code == "Success") 
+        return new MapResp()
+            ..success = true
+            ..map = map;
+    
+    return new Resp()
+        ..success = false
+        ..error = map.result_code;
 }
 
 @app.Route("/public/cloudreco/:recoID", methods: const [app.GET])
 @Encode()
-Future<RecoTargetResp> getCloudRecoTarget(@app.Attr() MongoDb dbConn, String recoID)
+Future<RecoTargetResp> getCloudRecoTarget(@app.Attr() MongoDb dbConn, String recoID) async
 {
-    return dbConn.findOne
+    AristaCloudRecoTarget reco = await dbConn.findOne
     (
         Col.recoTarget,
         AristaCloudRecoTarget,
         where.id(StringToId(recoID))
-    )
-    .then (ifNotNull("Cloud Reco not found", (AristaCloudRecoTarget reco)
-    {
-        return new RecoTargetResp()
-            ..success = true
-            ..recoTarget = reco;
-    }));
+    );
+    
+    if (reco == null) return new Resp()
+        ..success = false
+        ..error = "Cloud Reco not found";
+    
+    return new RecoTargetResp()
+        ..success = true
+        ..recoTarget = reco;
 }
 
-Future<RecoTargetResp> createRecoTarget (MongoDb dbConn, String eventoID, String imageID, String targetID)
+Future<RecoTargetResp> createRecoTarget (MongoDb dbConn, String eventoID, String imageID, String targetID) async
 {
     var recoTarget = new AristaCloudRecoTarget()
         ..imageId = imageID
         ..targetId = targetID
         ..id = new ObjectId().toHexString();
         
-    return dbConn.insert (Col.recoTarget, recoTarget)
+    await dbConn.insert (Col.recoTarget, recoTarget);
     
-    .then((_) => dbConn.update 
+    await dbConn.update 
     (
         Col.evento, 
         where.id (StringToId (eventoID)), 
-        modify.set ('cloudRecoTargetId', recoTarget.id))
-    )
-    .then((_) => new RecoTargetResp()
+        modify.set ('cloudRecoTargetId', recoTarget.id)
+    );
+    
+    return new RecoTargetResp()
         ..success = true
         ..recoTarget = (new AristaCloudRecoTarget()
             ..id = recoTarget.id
             ..imageId = imageID
-            ..targetId = targetID));
+            ..targetId = targetID);
 }
 
 createSignature (String verb, String path, String body, String contentType, String date) 

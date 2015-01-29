@@ -2,97 +2,83 @@ part of arista_server;
 
 
 
-@app.Route("/private/get/evento/:id/vistas")
+@app.Route("/private/evento/:id/vistas")
 @Encode()
-Future<VistasResp> getVistas(@app.Attr() MongoDb dbConn, String id)
+Future<VistasResp> getVistas(@app.Attr() MongoDb dbConn, String id) async
 {
-    return getEvento(dbConn, id).then((Evento e)
+    Evento evento = await getEvento(dbConn, id);
+
+    if (evento == null)
     {
-        if (e == null)
-        {
-            return new VistasResp()
-                ..success = false
-                ..error = "Evento no encontrado";
-        }
-        
-        var vistasID = e.viewIds.map(StringToId).toList();
-        
-        return dbConn.find(Col.vista, Vista, where.oneFrom('_id', vistasID))
-        .then((List<Vista> vistas)
-        {
-            return new VistasResp()
-                ..success = true
-                ..vistas = vistas;
-        });
-    });
+        return new VistasResp()
+            ..success = false
+            ..error = "Evento no encontrado";
+    }
+    
+    var vistasID = evento.viewIds.map(StringToId).toList();
+    
+    List<Vista> vistas = await dbConn.find(Col.vista, Vista, where.oneFrom('_id', vistasID));
+
+    return new VistasResp()
+        ..success = true
+        ..vistas = vistas;
 }
 
 @app.Route("/private/vista",methods: const[app.POST])
 @Encode()
-Future<VistasResp> newVista(@app.Attr() MongoDb dbConn)
+Future<VistasResp> newVista(@app.Attr() MongoDb dbConn) async
 {
         
-    var vista = new Vista();
-    
-    var vistaID = new ObjectId();
-    
-    vista.id = vistaID.toHexString();
+    var vista = new Vista()
+        ..id = new ObjectId().toHexString();
 
-    return dbConn.insert (Col.vista, vista).then((_) => 
-        new IdResp()
-            ..success = true
-            ..id = vista.id
-    );
+    await dbConn.insert (Col.vista, vista);
+    
+    return new IdResp()
+        ..success = true
+        ..id = vista.id;
 
 }
 
 @app.Route("/private/vista", methods: const[app.PUT])
 @Encode()
-Future<IdResp> saveVista(@app.Attr() MongoDb dbConn, @Decode() Vista vista)
+Future<IdResp> saveVista(@app.Attr() MongoDb dbConn, @Decode() Vista vista) async
 {
-    var id = StringToId(vista.id);
-            
-    return dbConn.update(Col.vista, where.id(id), vista)
-    .then((_) => new IdResp()
+    await dbConn.update(Col.vista, where.id(StringToId(vista.id)), vista);
+    
+    return new IdResp()
         ..success = true
-        ..id = vista.id
-    ); 
+        ..id = vista.id; 
 }
 
 @app.Route("/private/vista/:vistaID", methods: const [app.GET])
 @Encode()
-Future<IdResp> getVista(@app.Attr() MongoDb dbConn, String vistaID)
+Future<IdResp> getVista(@app.Attr() MongoDb dbConn, String vistaID) async
 {
     var id = StringToId(vistaID);
             
-    return dbConn.findOne(Col.vista, Vista, where.id(id))
-    .then((Vista vista)
+    Vista vista = await dbConn.findOne(Col.vista, Vista, where.id(id));
+
+    if (vista == null)
     {
-        if (vista == null)
-        {
-            return new VistaResp()
-                ..success = false
-                ..error = "Vista not found";
-        }
-        else
-        {
-            return new VistaResp()
-                ..success = true
-                ..vista = vista;
-        }
-    }); 
+        return new VistaResp()
+            ..success = false
+            ..error = "Vista not found";
+    }
+    else
+    {
+        return new VistaResp()
+            ..success = true
+            ..vista = vista;
+    }
 }
 
 @app.Route("/private/vista/:vistaID", methods: const [app.DELETE])
 @Encode()
-Future<IdResp> deleteVista(@app.Attr() MongoDb dbConn, String vistaID)
-{
-    var id = StringToId(vistaID);
-            
-    return dbConn.remove(Col.vista, where.id(id))
-    .then((_)
-    {
-        return new Resp()
-                ..success = true;
-    }); 
+Future<IdResp> deleteVista(@app.Attr() MongoDb dbConn, String vistaID) async
+{           
+    await dbConn.remove(Col.vista, where.id(StringToId(vistaID)));
+    
+    return new Resp()
+        ..success = true;
 }

@@ -32,7 +32,7 @@ class EventoVista
     
     cargarVistas (String eventID)
     {
-        return requestDecoded(VistasResp, Method.GET,"private/get/evento/$eventID/vistas")
+        return requestDecoded(VistasResp, Method.GET,"private/evento/$eventID/vistas")
         .then(doIfSuccess((VistasResp resp)
         {
             vistas = resp.vistas;

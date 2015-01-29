@@ -1,61 +1,59 @@
 part of arista_server;
 
 @app.Route("/public/file/:fileID", methods: const [app.GET])
-getFile(@app.Attr() MongoDb dbConn, String fileID)
+getFile(@app.Attr() MongoDb dbConn, String fileID) async
 {
     GridFS gridFS = new GridFS (dbConn.innerConn);
     ObjectId objID = StringToId(fileID);
             
-    return gridFS.findOne(where.id(objID)).then((GridOut gridOut)
+    GridOut gridOut = await gridFS.findOne (where.id(objID));
+    
+    if (gridOut == null)
     {
-        if (gridOut == null)
-        {
-            return {'success' : false};
-        }
-        
-        return new shelf.Response.ok 
-        (
-            getData (gridOut), 
-            headers: { "Content-Type": gridOut.contentType }
-        );
-    });
+        return {'success' : false};
+    }
+    
+    return new shelf.Response.ok 
+    (
+        getData (gridOut), 
+        headers: { "Content-Type": gridOut.contentType }
+    );
 }
 
 @app.Route("/private/file", methods: const [app.POST], allowMultipartRequest: true)
 @Encode()
-newFile(@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form)
+newFile(@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form) async
 {
     HttpBodyFileUpload file = form ['file'];
     var gridFS = new GridFS (dbConn.innerConn);
     
     var input = new Stream.fromIterable([file.content]);
     
-    var gridIn = gridFS.createFile(input, file.filename);
-    
-    gridIn.contentType = file.contentType.value;
+    var gridIn = gridFS.createFile(input, file.filename)
+        ..contentType = file.contentType.value;
             
-    return gridIn.save().then((res)
-            => new IdResp()
-                ..success = true
-                ..id = gridIn.id.toHexString());
+    await gridIn.save();
+    
+    return new IdResp()
+        ..success = true
+        ..id = gridIn.id.toHexString();
 }
 
 @app.Route("/private/file/:fileID", methods: const [app.DELETE])
 @Encode()
-Future<Resp> deleteFile(@app.Attr() MongoDb dbConn, String fileID)
+Future<Resp> deleteFile(@app.Attr() MongoDb dbConn, String fileID) async
 {
     var fs = new GridFS (dbConn.innerConn);
 
-    return deleteFiles (fs, where.id(new ObjectId.fromHexString(fileID))).then((_)
-    {
-        return new Resp()
-            ..success = true;
-    });
+    await deleteFiles (fs, where.id(new ObjectId.fromHexString(fileID)));
+    
+    return new Resp()
+        ..success = true;
 }
 
 @app.Route("/private/file/:fileID", methods: const [app.PUT], allowMultipartRequest: true)
 @Encode()
-Future<Resp> updateFile(@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, String fileID)
+Future<Resp> updateFile(@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, String fileID) async
 {
     HttpBodyFileUpload file = form ['file'];
     var gridFS = new GridFS (dbConn.innerConn);
@@ -65,14 +63,10 @@ Future<Resp> updateFile(@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form
         ..id = StringToId (fileID)
         ..contentType = file.contentType.value;
     
-    return deleteFile(dbConn, fileID).then((Resp resp)
-    {
-        return gridIn.save();
-    })
-    .then((res)
-    {
-        return new IdResp()
-            ..success = true
-            ..id = gridIn.id.toHexString();
-    });
+    await deleteFile (dbConn, fileID);
+    await gridIn.save();
+
+    return new IdResp()
+        ..success = true
+        ..id = gridIn.id.toHexString();
 }

@@ -4,7 +4,11 @@ class TextureGUI
 {
     @Field() String path = '';
     
-    @Field() String get urlTextura => localHost + path;
+    @Field() bool web = true;
+    
+    @Field() String get urlTextura => path != null && path != "" ?
+                                      (web ? localHost + path : path)
+                                      : "";
 
     @Field() String texto = '';
 

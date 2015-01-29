@@ -145,7 +145,7 @@ class VistaVista
     void set icono (String opcion)
     {
         _icono = opcion;
-        vista.icon.urlTextura = "HG/Materials/App/$opcion";
+        vista.icon.path = "HG/Materials/App/$opcion";
         urlIcono = 'images/webapp/${opcion}.png';
     }
     String get icono => _icono;

@@ -73,3 +73,14 @@ sendImage(@app.Attr() MongoDb dbConn, String fileID)
         });
     });
 }
+
+@app.Route ('/test/async')
+@Encode()
+testAsync (@app.Attr() MongoDb dbConn) async
+{
+    var res = await panelInfo (dbConn);
+    
+    print (res);
+    
+    return res;
+}

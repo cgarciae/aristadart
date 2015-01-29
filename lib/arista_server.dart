@@ -23,6 +23,7 @@ part 'services/evento_services.dart';
 part 'services/vista_services.dart';
 part 'services/general_services.dart';
 part 'services/file_services.dart';
+part 'services/file_revision_services.dart';
 part 'services/test_services.dart';
 part 'services/vuforia_services.dart';
 

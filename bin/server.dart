@@ -43,6 +43,18 @@ main()
     var key = "a26b48430ac02696539b02957f0830572eaa4c6a";
     
     print (crypto.CryptoUtils.bytesToHex(conv.UTF8.encode(key)));
+    
+    test1();
+}
+
+test1 () async
+{
+    print (await test2() * 2);
+}
+
+test2 () async
+{
+    return 21;
 }
 
 @app.Interceptor(r'/.*')

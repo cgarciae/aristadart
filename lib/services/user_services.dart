@@ -32,7 +32,7 @@ addUser(@app.Attr() MongoDb dbConn, @Decode() UserComplete user)
 
 @app.Route("/user/login", methods: const[app.POST])
 @Encode()
-login(@app.Attr() MongoDb dbConn, @Decode() UserSecure user)
+login(@app.Attr() MongoDb dbConn, @Decode() UserSecure user) async
 {   
     
     if (user.email == null || user.password == null)
@@ -45,57 +45,47 @@ login(@app.Attr() MongoDb dbConn, @Decode() UserSecure user)
     user.password = encryptPassword(user.password);
     
     
-    return dbConn.findOne('user', UserAdmin, {"email": user.email, "password": user.password})
-    .then((UserAdmin foundUser)
+    UserAdmin foundUser = await dbConn.findOne ('user', UserAdmin, {"email": user.email, "password": user.password});
+    
+    //User doesnt exist
+    if (foundUser == null)
     {
-        //User doesnt exist
-        if (foundUser == null)
-        {
-            return new IdResp()
-                ..success = false
-                ..error = "WRONG USERNAME OR PASSWORD";
-        }
-        
-        
-        session["id"] = StringToId(foundUser.id);
-        
-        Set roles = new Set();
-        
-        if (foundUser.admin)
-        {
-            roles.add(ADMIN);
-        }
-        
-        session["roles"] = roles;
-        
         return new IdResp()
-            ..success = true
-            ..id = foundUser.id;
-    });
+            ..success = false
+            ..error = "WRONG USERNAME OR PASSWORD";
+    }
+    
+    
+    session["id"] = StringToId(foundUser.id);
+    
+    Set roles = new Set();
+    
+    if (foundUser.admin)
+    {
+        roles.add(ADMIN);
+    }
+    
+    session["roles"] = roles;
+    
+    return new IdResp()
+        ..success = true
+        ..id = foundUser.id;
 }
 
 
 @app.Route ('/private/user/panelinfo')
 @Encode()
-panelInfo (@app.Attr() MongoDb dbConn)
+panelInfo (@app.Attr() MongoDb dbConn) async
 {
-    
     var userId = session['id'];
+    UserAdmin user = await dbConn.findOne (Col.user, UserAdmin, where.id (userId));
     
-    return dbConn.findOne(Col.user, UserAdmin, where.id(userId))
-    .then((UserAdmin user)
-    {
+    var eventIds = user.eventos.map (StringToId).toList();
+    List<Evento> eventos = await dbConn.find (Col.evento, Evento, where.oneFrom ('_id', eventIds));
     
-        var eventIds = user.eventos.map(StringToId).toList();
-        
-        return dbConn.find(Col.evento, Evento, where.oneFrom('_id', eventIds))
-        .then((List<Evento> eventos)
-        {
-            return new PanelInfo()
-                ..user = user
-                ..eventos = eventos;
-        });
-    });
+    return new PanelInfo()
+            ..user = user
+            ..eventos = eventos;
 }
 
 @app.Route("/user/logout")

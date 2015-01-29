@@ -11,6 +11,8 @@ dependencies:
   redstone_mapper: any
   redstone_mapper_mongo: any
   shelf_static: any
+  
+
 transformers:
 - redstone_mapper
 - angular:
