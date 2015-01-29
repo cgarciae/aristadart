@@ -8,7 +8,9 @@ class ElementoInfo
     @Field() String titulo;
     
     //ImagenInfoJS
-    @Field() String url;
+    @Field() String path;
+    @Field() String get  url =>  path != null && path != '' ? localHost + path : '';
+    
     
     //InfoTextoJS
     //titulo

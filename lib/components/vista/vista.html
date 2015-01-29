@@ -32,7 +32,7 @@
                         <li class = "large-7 columns">
                             <form enctype="multipart/form-data" method="POST">
                                  Choose a file to upload: <input name="file" type="file"><br>
-                                 <button class="button tiny" ng-click="upload ($event, vista.modelo.url_objeto, guardarUrlObjeto )">Upload</button>
+                                 <button class="button tiny" ng-click="upload ($event, vista.modelo.path, guardarUrlObjeto )">Upload</button>
                                  <p class="button tiny" ng-href = "{{vista.modelo.url_objeto}}" 
                                 target="_blank">
                                 Download
@@ -51,7 +51,7 @@
                         <li class = "large-7 columns">
                             <form enctype="multipart/form-data" method="POST">
                                  Choose a file to upload: <input name="file" type="file"><br>
-                                 <button class="button tiny" ng-click="upload ($event, vista.target.url, guardarUrlTarget )">Upload</button>
+                                 <button class="button tiny" ng-click="upload ($event, vista.target.path, guardarUrlTarget )">Upload</button>
                                  <p class="button tiny" ng-href = "{{vista.target.url}}" 
                                 target="_blank">
                                 Download
@@ -78,13 +78,12 @@
                                     <img alt="Imágen" ng-src="{{elemento.urlImagen}}">
                                     <form enctype="multipart/form-data" method="POST">
                                          Choose a file to upload: <input name="file" type="file"><br>
-                                         <button class="button tiny" ng-click="upload ($event, elemento.urlImagen, guardarUrlImagenElemento, elemento )">Upload</button>
-                                         <p target="_blank"class="button radius tiny" ng-href = "{{elemento.urlImagen}}">
+                                         <button class="button tiny" ng-click="upload ($event, elemento.path, guardarUrlImagenElemento, elemento )">Upload</button>
                                         Download
                                     </p>
                                     </form>
                                 </li>
-                                <li><label>URL Imágen:</label> <input type="text" ng-model="elemento.urlImagen"></li>
+                                <li><label>URL Imágen:</label> <input type="text" ng-model="elemento.path"></li>
                                 <li><label>Texto:</label> <textarea type="text" ng-model="elemento.texto"></textarea></li>
                             </ul>
                         </li>   
@@ -110,14 +109,10 @@
                                     <form enctype="multipart/form-data" method="POST">
                                         <img alt="Imágen" ng-src="{{elemento.urlImagen}}">
                                          Choose a file to upload: <input name="file" type="file"><br>
-                                         <button class="button tiny" ng-click="upload ($event, elemento.urlImagen, guardarUrlImagenElemento, elemento )">Upload</button>
-                                         <p class="button tiny" ng-href = "{{elemento.urlImagen}}" 
-                                        target="_blank">
-                                        Download
-                                    </p>
+                                         <button class="button tiny" ng-click="upload ($event, elemento.path, guardarUrlImagenElemento, elemento )">Upload</button>
                                     </form>
                                 </li>
-                                <li><label>URL Imágen:</label> <input type="text" ng-model="elemento.urlImagen"></li>
+                                <li><label>URL Imágen:</label> <input type="text" ng-model="elemento.path"></li>
                                 <li><label>Texto:</label> <textarea type="text" ng-model="elemento.texto"></textarea></li>
                             </ul>
                         </li>   
@@ -186,13 +181,9 @@
                                     <form enctype="multipart/form-data" method="POST">
                                         <img alt="Imágen" ng-src="{{info.url}}">
                                          Choose a file to upload: <input name="file" type="file"><br>
-                                         <button class="button tiny" ng-click="upload ($event, info.url, guardarUrlInfo, info )">Upload</button>
-                                         <p class="button tiny" ng-href = "{{info.url}}" 
-                                        target="_blank">
-                                        Download
-                                    </p>
+                                         <button class="button tiny" ng-click="upload ($event, info.path, guardarUrlInfo, info )">Upload</button>
                                     </form>
-                                    <label>Url Imágen:</label> <input type="text" ng-model="info.url">                                                
+                                    <label>Url Imágen:</label> <input type="text" ng-model="info.path">                                                
                                 </div>
                                 <div ng-switch-when="InfoTextoJS, Assembly-CSharp">
                                     <label>Titulo:</label> <input type="text" ng-model="info.titulo">
@@ -243,13 +234,9 @@
                                             <br>
                                             <form enctype="multipart/form-data" method="POST">
                                                  Choose a file to upload: <input name="file" type="file"><br>
-                                                 <button class="button tiny" ng-click="upload ($event, textura.urlTextura, guardarUrlTextura, textura )">Upload</button>
-                                                 <p class="button tiny" ng-href = "{{textura.urlTextura}}" 
-                                                target="_blank">
-                                                Download
-                                                </p>
+                                                 <button class="button tiny" ng-click="upload ($event, textura.path, guardarUrlTextura, textura )">Upload</button>
                                             </form>
-                                            <li><label>Imagen:</label> <input type="text" ng-model="textura.urlTextura"></li>
+                                            <li><label>Imagen:</label> <input type="text" ng-model="textura.path"></li>
                                             <li><label>Descripción:</label> <input type="text" ng-model="textura.texto"></li>
                                         </ul>
                                     </div>

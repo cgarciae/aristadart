@@ -2,12 +2,11 @@ part of arista;
 
 class AristaImageTarget
 {
-    @Field () String url;
+    @Field () String path;
+    @Field() String get url => path != null && path != '' ? localHost + path : '';
     @Field () int version;
     
     AristaImageTarget ();
-    
-    AristaImageTarget.New ({this.url, this.version});
 }
 
 class AristaCloudRecoTarget
