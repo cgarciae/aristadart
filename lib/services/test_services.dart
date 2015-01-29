@@ -84,3 +84,31 @@ testAsync (@app.Attr() MongoDb dbConn) async
     
     return res;
 }
+
+@app.Route('/esteban', methods: const [app.POST])
+@Encode()
+testEsteban (@app.Attr() MongoDb dbConn, @Decode() User usuario) async
+{ 
+    usuario.id = new ObjectId().toHexString();
+    await dbConn.insert(Col.user, usuario);
+    
+    return new IdResp()
+        ..success = true
+        ..id = usuario.id;
+}
+
+@app.Route('/esteban/:id')
+@Encode()
+testIdEsteban (@app.Attr() MongoDb dbConn, String id) async
+{
+    User usuario =  await dbConn.findOne(Col.user, User, where.id(StringToId(id)));
+    if( usuario == null){
+        return new Resp()
+            ..success = false
+            ..error = "usuario no encontrado";
+    }
+    return new UserResp()
+            ..user = usuario
+            ..success = true;
+    
+}

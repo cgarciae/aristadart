@@ -68,6 +68,11 @@ class IdResp extends Resp
     @Field() String id;
 }
 
+class UserResp extends Resp
+{
+    @Field() User user;
+}
+
 class UrlResp extends Resp
 {
     @Field() String url;

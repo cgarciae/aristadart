@@ -18,7 +18,7 @@ import 'package:shelf_static/shelf_static.dart';
 import '../lib/authorization.dart';
 
 
-main() 
+main() async
 {
   
     var DOip = "104.131.109.228:8095";
@@ -44,18 +44,8 @@ main()
     
     print (crypto.CryptoUtils.bytesToHex(conv.UTF8.encode(key)));
     
-    test1();
 }
 
-test1 () async
-{
-    print (await test2() * 2);
-}
-
-test2 () async
-{
-    return 21;
-}
 
 @app.Interceptor(r'/.*')
 handleResponseHeader()
