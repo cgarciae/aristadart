@@ -37,7 +37,6 @@ Future<VistasResp> newVista(@app.Attr() MongoDb dbConn) async
     return new IdResp()
         ..success = true
         ..id = vista.id;
-
 }
 
 @app.Route("/private/vista", methods: const[app.PUT])

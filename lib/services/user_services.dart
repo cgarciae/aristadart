@@ -38,6 +38,8 @@ addUser(@app.Attr() MongoDb dbConn, @Decode() UserComplete user) async
 login(@app.Attr() MongoDb dbConn, @Decode() UserSecure user) async
 {   
     
+    print (encodeJson(user));
+    
     if (user.email == null || user.password == null)
     {
         return new IdResp()

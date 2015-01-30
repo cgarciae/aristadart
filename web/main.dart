@@ -7,22 +7,21 @@ import 'package:redstone_mapper/mapper_factory.dart';
 import 'package:aristadart/arista_client.dart';
 import 'package:aristadart/arista.dart';
 import 'dart:html' as dom;
-import 'package:redstone/query_map.dart';
-import  'dart:html';
+import 'dart:async';
 
-@MirrorsUsed(targets: const[
-  'angular',
-  'angular.core',
-  'angular.core.dom',
-  'angular.filter',
-  'angular.perf',
-  'angular.directive',
-  'angular.routing',
-  'angular.core.parser',
-  'NodeTreeSanitizer'
-  ],
-  override: '*')
-import 'dart:mirrors';
+//@MirrorsUsed(targets: const[
+//  'angular',
+//  'angular.core',
+//  'angular.core.dom',
+//  'angular.filter',
+//  'angular.perf',
+//  'angular.directive',
+//  'angular.routing',
+//  'angular.core.parser',
+//  'NodeTreeSanitizer'
+//  ],
+//  override: '*')
+//import 'dart:mirrors';
 
 @Injectable()
 class MainController 
@@ -82,6 +81,4 @@ void main()
         .addModule(new MyAppModule())
         .rootContextType(MainController)
         .run();
-    
-    
 }

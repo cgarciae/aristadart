@@ -80,7 +80,7 @@ class RecoTargetResp extends Resp
 
 class MapResp extends Resp
 {
-    @Field() Map map;
+    @Field() String map;
 }
 
 List flatten (List<List> list) => list.expand(F.identity).toList();
