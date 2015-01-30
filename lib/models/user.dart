@@ -10,37 +10,37 @@ class User
     @ReferenceId() List<String> eventos = [];
 }
 
-class _Admin
+class Admin
 {
     @Field() bool admin;
 }
 
-class _Password
+class Password
 {
     @Field() String password;
 }
 
-class _Money
+class Money
 {
     @Field() num money = 0;
 }
 
-class UserAdmin extends User with _Admin
+class UserAdmin extends User with Admin
 {
     
 }
 
-class UserSecure extends User with _Password
+class UserSecure extends User with Password
 {
     
 }
 
-class UserMoney extends User with _Money
+class UserMoney extends User with Money
 {
     
 }
 
-class UserComplete extends User with _Admin, _Password, _Money
+class UserComplete extends User with Admin, Password, Money
 {
     
 } 

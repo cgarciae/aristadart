@@ -76,7 +76,7 @@ Future<dom.HttpRequest> makeRequest (String method, String path, {dynamic data, 
     } 
 }
 
-Future<dynamic> requestString (String method, String path, {dynamic data, Map headers})
+Future<String> requestString (String method, String path, {dynamic data, Map headers})
 {
     return makeRequest (method, path, data: data, headers: headers) 
     .then (getField (#responseText));

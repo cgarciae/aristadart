@@ -52,6 +52,8 @@ class Login extends ShadowRootAware
     
     login ()
     {
+        print (encodeJson(user));
+        
         jsonRequestDecoded (IdResp, Method.POST, 'user/login', user)
         .then (doIfSuccess((IdResp obj) 
         {

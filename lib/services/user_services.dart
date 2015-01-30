@@ -5,35 +5,40 @@ part of arista_server;
 //A public service. Anyone can create a new user
 @app.Route("/user", methods: const[app.POST])
 @Encode()
-addUser(@app.Attr() MongoDb dbConn, @Decode() UserComplete user) 
+addUser(@app.Attr() MongoDb dbConn, @Decode() UserComplete user) async
 {   
-    return dbConn.findOne (Col.user, UserComplete, {"email": user.email})
-    .then((UserComplete foundUser) 
+    UserComplete foundUser = await dbConn.findOne 
+    (
+        Col.user,
+        UserComplete, 
+        {"email": user.email}
+    );
+    
+    if (foundUser != null)
     {
-        if (foundUser != null)
-        {
-            return new IdResp()
-                ..success = false
-                ..error = "User Exists";
-        }    
+        return new Resp()
+            ..success = false
+            ..error = "User Exists";
+    }    
 
-        user.id = new ObjectId().toHexString();
-        user.password = encryptPassword (user.password);
-        user.admin = false;
+    user.id = new ObjectId().toHexString();
+    user.password = encryptPassword (user.password);
+    user.admin = false;
+    user.money = 0;
           
-        return dbConn.insert(Col.user, user).then((_) 
-        {
-            return new IdResp()
-                ..success = true
-                ..id = user.id;
-        });
-    }); 
+    await dbConn.insert(Col.user, user);
+
+    return new IdResp()
+        ..success = true
+        ..id = user.id;
 }
 
 @app.Route("/user/login", methods: const[app.POST])
 @Encode()
 login(@app.Attr() MongoDb dbConn, @Decode() UserSecure user) async
 {   
+    
+    print (encodeJson(user));
     
     if (user.email == null || user.password == null)
     {
@@ -78,8 +83,9 @@ login(@app.Attr() MongoDb dbConn, @Decode() UserSecure user) async
 panelInfo (@app.Attr() MongoDb dbConn) async
 {
     var userId = session['id'];
+        
     UserAdmin user = await dbConn.findOne (Col.user, UserAdmin, where.id (userId));
-    
+
     var eventIds = user.eventos.map (StringToId).toList();
     List<Evento> eventos = await dbConn.find (Col.evento, Evento, where.oneFrom ('_id', eventIds));
     

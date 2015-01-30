@@ -2,9 +2,9 @@ part of arista_server;
 
 
 
-@app.Route("/private/evento",methods: const[app.POST])
+@app.Route("/private/evento", methods: const[app.POST])
 @Encode()
-newEvent(@app.Attr() MongoDb dbConn) async
+Future<IdResp> newEvent(@app.Attr() MongoDb dbConn) async
 {
     var evento = new Evento()
         ..id = new ObjectId().toHexString();
@@ -12,8 +12,18 @@ newEvent(@app.Attr() MongoDb dbConn) async
     await dbConn.insert (Col.evento, evento);
 
     var userId = session['id'];
+    
+    if (userId == null)
+        return new Resp()
+            ..success = false
+            ..error = 'User not found';
 
-    await dbConn.collection(Col.user).update(where.id(userId), modify.push('eventos', evento.id));
+    await dbConn.update
+    (
+        Col.user,
+        where.id (userId), 
+        modify.push('eventos', evento.id)
+    );
 
     return new IdResp()
       ..success = true
