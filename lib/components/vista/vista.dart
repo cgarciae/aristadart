@@ -90,7 +90,7 @@ class VistaVista
             getFromCollection (VistaResp, 'vista', id).then (doIfSuccess ((VistaResp resp)
             {
                 vista = resp.vista;
-                icono = vista.icon.urlTextura.split(r'/').last;
+                setIcono();
             }));
         }
     }
@@ -108,7 +108,9 @@ class VistaVista
     
     seleccionarTipoVista (TipoDeVista tipo)
     {
+
         vista.type__ = tipo.type__;
+        setIcono();
         switch(vista.type__){
             case 'ConstruccionRAJS, Assembly-CSharp':
                 vista
@@ -116,19 +118,15 @@ class VistaVista
                     ..cuartos = []
                     ..modelo = new ObjetoUnity()
                     ..target = new AristaImageTarget();
-                icono = "3D";
                 break;
             case 'InfoContactoJS, Assembly-CSharp':
                 vista
                     ..elementosContacto = []
                     ..elementosInfo = [];
-                icono = "info";
                 break;
             case 'MultimediaJS, Assembly-CShar':
-                icono = "Galeria";
                 break;
             case 'MapaConstruccionJS, Assembly-CSharp':
-                icono = "Ubicacion";
                 break;
             default:
                 break;
@@ -141,14 +139,31 @@ class VistaVista
         elem.type__ = tipo.type__;
     } 
     
-    String _icono = '';
-    void set icono (String opcion)
+    String icono = '';
+    void setIcono ()
     {
-        _icono = opcion;
-        vista.icon.path = "HG/Materials/App/$opcion";
-        urlIcono = 'images/webapp/${opcion}.png';
+        switch(vista.type__){
+            case 'ConstruccionRAJS, Assembly-CSharp':
+                icono = "3D";
+                break;
+            case 'InfoContactoJS, Assembly-CSharp':
+                icono = "info";
+                break;
+            case 'MultimediaJS, Assembly-CShar':
+                icono = "Galeria";
+                break;
+            case 'MapaConstruccionJS, Assembly-CSharp':
+                icono = "Ubicacion";
+                break;
+            default:
+                break;
+                
+        }
+        
+        vista.icon.web = false;
+        vista.icon.path = "HG/Materials/App/$icono";
+        urlIcono = 'images/webapp/${icono}.png';
     }
-    String get icono => _icono;
     String urlIcono = '';
     
         
@@ -175,11 +190,11 @@ class VistaVista
     }
     
     guardarUrlObjeto(String s, _){
-        vista.modelo.url_objeto = s;
+        vista.modelo.path = s;
     }
     
     guardarUrlTarget(String s, _){
-        vista.target.url = s;
+        vista.target.path = s;
     }
     
     guardarUrlImagenElemento(String s, elemento){
@@ -187,7 +202,7 @@ class VistaVista
     }
     
     guardarUrlInfo(String s, info){
-        info.url = s;
+        info.path = s;
     }
     
     guardarUrlTextura(String s, textura){

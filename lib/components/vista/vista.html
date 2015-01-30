@@ -179,7 +179,8 @@
                                 </div>
                                 <div ng-switch-when="ImagenInfoJS, Assembly-CSharp">
                                     <form enctype="multipart/form-data" method="POST">
-                                        <img alt="Imágen" ng-src="{{info.url}}">
+                                        <img alt="Imágen" ng-src="{{info.path}}">
+                                        <br>
                                          Choose a file to upload: <input name="file" type="file"><br>
                                          <button class="button tiny" ng-click="upload ($event, info.path, guardarUrlInfo, info )">Upload</button>
                                     </form>
@@ -265,13 +266,14 @@
         </div>
         <div ng-switch-default>
             <br>
-            <a class="button radius" data-dropdown="drop1"
-               aria-controls="drop1" data-options="align:right">
+            <a class="button radius" data-dropdown="selectTipo"
+               aria-controls="selectTipo" data-options="align:right">
                 Escoge el Tipo de Vista &raquo;
             </a>
-            <ul id="drop1" class="f-dropdown">
+            <ul id="selectTipo" class="f-dropdown">
               <li ng-repeat="tipo in tiposDeVista"
                  ng-click="seleccionarTipoVista (tipo)"
+                 {{tipo.nombre}}
                  class="panel boxes">
                     <b>{{tipo.nombre}}</b>
                     <br>   

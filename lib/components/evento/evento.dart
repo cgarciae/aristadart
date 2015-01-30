@@ -117,14 +117,11 @@ class EventoVista
     
     String iconoURL (Vista v)
     {
-        if ((v.icon.urlTextura != null) && (v.icon.urlTextura != ''))
-        {
-            var opcion = v.icon.urlTextura.split(r'/').last;
-            
-            return 'images/webapp/${opcion}.png';
-        }
+        var opcion = v.icon.urlTextura.split(r'/').last; 
+        if ((opcion == null) || (opcion == ''))
+           opcion = 'missing_image';
+        return 'images/webapp/${opcion}.png';
         
-        return 'images/webapp/missing_image.png';
     }
     
     upload (dom.MouseEvent event)
