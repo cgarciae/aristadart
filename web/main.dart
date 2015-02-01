@@ -9,19 +9,19 @@ import 'package:aristadart/arista.dart';
 import 'dart:html' as dom;
 import 'dart:async';
 
-//@MirrorsUsed(targets: const[
-//  'angular',
-//  'angular.core',
-//  'angular.core.dom',
-//  'angular.filter',
-//  'angular.perf',
-//  'angular.directive',
-//  'angular.routing',
-//  'angular.core.parser',
-//  'NodeTreeSanitizer'
-//  ],
-//  override: '*')
-//import 'dart:mirrors';
+@MirrorsUsed(targets: const[
+  'angular',
+  'angular.core',
+  'angular.core.dom',
+  'angular.filter',
+  'angular.perf',
+  'angular.directive',
+  'angular.routing',
+  'angular.core.parser',
+  'NodeTreeSanitizer'
+  ],
+  override: '*')
+import 'dart:mirrors';
 
 @Injectable()
 class MainController 
@@ -70,7 +70,7 @@ class ListInt
     @Field() List<int> list;
 }
 
-void main()
+void main() async
 {
     bootstrapMapper();
 
@@ -81,4 +81,8 @@ void main()
         .addModule(new MyAppModule())
         .rootContextType(MainController)
         .run();
+    
+    Resp logged = await requestDecoded(Resp, Method.GET, "user/loggedin");
+    
+    print ("Logged in = ${logged.success}");
 }
