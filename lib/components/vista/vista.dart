@@ -175,11 +175,11 @@ class VistaVista
     }
     
     guardarUrlObjeto(String s, _){
-        vista.modelo.url_objeto = s;
+        vista.modelo.path = s;
     }
     
     guardarUrlTarget(String s, _){
-        vista.target.url = s;
+        vista.target.path = s;
     }
     
     guardarUrlImagenElemento(String s, elemento){
