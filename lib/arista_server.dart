@@ -39,6 +39,7 @@ abstract class Col
     static String evento = 'evento';
     static String vista = 'vista';
     static String recoTarget = 'recoTarget';
+    static String objetoUnity = 'objetoUnity';
 }
 
 
