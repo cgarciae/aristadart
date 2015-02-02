@@ -83,6 +83,11 @@ class ObjetoUnitySendResp extends Resp
     @Field() ObjetoUnitySend obj;
 }
 
+class ObjetoUnitySendListResp extends Resp
+{
+    @Field() List<ObjetoUnitySend> objs;
+}
+
 class ObjetoUnityAdminResp extends Resp
 {
     @Field() ObjetoUnityAdmin obj;

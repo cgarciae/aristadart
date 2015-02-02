@@ -43,5 +43,5 @@ class UserMoney extends User with Money
 class UserComplete extends User with Admin, Password, Money
 {
     
-} 
+}
 

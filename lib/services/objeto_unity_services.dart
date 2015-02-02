@@ -9,11 +9,12 @@ newObjetoUnity (@app.Attr() MongoDb dbConn) async
     {
         var obj = new ObjetoUnitySend()
             ..id = new ObjectId().toHexString()
-            ..name = "Nuevo Nombre"
+            ..name = 'Nuevo Modelo'
             ..version = 0
-            ..updatePending = false;
+            ..updatePending = false
+            ..owner = (session["id"] as ObjectId).toHexString();
         
-        await dbConn.insert(Col.objetoUnity, obj);
+        await dbConn.insert (Col.objetoUnity, obj);
         
         return new ObjetoUnitySendResp()
             ..success = true
@@ -173,6 +174,8 @@ putObjetoUnityUserFile (@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form
     }
 }
 
+
+
 @app.Route('/private/objetounity/:id/modelfile', methods: const [app.POST], allowMultipartRequest: true)
 @Encode()
 @Secure(ADMIN)
@@ -238,6 +241,31 @@ putObjetoUnityModelFile (@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map for
         );
         
         return resp;
+    }
+    catch (e, stacktrace)
+    {
+        return new Resp()
+            ..success = false
+            ..error = e.toString() + stacktrace.toString();
+    }
+}
+
+@app.Route('/private/user/objetounitymodels', methods: const [app.GET])
+@Encode()
+userModels (@app.Attr() MongoDb dbConn) async
+{
+    try
+    {   
+        List<ObjetoUnitySend> objs = await dbConn.find
+        (
+            Col.objetoUnity,
+            ObjetoUnitySend,
+            where.eq('owner', session['id'])
+        );
+
+        return new ObjetoUnitySendListResp()
+            ..success = true
+            ..objs = objs;
     }
     catch (e, stacktrace)
     {
