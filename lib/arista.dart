@@ -78,6 +78,21 @@ class UrlResp extends Resp
     @Field() String url;
 }
 
+class ObjetoUnityResp extends Resp
+{
+    @Field() ObjetoUnity obj;
+}
+
+class ObjetoUnitySendResp extends Resp
+{
+    @Field() ObjetoUnitySend obj;
+}
+
+class ObjetoUnityAdminResp extends Resp
+{
+    @Field() ObjetoUnityAdmin obj;
+}
+
 class RecoTargetResp extends Resp
 {
     @Field() AristaCloudRecoTarget recoTarget;
