@@ -3,25 +3,24 @@ part of arista;
 class ObjetoUnity
 {
     @Id() String id;
-    @ReferenceId() String userFile;
     @Field() String name;
 }
 
 class ObjetoUnitySend extends ObjetoUnity
 {
-    @Field() bool active;
+    @ReferenceId() String owner;
+    @ReferenceId() String userFileId;
+    @Field() bool get active => modelId != null && modelId != '';
     @Field() int version;
     @ReferenceId() String screenshotId;
-}
-
-class ObjetoUnityAdmin extends ObjetoUnitySend
-{
-    @Field () String path;
+    @Field() bool updatePending;
+    
+    @ReferenceId() String modelId;
     @Field() String get url_objeto
     {
-        if (path == null || path == '' || ! active)
+        if (! active)
             return "";
         
-        return localHost + path;
+        return localHost + 'public/file/' + modelId;
     }
 }

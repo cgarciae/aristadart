@@ -118,3 +118,26 @@ listUsers(@app.Attr() MongoDb dbConn) {
   
 }
 
+@app.Route ('/setadmin/:userid')
+@Encode()
+setAdmin (@app.Attr() MongoDb dbConn, String userid) async
+{
+    try
+    {
+        await dbConn.update
+        (
+            Col.user,
+            where.id (StringToId (userid)),
+            modify.set('admin', true)
+        );
+    
+        return new Resp()..success = true;
+    }
+    catch (e, stacktrace)
+    {
+        return new Resp()
+            ..success = false
+            ..error = e.toString() + stacktrace.toString();
+    }
+}
+

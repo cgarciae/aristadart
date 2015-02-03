@@ -39,11 +39,6 @@ main() async
      
     app.setupConsoleLog();
     app.start(port: 9090);
-    
-    var key = "a26b48430ac02696539b02957f0830572eaa4c6a";
-    
-    print (crypto.CryptoUtils.bytesToHex(conv.UTF8.encode(key)));
-    
 }
 
 

@@ -32,34 +32,23 @@ main() async
     
     app.setShelfHandler (createStaticHandler
     (
-        "../build/web", 
+        "../web", 
         defaultDocument: "index.html",
         serveFilesOutsidePath: true
     ));
      
     app.setupConsoleLog();
     app.start(port: 9090);
+<<<<<<< HEAD
     
     var key = "a26b48430ac02696539b02957f0830572eaa4c6a";
     
     print (crypto.CryptoUtils.bytesToHex(conv.UTF8.encode(key)));
-<<<<<<< HEAD
     
-}
-
 =======
-}
-
-test1 () async
-{
-    return 42;
-}
-
-test2 () async
-{
-    return 21;
-}
 >>>>>>> upstream/master
+}
+
 
 @app.Interceptor(r'/.*')
 handleResponseHeader()
