@@ -125,10 +125,17 @@ logout()
 isLoggedIn() 
 {
     try
-    {   
-        return new BoolResp()
-            ..success = true
-            ..value = app.request.session['id'] != null;
+    {
+        ObjectId id = app.request.session['id'];
+        
+        if (id != null)
+            return new IdResp()
+                ..success = true
+                ..id = id.toHexString();
+        
+        return new Resp()
+            ..success = false
+            ..error = "User not logged in";
     }
     catch (e, stacktrace)
     {

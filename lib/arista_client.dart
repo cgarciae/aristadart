@@ -206,7 +206,12 @@ class MainController
 {
     Router router;
     
-    MainController (this.router);
+    static MainController i;
+    
+    MainController (this.router)
+    {
+        i = this;
+    }
     
     logout ()
     {
@@ -223,8 +228,8 @@ class MainController
                 dom.window.alert("Logout Failed");
             }
         });
-    }   
-    
-    static bool LoggedIn = false;
+    }
+            
+    bool isLoggedIn = false;
     
 }

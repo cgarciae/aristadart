@@ -2,11 +2,15 @@ part of arista_client;
 
 void recipeBookRouteInitializer(Router router, RouteViewFactory view) 
 {
+    //TODO: Usar con pre-enter que acepta utilizar Future<bool> y utilizar async
+    
     authenticate (String route, [Function onEnter]) 
     {
-        return (RouteEnterEvent e) async
+        checkLogin();
+        
+        return (RouteEnterEvent e)
         {
-            if (! await loggedIn)
+            if (! loggedIn)
             {
                 router.go('login', {});
             }
@@ -47,16 +51,21 @@ void recipeBookRouteInitializer(Router router, RouteViewFactory view)
         (
             path: '/login',
             defaultRoute: true,
-            enter : (RouteEnterEvent e) async
+            enter : (RouteEnterEvent e)
             {
-                if (await loggedIn)
+                checkLogin();
+                
+                if (loggedIn)
                 {
+                    print ("go home");
                     router.go('home', {});
                 }
                 else
-                {               
+                {     
+                    print ("loggin");
                     view ('view/login_view.html') (e);
                 }
+               
             },
             mount: 
             {
@@ -149,17 +158,26 @@ void recipeBookRouteInitializer(Router router, RouteViewFactory view)
   });
 }
 
+bool get loggedIn => storage['id'] != null;
+set loggedIn (bool value)
+{
+    if (! value)
+        storage['id'] = null;
+}
 
-Future<bool> get loggedIn async{
-    BoolResp resp = await requestDecoded(
-             BoolResp,
-             Method.GET,
-             "user/loggedin");
+checkLogin () async
+{
+    IdResp resp = await requestDecoded
+    (
+         IdResp,
+         Method.GET,
+         "user/loggedin"
+     );
     
-    if( resp.success)
-        return MainController.LoggedIn = resp.value;
+    if (resp.success)
+        storage['id'] = resp.id;
     else
-        return false;
+        storage.remove('id');
 }
 //var userCollection = conn.collection("user");
 Future<bool> get loggedAdmin async{

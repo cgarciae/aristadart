@@ -31,8 +31,8 @@ class MyAppModule extends Module
         bind (HomeVista);
         bind (EventoVista);
         bind (VistaVista);
-        bind(NuevoUsuarioVista);
-        bind(AdminVista);
+        bind (NuevoUsuarioVista);
+        bind (AdminVista);
         bind (RouteInitializerFn, toValue: recipeBookRouteInitializer);
         bind (NgRoutingUsePushState, toValue: new NgRoutingUsePushState.value(false));
     }
@@ -43,7 +43,7 @@ class ListInt
     @Field() List<int> list;
 }
 
-void main() async
+void main()
 {
     bootstrapMapper();
 
@@ -52,10 +52,6 @@ void main() async
 
     applicationFactory()
         .addModule(new MyAppModule())
-        .rootContextType(MainController)
+        .rootContextType (MainController)
         .run();
-    
-    Resp logged = await requestDecoded(Resp, Method.GET, "user/loggedin");
-    
-    print ("Logged in = ${logged.success}");
 }
