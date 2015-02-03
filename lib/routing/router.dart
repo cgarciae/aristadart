@@ -153,6 +153,16 @@ void recipeBookRouteInitializer(Router router, RouteViewFactory view)
 }
 
 
-bool get loggedIn => storage['id'] != null;
+Future<bool> get loggedIn async{
+    BoolResp resp = await requestDecoded(
+             BoolResp,
+             Method.GET,
+             "user/loggedin");
+    
+    if( resp.success)
+        return resp.value;
+    else
+        return false;
+}
 //var userCollection = conn.collection("user");
-//bool get loggedAdmin => storage['']
+//Future<bool> get loggedAdmin => storage['']
