@@ -6,7 +6,7 @@ part of arista_client;
     templateUrl: 'components/login/login.html',
     useShadowDom: false
 )
-class Login extends ShadowRootAware
+class LoginVista extends ShadowRootAware
 {
     
     UserSecure user = new UserSecure();
@@ -14,7 +14,7 @@ class Login extends ShadowRootAware
     
     bool nuevo = false;
     
-    Login (this.router)
+    LoginVista (this.router)
     {
         
     }

@@ -2,11 +2,11 @@ part of arista_client;
 
 void recipeBookRouteInitializer(Router router, RouteViewFactory view) 
 {
-    authenticate (String route, [Function onEnter])
+    authenticate (String route, [Function onEnter]) 
     {
-        return (RouteEnterEvent e)
+        return (RouteEnterEvent e) async
         {
-            if (! loggedIn)
+            if (! await loggedIn)
             {
                 router.go('login', {});
             }
@@ -22,24 +22,21 @@ void recipeBookRouteInitializer(Router router, RouteViewFactory view)
     
     authenticateAdmin (String route, [Function onEnter])
     {
-        return (RouteEnterEvent e)
+        return (RouteEnterEvent e) async
         {
-            if (! loggedIn)
+            if (! await loggedIn)
             {
                 router.go('login', {});
             }
-            else
+            else if (! await loggedAdmin) 
             {
-                if (! loggedAdmin)
-                {
-                    router.go('home', {});
-                }
-                else{
-                    if (onEnter != null)
-                        onEnter ();
-                    
-                    view (route) (e);                        
-                }
+                router.go('home', {});
+            }
+            else{
+                if (onEnter != null)
+                    onEnter ();
+                
+                view (route) (e);                        
             }
         };
     }
@@ -50,9 +47,9 @@ void recipeBookRouteInitializer(Router router, RouteViewFactory view)
         (
             path: '/login',
             defaultRoute: true,
-            enter : (RouteEnterEvent e)
+            enter : (RouteEnterEvent e) async
             {
-                if (loggedIn)
+                if (await loggedIn)
                 {
                     router.go('home', {});
                 }
@@ -113,7 +110,7 @@ void recipeBookRouteInitializer(Router router, RouteViewFactory view)
         'admin' : ngRoute
         (
             path: '/admin',
-            enter: authenticateAdmin(route) 
+            enter: authenticateAdmin('view/admin.html') 
         ),
         
         'A' : ngRoute 
@@ -160,9 +157,20 @@ Future<bool> get loggedIn async{
              "user/loggedin");
     
     if( resp.success)
-        return resp.value;
+        return MainController.LoggedIn = resp.value;
     else
         return false;
 }
 //var userCollection = conn.collection("user");
-//Future<bool> get loggedAdmin => storage['']
+Future<bool> get loggedAdmin async{
+    BoolResp resp = await requestDecoded(
+             BoolResp,
+             Method.GET,
+             '/private/user/isadmin');
+    
+    if( resp.success)
+        return resp.value;
+    else
+        return false;
+}
+

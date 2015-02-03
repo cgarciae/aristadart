@@ -15,6 +15,7 @@ part 'components/login/login.dart';
 part 'components/login/nuevo_usuario.dart';
 part 'components/home/home.dart';
 part 'routing/router.dart';
+part 'components/admin/admin.dart';
 
 dom.Storage get storage => dom.window.localStorage;
 
@@ -198,3 +199,32 @@ Future<Resp> pullIDfromList (String collection, String objID, String fieldName, 
 }
 
 dom.FormElement getFormElement (dom.MouseEvent event) => (event.target as dom.ButtonElement).parent as dom.FormElement;
+
+
+@Injectable()
+class MainController 
+{
+    Router router;
+    
+    MainController (this.router);
+    
+    logout ()
+    {
+        requestDecoded(Resp, Method.GET,'user/logout').then((Resp resp)
+        {
+            if (resp.success)
+            {
+                storage.remove('id');
+                
+                router.go('login', {});
+            }
+            else
+            {
+                dom.window.alert("Logout Failed");
+            }
+        });
+    }   
+    
+    static bool LoggedIn = false;
+    
+}

@@ -6,14 +6,14 @@ part of arista_client;
     templateUrl: 'components/login/nuevo_usuario.html',
     useShadowDom: false
 )
-class NuevoUsuario
+class NuevoUsuarioVista
 {
     UserComplete user = new UserComplete();
     String password2 = "";
     
     Router router;
     
-    NuevoUsuario(this.router);
+    NuevoUsuarioVista(this.router);
     
     String get passwordStatus
     {

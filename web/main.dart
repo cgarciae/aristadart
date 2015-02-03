@@ -23,43 +23,16 @@ import 'dart:async';
   override: '*')
 import 'dart:mirrors';
 
-@Injectable()
-class MainController 
-{
-    Router router;
-    
-    MainController (this.router);
-    
-    logout ()
-    {
-        requestDecoded(Resp, Method.GET,'user/logout').then((Resp resp)
-        {
-            if (resp.success)
-            {
-                storage.remove('id');
-                
-                router.go('login', {});
-            }
-            else
-            {
-                dom.window.alert("Logout Failed");
-            }
-        });
-    }
-    
-    bool get LoggedIn => loggedIn;
-}
-
-
 class MyAppModule extends Module
 {
     MyAppModule()
     {
-        bind (Login);
-        bind (Home);
+        bind (LoginVista);
+        bind (HomeVista);
         bind (EventoVista);
         bind (VistaVista);
-        bind(NuevoUsuario);
+        bind(NuevoUsuarioVista);
+        bind(AdminVista);
         bind (RouteInitializerFn, toValue: recipeBookRouteInitializer);
         bind (NgRoutingUsePushState, toValue: new NgRoutingUsePushState.value(false));
     }

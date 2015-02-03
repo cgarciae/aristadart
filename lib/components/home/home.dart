@@ -8,7 +8,7 @@ part of arista_client;
     templateUrl: 'components/home/home.html',
     useShadowDom: false
 )
-class Home
+class HomeVista
 {
     
     User user = new User();
@@ -17,7 +17,7 @@ class Home
     
     Router router;
     
-    Home (this.router)
+    HomeVista (this.router)
     {
         getUser();
     }
