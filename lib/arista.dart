@@ -68,9 +68,9 @@ class IdResp extends Resp
     @Field() String id;
 }
 
-class UserResp extends Resp
+class EventoExportableResp extends Resp
 {
-    @Field() User user;
+    @Field() EventoExportable evento;
 }
 
 class UrlResp extends Resp
@@ -91,11 +91,6 @@ class ObjetoUnitySendResp extends Resp
 class ObjetoUnitySendListResp extends Resp
 {
     @Field() List<ObjetoUnitySend> objs;
-}
-
-class ObjetoUnityAdminResp extends Resp
-{
-    @Field() ObjetoUnityAdmin obj;
 }
 
 class RecoTargetResp extends Resp

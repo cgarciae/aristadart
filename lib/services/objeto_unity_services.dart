@@ -222,8 +222,6 @@ putObjetoUnityModelFile (@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map for
     {
         var resp = await updateFile(dbConn, form, fileId);
         
-        //TODO: Update ObjetoUnity para indicar que hay nuevo archivo pendiente por revision.
-        
         await dbConn.update
         (
             Col.objetoUnity,

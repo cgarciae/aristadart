@@ -67,10 +67,10 @@ Future<Resp> activateEvento(@app.Attr() MongoDb dbConn, bool status, String even
 {
     String aristaRecoID;
 
-    EventoActive evento = await dbConn.findOne
+    EventoCompleto evento = await dbConn.findOne
     (
         Col.evento, 
-        EventoActive, 
+        EventoCompleto, 
         where.id(StringToId(eventoID))
     );
     
@@ -79,27 +79,40 @@ Future<Resp> activateEvento(@app.Attr() MongoDb dbConn, bool status, String even
             ..success = false
             ..error = "Evento not found";
 
-    evento.active = status;
     aristaRecoID = evento.cloudRecoTargetId;
-
-    await dbConn.update(Col.evento, where.id(StringToId(eventoID)), evento);
     
-    AristaCloudRecoTarget reco = await dbConn.findOne(Col.recoTarget, AristaCloudRecoTarget, where.id(StringToId(aristaRecoID)));
+    AristaCloudRecoTarget reco = await dbConn.findOne
+    (
+        Col.recoTarget,
+        AristaCloudRecoTarget, 
+        where.id(StringToId(aristaRecoID))
+    );
     
     if (reco == null)
         return new Resp()
             ..success = false
             ..error = "Cloud Reco not found";
 
-    String body = conv.JSON.encode
-    ({
-        "active_flag": status
-    });
-
-    QueryMap map = await makeVuforiaRequest (Method.PUT, "/targets/${reco.targetId}", body, ContType.applicationJson)
-        .send()
-        .then (streamResponseToJSON)
-        .then (MapToQueryMap);
+    await dbConn.update
+    (
+        Col.evento,
+        where.id (StringToId (eventoID)),
+        modify.set('active', status)
+    );
+    
+    QueryMap map = await makeVuforiaRequest 
+    (
+        Method.PUT, 
+        "/targets/${reco.targetId}", 
+        conv.JSON.encode
+        ({
+            "active_flag": status
+        }), 
+        ContType.applicationJson
+    )
+    .send()
+    .then (streamResponseToJSON)
+    .then (MapToQueryMap);
         
 
     if (map.result_code == "Success") 
@@ -131,10 +144,21 @@ exportEvento(@app.Attr() MongoDb dbConn, String id) async
         EventoExportable, 
         where.id (StringToId (id))
     );
-    
-    evento.viewIds.forEach(print);
 
-    return BuildEvento(dbConn, evento);
+    await BuildEvento(dbConn, evento);
+    
+    Resp resp = await validEvento (evento);
+    
+    if (resp.success)
+    {
+        return new EventoExportableResp()
+            ..success = true
+            ..evento = evento;
+    }
+    else
+    {
+        return resp..error = "Evento Invalido: ${resp.error}";
+    }
 }
 
 Future<EventoExportable> BuildEvento(MongoDb dbConn, EventoExportable evento) async
@@ -147,6 +171,40 @@ Future<EventoExportable> BuildEvento(MongoDb dbConn, EventoExportable evento) as
         VistaExportable, 
         where.oneFrom('_id', objIDs)
     );
-
+    
     return evento..vistas = vistas;
+}
+
+Future<Resp> validEvento (EventoExportable evento) async
+{
+    if (evento.id == null || evento.id == "")
+        return new Resp()
+            ..success = false
+            ..error = "Id de Evento Invalida";
+    
+    if (evento.active == null || ! evento.active)
+        return new Resp()
+            ..success = false
+            ..error = "Evento inactivo";
+    
+    if (evento.cloudRecoTargetId == null || evento.cloudRecoTargetId == "")
+        return new Resp()
+            ..success = false
+            ..error = "Target ID Invalida";
+    
+    List<VistaExportable> list = [];
+    for (VistaExportable vista in evento.vistas)
+    {
+        if (await validVista (vista))
+            list.add (vista);
+    }
+    
+    evento.vistas = list;
+    
+    if (evento.vistas.length == 0)
+        return new Resp()
+            ..success = false
+            ..error = "Ninguna vista valida disponible";
+    
+    return new Resp()..success = true;
 }

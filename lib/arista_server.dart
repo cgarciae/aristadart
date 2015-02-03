@@ -2,7 +2,7 @@ library arista_server;
 
 import 'dart:io';
 import 'dart:convert' as conv;  
-import 'arista.dart';
+import 'package:aristadart/arista.dart';
 import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'package:crypto/crypto.dart' as crypto;

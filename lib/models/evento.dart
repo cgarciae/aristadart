@@ -13,27 +13,12 @@ class Evento
     @ReferenceId() String cloudRecoTargetId;
 }
 
-class Active extends Object
+class EventoCompleto extends Evento
 {
     @Field() bool active;
 }
 
-class Exportable extends Object
+class EventoExportable extends EventoCompleto
 {
     @Field() List<VistaExportable> vistas;
-}
-
-class EventoCompleto extends Evento with Active
-{
-    
-}
-
-class EventoActive extends Evento with Active
-{
-    
-}
-
-class EventoExportable extends Evento with Exportable
-{
-    
 }
