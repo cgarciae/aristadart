@@ -20,6 +20,30 @@ void recipeBookRouteInitializer(Router router, RouteViewFactory view)
         };
     }
     
+    authenticateAdmin (String route, [Function onEnter])
+    {
+        return (RouteEnterEvent e)
+        {
+            if (! loggedIn)
+            {
+                router.go('login', {});
+            }
+            else
+            {
+                if (! loggedAdmin)
+                {
+                    router.go('home', {});
+                }
+                else{
+                    if (onEnter != null)
+                        onEnter ();
+                    
+                    view (route) (e);                        
+                }
+            }
+        };
+    }
+    
     view.configure(
     {
         'login': ngRoute
@@ -86,6 +110,12 @@ void recipeBookRouteInitializer(Router router, RouteViewFactory view)
             enter: authenticate ('view/vista_view.html')
         ),
         
+        'admin' : ngRoute
+        (
+            path: '/admin',
+            enter: authenticateAdmin(route) 
+        ),
+        
         'A' : ngRoute 
         (
             path : '/A/:parA',
@@ -123,5 +153,6 @@ void recipeBookRouteInitializer(Router router, RouteViewFactory view)
 }
 
 
-
 bool get loggedIn => storage['id'] != null;
+//var userCollection = conn.collection("user");
+//bool get loggedAdmin => storage['']
