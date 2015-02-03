@@ -114,9 +114,12 @@ class VistaVista
                 vista
                     ..muebles = []
                     ..cuartos = []
-                    ..modelo = new ObjetoUnity()
                     ..target = new AristaImageTarget();
                 icono = "3D";
+                
+                //TODO: Vista ya no tiene el campo "modelo", ahora tiene "modeloId" que es el _id
+                //de Mongo del UnityObject. Verificar si es null y pedir uno nuevo, sino pedir el existente.
+                
                 break;
             case 'InfoContactoJS, Assembly-CSharp':
                 vista
@@ -175,6 +178,8 @@ class VistaVista
     }
     
     guardarUrlObjeto(String s, _){
+        //TODO: Vista ya no tiene el campo "modelo", ademas ya "path" es
+        //una propiedad "get". Mirar el nuevo API para ver como interactuar con ObjetoUnity.
         vista.modelo.path = s;
     }
     
