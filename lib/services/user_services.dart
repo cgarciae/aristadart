@@ -124,8 +124,18 @@ logout()
 @Encode()
 isLoggedIn() 
 {
-    return new Resp()
-        ..success = app.request.session['id'] != null;
+    try
+    {   
+        return new BoolResp()
+            ..success = true
+            ..value = app.request.session['id'] != null;
+    }
+    catch (e, stacktrace)
+    {
+        return new Resp()
+            ..success = false
+            ..error = e.toString() + stacktrace.toString();
+    }
 }
 
 @app.Route ('/private/userlist')
