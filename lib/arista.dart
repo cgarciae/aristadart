@@ -63,9 +63,19 @@ class VistaResp extends Resp
     @Field() Vista vista;
 }
 
+class VistaExportableResp extends Resp
+{
+    @Field() VistaExportable vista;
+}
+
 class IdResp extends Resp
 {
     @Field() String id;
+}
+
+class BoolResp extends Resp
+{
+    @Field() bool value;
 }
 
 class EventoExportableResp extends Resp

@@ -9,7 +9,7 @@ part of arista_client;
 class VistaVista
 {
     Router router;
-    Vista vista = new Vista();
+    VistaExportable vista = new VistaExportable();
     String eventoID;
     
     List<TipoDeVista> tiposDeVista = const 
@@ -66,42 +66,62 @@ class VistaVista
     ];
     
     
-    VistaVista (RouteProvider routeProvider, this.router) 
+    VistaVista (RouteProvider routeProvider, this.router)
+    {
+        initVista (routeProvider);
+    }
+    
+    initVista (RouteProvider routeProvider) async
     {
         var id = routeProvider.parameters['vistaID'];
         eventoID = routeProvider.parameters['eventoID'];
-        
-        routeProvider.parameters.keys.forEach(print);
         
         if (id == null)
         {
             print ('NUEVA VISTA');
             //Crear nuevo evento
-            newFromCollection ('vista').then (doIfSuccess ((IdResp res)
+            IdResp resp = await newFromCollection ('vista');
+            
+            if (resp.success)
             {
-                vista.id = res.id;
-            }));
+                vista.id = resp.id;
+            }
+            else
+            {
+                print (resp.error);
+            }
         }
         else
         {
             print ('CARGAR VISTA');
-            
             //Cargar vista
-            getFromCollection (VistaResp, 'vista', id).then (doIfSuccess ((VistaResp resp)
+            VistaExportableResp resp = await getFromCollection
+            (
+                VistaExportableResp, 
+                'vista', 
+                id
+            );
+
+            if (resp.success)
             {
                 vista = resp.vista;
-                icono = vista.icon.urlTextura.split(r'/').last;
-            }));
+                icono = vista.icon.urlTextura.split (r'/').last;
+            }
+            else
+            {
+                print (resp.error);
+            }
         }
     }
     
-    save ()
+    save () async
     {
-        saveInCollection ('vista', vista)
-        .then(doIfSuccess((Resp resp)
-        {
+        Resp resp = await saveInCollection ('vista', vista);
+
+        if (resp.success)
             router.go('evento', {'eventoID' : eventoID});
-        }));
+        else
+            print (resp.error);
     }
 
     
@@ -216,7 +236,7 @@ class VistaVista
             print("actualizo");
         }   
     
-        dom.FormElement form = (event.target as dom.ButtonElement).parent as dom.FormElement;
+        dom.FormElement form = getFormElement (event);
                     
         formRequestDecoded(IdResp, method, url, form)
         
@@ -233,7 +253,30 @@ class VistaVista
         }));
     }
     
+    uploadObjetoUnityUserFile (dom.MouseEvent event) async
+    {
+        dom.FormElement form = getFormElement (event);
+        
+        if (notNullOrEmpty (vista.modeloId))
+        {
+            IdResp resp = await formRequestDecoded
+            (
+                IdResp,
+                Method.PUT,
+                "private/objetounity/${vista.modeloId}/modelfile",
+                form
+            );
+            
+            if (! resp.success)
+            {
+                print ("Upload Failed: ${resp.error}");
+            }
+        }
+        
+    }
 }
+
+
 
 class TipoDeVista
 {

@@ -173,6 +173,20 @@ Function doIfSuccess ([dynamic f (dynamic)])
     };
 }
 
+ifRespSuccess (Resp resp, Function f)
+{
+    if (resp.success)
+    {
+        if (f != null)
+            return f (resp);
+    }
+    else
+    {
+        print (resp.error);
+        return resp;
+    }
+}
+
 Future<Resp> pushIDtoList (String collection, String objID, String fieldName, String referenceID)
 {
     return requestDecoded(Resp, Method.GET,'/private/push/$collection/$objID/$fieldName/$referenceID');
@@ -182,3 +196,5 @@ Future<Resp> pullIDfromList (String collection, String objID, String fieldName, 
 {
     return requestDecoded(Resp, Method.GET,'/private/pull/$collection/$objID/$fieldName/$referenceID');
 }
+
+dom.FormElement getFormElement (dom.MouseEvent event) => (event.target as dom.ButtonElement).parent as dom.FormElement;

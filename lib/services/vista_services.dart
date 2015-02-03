@@ -82,6 +82,13 @@ Future<IdResp> deleteVista(@app.Attr() MongoDb dbConn, String vistaID) async
         ..success = true;
 }
 
+@app.Route("/export/vista/:vistaID", methods: const [app.GET])
+@Encode()
+Future<IdResp> exportarVista(@app.Attr() MongoDb dbConn, String vistaID) async
+{ 
+    
+}
+
 Future<VistaExportable> buildVista (MongoDb dbConn, VistaExportable vista) async
 {
     
