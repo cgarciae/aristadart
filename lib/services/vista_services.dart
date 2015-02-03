@@ -81,3 +81,9 @@ Future<IdResp> deleteVista(@app.Attr() MongoDb dbConn, String vistaID) async
     return new Resp()
         ..success = true;
 }
+
+Future<bool> validVista (VistaExportable vista) async
+{
+    //TODO: HACER
+    return true;
+}

@@ -68,6 +68,11 @@ class IdResp extends Resp
     @Field() String id;
 }
 
+class EventoExportableResp extends Resp
+{
+    @Field() EventoExportable evento;
+}
+
 class UrlResp extends Resp
 {
     @Field() String url;
@@ -95,7 +100,7 @@ class RecoTargetResp extends Resp
 
 class MapResp extends Resp
 {
-    @Field() String map;
+    @Field() Map map;
 }
 
 List flatten (List<List> list) => list.expand(F.identity).toList();
