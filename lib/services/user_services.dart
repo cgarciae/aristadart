@@ -62,6 +62,7 @@ login(@app.Attr() MongoDb dbConn, @Decode() UserSecure user) async
     
     
     session["id"] = StringToId(foundUser.id);
+    session["admin"] = foundUser.admin;
     
     Set roles = new Set();
     
@@ -75,6 +76,24 @@ login(@app.Attr() MongoDb dbConn, @Decode() UserSecure user) async
     return new IdResp()
         ..success = true
         ..id = foundUser.id;
+}
+
+@app.Route ('/private/user/isadmin')
+@Encode()
+idAdmin ()
+{
+    try
+    {   
+        return new BoolResp()
+            ..success = true
+            ..value = session['admin'];
+    }
+    catch (e, stacktrace)
+    {
+        return new Resp()
+            ..success = false
+            ..error = e.toString() + stacktrace.toString();
+    }
 }
 
 

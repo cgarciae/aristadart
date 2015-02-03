@@ -145,8 +145,10 @@ exportEvento(@app.Attr() MongoDb dbConn, String id) async
         where.id (StringToId (id))
     );
 
+    print ("EE 1");
     await BuildEvento(dbConn, evento);
     
+    print ("EE 2");
     Resp resp = await validEvento (evento);
     
     if (resp.success)
@@ -163,16 +165,22 @@ exportEvento(@app.Attr() MongoDb dbConn, String id) async
 
 Future<EventoExportable> BuildEvento(MongoDb dbConn, EventoExportable evento) async
 {
+    print ("BE 1");
     var objIDs = evento.viewIds.map (StringToId).toList();
 
-    List<VistaExportable> vistas = await dbConn.find
+    evento.vistas = await dbConn.find
     (
         Col.vista, 
         VistaExportable, 
         where.oneFrom('_id', objIDs)
     );
+
+    var futures = evento.vistas.map((VistaExportable vista) 
+            => buildVista(dbConn, vista)).toList();
     
-    return evento..vistas = vistas;
+    await Future.wait (futures);
+    
+    return evento;
 }
 
 Future<Resp> validEvento (EventoExportable evento) async
@@ -192,11 +200,15 @@ Future<Resp> validEvento (EventoExportable evento) async
             ..success = false
             ..error = "Target ID Invalida";
     
+    
     List<VistaExportable> list = [];
     for (VistaExportable vista in evento.vistas)
     {
-        if (await validVista (vista))
+        Resp resp = await validVista (vista);
+        if (resp.success)
             list.add (vista);
+        else
+            print (resp.error);
     }
     
     evento.vistas = list;

@@ -8,7 +8,7 @@ class Vista
     @Field() TextureGUI icon = new TextureGUI();
 
     //ConstruccionRA
-    @Field() ObjetoUnity modelo;
+    @ReferenceId() String modeloId;
     @Field() AristaImageTarget target;
     @Field() List<ElementoConstruccion> cuartos;
     @Field() List<ElementoConstruccion> muebles;
@@ -46,5 +46,6 @@ class Vista
 
 class VistaExportable extends Vista
 {
-    
+    //ConstruccionRA
+    @Field() ObjetoUnitySend modelo;
 }

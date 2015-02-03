@@ -82,8 +82,56 @@ Future<IdResp> deleteVista(@app.Attr() MongoDb dbConn, String vistaID) async
         ..success = true;
 }
 
-Future<bool> validVista (VistaExportable vista) async
+@app.Route("/export/vista/:vistaID", methods: const [app.GET])
+@Encode()
+Future<IdResp> exportarVista(@app.Attr() MongoDb dbConn, String vistaID) async
+{ 
+    
+}
+
+Future<VistaExportable> buildVista (MongoDb dbConn, VistaExportable vista) async
 {
-    //TODO: HACER
-    return true;
+    
+    switch (vista.type__)
+    {
+        case 'ConstruccionRAJS, Assembly-CSharp':
+            if (notNullOrEmpty(vista.modeloId))
+            {
+                vista.modelo = await dbConn.findOne
+                (
+                    Col.objetoUnity,
+                    ObjetoUnitySend,
+                    where.id (StringToId (vista.modeloId))
+                );
+            }
+            break;
+
+        default:
+            break;
+    }
+    
+    return vista;
+}
+
+Future<Resp> validVista (VistaExportable vista) async
+{
+    if (vista.type__ == null || vista.type__ == "")
+        return new Resp()
+            ..success = false
+            ..error = "type__ undefined.";
+    
+    switch (vista.type__)
+    {
+        case 'ConstruccionRAJS, Assembly-CSharp':
+            
+            if (vista.modelo == null)
+                return new Resp()
+                    ..success = false
+                    ..error = "modeloId undefined.";
+            
+            break;
+    }
+    
+    return new Resp()
+        ..success = true;
 }

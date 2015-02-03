@@ -63,9 +63,19 @@ class VistaResp extends Resp
     @Field() Vista vista;
 }
 
+class VistaExportableResp extends Resp
+{
+    @Field() VistaExportable vista;
+}
+
 class IdResp extends Resp
 {
     @Field() String id;
+}
+
+class BoolResp extends Resp
+{
+    @Field() bool value;
 }
 
 class EventoExportableResp extends Resp
@@ -117,3 +127,5 @@ abstract class Method
     static String GET = "GET";
     static String DELETE = "DELETE";
 }
+
+bool notNullOrEmpty (String s) => ! (s == null || s == '');
