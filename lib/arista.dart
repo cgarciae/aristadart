@@ -88,11 +88,6 @@ class ObjetoUnitySendListResp extends Resp
     @Field() List<ObjetoUnitySend> objs;
 }
 
-class ObjetoUnityAdminResp extends Resp
-{
-    @Field() ObjetoUnityAdmin obj;
-}
-
 class RecoTargetResp extends Resp
 {
     @Field() AristaCloudRecoTarget recoTarget;
@@ -100,7 +95,7 @@ class RecoTargetResp extends Resp
 
 class MapResp extends Resp
 {
-    @Field() Map map;
+    @Field() String map;
 }
 
 List flatten (List<List> list) => list.expand(F.identity).toList();
