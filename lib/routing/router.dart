@@ -12,7 +12,7 @@ void recipeBookRouteInitializer(Router router, RouteViewFactory view)
         {
             if (! loggedIn)
             {
-                router.go('login', {});
+                 router.go('login', {});
             }
             else
             {

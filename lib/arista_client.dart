@@ -230,6 +230,6 @@ class MainController
         });
     }
             
-    bool isLoggedIn = false;
+    bool get isLoggedIn => loggedIn;
     
 }
