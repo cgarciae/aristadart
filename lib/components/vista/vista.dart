@@ -69,6 +69,7 @@ class VistaVista
     VistaVista (RouteProvider routeProvider, this.router)
     {
         initVista (routeProvider);
+        print("constructor vistaVista");
     }
     
     initVista (RouteProvider routeProvider) async
@@ -106,6 +107,7 @@ class VistaVista
             {
                 vista = resp.vista;
                 icono = vista.icon.urlTextura.split (r'/').last;
+                urlIcono = 'images/webapp/${icono}.png';
             }
             else
             {
@@ -137,7 +139,6 @@ class VistaVista
                     ..muebles = []
                     ..cuartos = []
                     ..target = new AristaImageTarget();
-                icono = "3D";
                 
                 //TODO: Vista ya no tiene el campo "modelo", ahora tiene "modeloId" que es el _id
                 //de Mongo del UnityObject. Verificar si es null y pedir uno nuevo, sino pedir el existente.
@@ -163,6 +164,7 @@ class VistaVista
         elem.type__ = tipo.type__;
     } 
     
+    
     String icono = '';
     void setIcono ()
     {
@@ -180,6 +182,7 @@ class VistaVista
                 icono = "Ubicacion";
                 break;
             default:
+                icono= "missing_image";
                 break;
                 
         }
