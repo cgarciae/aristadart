@@ -1,6 +1,78 @@
-<fieldset>
+<div class="large-10 small-centered columns">
+   
+    <h1>Panel administrador</h1>
+    <div class="row">
+        <!--<div ng-repeat="modelo in vistas"> -->
+         <fieldset>
+         <div class="row medium-uncollapse large-collapse">
+            <h2>
+                <!--{{modelo.name}} -->
+                Nombre modelo
+            </h2>
+            <br>
+            <a class="button radius secondary left tiny" ng-click="descargarModelo">Download User Model</a>
+            <!--<p>Versión modelo: {{modelo.version}}</p>-->
+            <p> Versión modelo: #001</p>
+            <br>
+            <div class="small-6 columns">
+                <h3>Imágen preview</h3>
+                <br>
+                <div class="large-4 columns">
+                   <!-- <img alt={{}} ng-src="{{}}"> -->
+                </div>
+                <div class="large-8 columns">
+                    <form enctype="multipart/form-data" method="POST">
+                         Choose a file to upload: <input name="file" type="file"><br>
+                         <button class="button tiny radius" ng-click="upload ($event)">Upload</button>
+                    </form>
+                </div>
+            </div>
+            <br>
+            </div>
+            <br>
+            <div class="row medium-uncollapse large-collapse">
+                <div class="small-6 columns">
+                    <h4>Versión iOS</h4>
+                    <div class="large-8 columns">
+                        <form enctype="multipart/form-data">
+                             Choose a file to upload: <input name="file" type="file"><br>
+                             <button class="button tiny radius" ng-click="uploadTarget ($event)">Upload</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="small-6 columns">
+                    <h4>Versión MACOSX</h4>
+                    <div class="large-8 columns">
+                        <form enctype="multipart/form-data">
+                             Choose a file to upload: <input name="file" type="file"><br>
+                             <button class="button tiny radius" ng-click="uploadTarget ($event)">Upload</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="small-6 columns">
+                    <h4>Versión Android</h4>
+                    <div class="large-8 columns">
+                        <form enctype="multipart/form-data">
+                             Choose a file to upload: <input name="file" type="file"><br>
+                             <button class="button tiny radius" ng-click="uploadTarget ($event)">Upload</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="small-6 columns">
+                    <h4>Versión windows</h4>
+                    <div class="large-8 columns">
+                        <form enctype="multipart/form-data">
+                             Choose a file to upload: <input name="file" type="file"><br>
+                             <button class="button tiny radius" ng-click="uploadTarget ($event)">Upload</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+        <br>
+       <!-- </div> -->
+    </div>
+</div>
 
-    <h1>Página admin!!</h1>
 
 
-</fieldset>
