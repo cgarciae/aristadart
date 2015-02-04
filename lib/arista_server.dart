@@ -30,6 +30,7 @@ part 'services/vuforia_services.dart';
 ObjectId StringToId (String id) => new ObjectId.fromHexString(id);
 
 HttpSession get session => app.request.session;
+ObjectId get userId => session['id'];
 
 const String ADMIN = "ADMIN";
 

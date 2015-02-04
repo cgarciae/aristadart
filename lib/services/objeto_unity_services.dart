@@ -174,71 +174,102 @@ putObjetoUnityUserFile (@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form
     }
 }
 
-
-
-@app.Route('/private/objetounity/:id/modelfile', methods: const [app.POST], allowMultipartRequest: true)
-@Encode()
-@Secure(ADMIN)
-postObjetoUnityModelFile (@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, String id) async
+Future saveOrUpdateModelFile (MongoDb dbConn, Map form, ObjetoUnitySend obj, String system) async
 {
-    try
+    String fileId;
+    
+    if (system == 'android')
     {
-        Resp resp = await newFile (dbConn, form);
-        IdResp idResp = resp as IdResp;
-        
-        if (! resp.success || idResp == null)
-            return resp;
-        
-        
-        await dbConn.update
-        (
-            Col.objetoUnity,
-            where.id (StringToId (id)),
-            {
-                r'$set' : {
-                    'modelId' : StringToId (idResp.id),
-                    'updatePending' : false,
-                    'version' : 1
-                }
-            }
-        );
-        
-        return idResp;    
+        fileId = obj.modelIdAndroid;
     }
-    catch (e, stacktrace)
+    else if (system == 'ios')
+    {
+        fileId = obj.modelIdIOS;
+    }
+    else if (system == 'windows')
+    {
+        fileId = obj.modelIdWindows;
+    }
+    else if (system == 'mac')
+    {
+        fileId = obj.modelIdMAC;
+    }
+    else
     {
         return new Resp()
             ..success = false
-            ..error = e.toString() + stacktrace.toString();
+            ..error = "Invalid system path variable: ${system}";
     }
+    
+    Resp resp;
+    IdResp idResp;
+    
+    if (fileId == null)
+    {
+        resp = await newFile (dbConn, form);
+    }
+    else
+    {
+        resp = await updateFile(dbConn, form, fileId);
+    }
+    
+    if (resp is IdResp && resp.success)
+    {
+        idResp = resp;
+    }
+    else
+    {
+        return resp;
+    }
+    
+    if (system == 'android')
+    {
+        obj.modelIdAndroid = idResp.id;
+    }
+    else if (system == 'ios')
+    {
+        obj.modelIdIOS = idResp.id;
+    }
+    else if (system == 'windows')
+    {
+        obj.modelIdWindows = idResp.id;
+    }
+    else if (system == 'mac')
+    {
+        obj.modelIdMAC = idResp.id;
+    }
+    
+    return idResp;   
 }
 
-@app.Route('/private/objetounity/:id/modelfile/:fileId', methods: const [app.PUT], allowMultipartRequest: true)
+@app.Route('/private/objetounity/:id/modelfile/:system', methods: const [app.POST, app.PUT], allowMultipartRequest: true)
 @Encode()
 @Secure(ADMIN)
-putObjetoUnityModelFile (@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, String id, String fileId) async
+Future newOrUpdateObjetoUnityModelFile (@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, String id, String system) async
 {
     try
     {
-        var resp = await updateFile(dbConn, form, fileId);
+        ObjetoUnitySendResp objResp = await getObjetoUnity(dbConn, id);
+                
+        if (! objResp.success)
+            return objResp;
+        
+        ObjetoUnitySend obj = objResp.obj;
+        
+        Resp resp = await saveOrUpdateModelFile (dbConn, form, obj, system);
+        
+        if (! resp.success)
+            return resp;
         
         await dbConn.update
         (
             Col.objetoUnity,
             where.id (StringToId (id)),
-            {
-                r'$set' : 
-                {
-                    'updatePending' : false
-                },
-                r'$inc' :
-                {
-                    'version' : 1
-                }
-            }
+            obj
         );
         
-        return resp;
+        return objResp;
+        
     }
     catch (e, stacktrace)
     {
@@ -253,12 +284,12 @@ putObjetoUnityModelFile (@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map for
 userModels (@app.Attr() MongoDb dbConn) async
 {
     try
-    {   
+    {  
         List<ObjetoUnitySend> objs = await dbConn.find
         (
             Col.objetoUnity,
             ObjetoUnitySend,
-            where.eq('owner', session['id'])
+            where.eq('owner', userId)
         );
 
         return new ObjetoUnitySendListResp()
