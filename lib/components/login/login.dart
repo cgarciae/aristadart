@@ -50,16 +50,40 @@ class LoginVista extends ShadowRootAware
 //        });
 //    }
     
-    login ()
+    login () async
     {
         print (encodeJson(user));
         
-        jsonRequestDecoded (IdResp, Method.POST, 'user/login', user)
-        .then (doIfSuccess((IdResp obj) 
+        IdResp resp = await jsonRequestDecoded 
+        (
+            IdResp,
+            Method.POST, 
+            'user/login',
+            user
+        );
+        
+        if (resp.success)
         {
-            storage['id'] = obj.id;
+            storage['id'] = resp.id;
             router.go('home', {});
-        }));
+        }
+        else
+        {
+            print (resp.error);
+            return;
+        }
+        
+        BoolResp boolResp = await requestDecoded 
+        (
+            BoolResp,
+            Method.GET, 
+            'user/isadmin'
+        );
+        
+        if (boolResp.success)
+        {
+            storage['admin'] = boolResp.value.toString();
+        }   
     }
     
     nuevoUsuario()
