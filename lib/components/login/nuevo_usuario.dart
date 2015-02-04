@@ -27,26 +27,26 @@ class NuevoUsuarioVista
         return user.nombre != '' && user.apellido != '' && user.email != '' && passwordStatus == 'OK';
     }
     
-    registrar()
+    registrar() async
     {
         if (registrable)
         {
-            jsonRequestDecoded(IdResp, Method.POST, 'new/user', user).then(doIfSuccess((IdResp resp)
+            UserAdminResp resp = await jsonRequestDecoded
+            (
+                UserAdminResp,
+                Method.POST, 
+                'user', 
+                user
+            );
+            
+            if (resp.success)
             {
-                print ('NEW USER');
-                return jsonRequestDecoded(IdResp, Method.POST,'/user/login', user);
-            }))
-            .then(doIfSuccess((IdResp obj) 
-            {
-                print ('LOGIN');
-                
-                storage['id'] = obj.id;
-                router.go('home', {});
-            }));
+                loginUser(router, resp);
+            }
         }
         else
         {
-            dom.window.alert('Campos Incompletos');
+            print('Campos Incompletos');
         }
     }
 }

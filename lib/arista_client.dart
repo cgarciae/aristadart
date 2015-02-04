@@ -200,6 +200,12 @@ Future<Resp> pullIDfromList (String collection, String objID, String fieldName, 
 
 dom.FormElement getFormElement (dom.MouseEvent event) => (event.target as dom.ButtonElement).parent as dom.FormElement;
 
+loginUser (Router router, UserAdminResp resp)
+{
+    storage['logged'] = resp.user.id;
+    storage['admin'] = resp.user.admin.toString();
+    router.go ('home', {});
+}
 
 @Injectable()
 class MainController 
@@ -213,23 +219,25 @@ class MainController
         i = this;
     }
     
-    logout ()
+    logout () async
     {
-        requestDecoded(Resp, Method.GET,'user/logout').then((Resp resp)
+        Resp resp = await requestDecoded(Resp, Method.GET,'user/logout');
+        
+        if (resp.success)
         {
-            if (resp.success)
-            {
-                storage.remove('id');
-                
-                router.go('login', {});
-            }
-            else
-            {
-                dom.window.alert("Logout Failed");
-            }
-        });
+            router.go('login', {});
+        }
+        else
+        {
+            print("Logout Failed");
+        }
     }
             
-    bool get isLoggedIn => loggedIn;
+    bool get isLoggedIn
+    {
+        var logged = storage['logged'];
+        
+        return logged != null && logged == true.toString();
+    }
     
 }

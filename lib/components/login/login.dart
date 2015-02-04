@@ -54,9 +54,9 @@ class LoginVista extends ShadowRootAware
     {
         print (encodeJson(user));
         
-        IdResp resp = await jsonRequestDecoded 
+        UserAdminResp resp = await jsonRequestDecoded 
         (
-            IdResp,
+            UserAdminResp,
             Method.POST, 
             'user/login',
             user
@@ -64,26 +64,12 @@ class LoginVista extends ShadowRootAware
         
         if (resp.success)
         {
-            storage['id'] = resp.id;
-            router.go('home', {});
+            loginUser(router, resp);
         }
         else
         {
             print (resp.error);
-            return;
         }
-        
-        BoolResp boolResp = await requestDecoded 
-        (
-            BoolResp,
-            Method.GET, 
-            'user/isadmin'
-        );
-        
-        if (boolResp.success)
-        {
-            storage['admin'] = boolResp.value.toString();
-        }   
     }
     
     nuevoUsuario()
