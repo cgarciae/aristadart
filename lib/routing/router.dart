@@ -34,16 +34,19 @@ void recipeBookRouteInitializer(Router router, RouteViewFactory view)
             {
                 router.go('login', {});
             }
-            else
+            else if (! loggedAdmin) 
             {
+                router.go('home', {});
+            }
+            else{
                 if (onEnter != null)
                     onEnter ();
                 
-                view (route) (e);
+                view (route) (e);                        
             }
         };
     }
-
+    
     view.configure(
     {
         'login': ngRoute
@@ -158,11 +161,9 @@ void recipeBookRouteInitializer(Router router, RouteViewFactory view)
 }
 
 bool get loggedIn => storage['id'] != null;
-set loggedIn (bool value)
-{
-    if (! value)
-        storage['id'] = null;
-}
+bool get loggedAdmin => storage['admin'] != null && storage['admin'] == true.toString(); 
+    
+
 
 checkLogin () async
 {
@@ -189,8 +190,8 @@ checkAdmin () async
      );
     
     if (resp.success)
-        storage['id'] = resp.id;
+        storage['admin'] = true.toString();
     else
-        storage.remove('id');
+        storage.remove('admin');
 }
 
