@@ -78,6 +78,11 @@ class BoolResp extends Resp
     @Field() bool value;
 }
 
+class UserAdminResp extends Resp
+{
+    @Field() UserAdmin user;
+}
+
 class EventoExportableResp extends Resp
 {
     @Field() EventoExportable evento;

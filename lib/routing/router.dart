@@ -1,5 +1,39 @@
 part of arista_client;
 
+Future<bool> get serverUserLoggedIn async
+{
+    Resp resp = await requestDecoded
+    (
+        Resp,
+        Method.GET,
+        'user/loggedin'
+    );
+    
+
+    storage['logged'] = resp.success.toString();
+    
+    
+    return resp.success;
+}
+
+Future<bool> get serverUserAdmin async
+{
+    BoolResp resp = await requestDecoded
+    (
+        BoolResp,
+        Method.GET,
+        'private/user/isadmin'
+    );
+    
+    print ("Is admin? ${resp.value}");
+    
+    var isAdmin = (resp.success && resp.value);
+    
+    storage['admin'] = isAdmin.toString();
+    
+    return isAdmin;
+}
+
 void recipeBookRouteInitializer(Router router, RouteViewFactory view) 
 {
     //TODO: Usar con pre-enter que acepta utilizar Future<bool> y utilizar async
@@ -7,6 +41,8 @@ void recipeBookRouteInitializer(Router router, RouteViewFactory view)
     authenticate (String route, [Function onEnter]) 
     {
         checkLogin();
+        
+        print ("Trying to enter $route");
         
         return (RouteEnterEvent e)
         {
@@ -24,8 +60,60 @@ void recipeBookRouteInitializer(Router router, RouteViewFactory view)
         };
     }
     
+    authenticate2 (RoutePreEnterEvent event)
+    {
+        event.allowEnter (() async
+        {
+            bool logged = await serverUserLoggedIn;
+            
+            if (! logged)
+                router.go
+                (
+                    'login', {},
+                    forceReload: true
+                );
+            
+            return logged;
+        }());          
+    }
+    
+    authenticateAdmin2 (RoutePreEnterEvent event)
+    {
+        event.allowEnter (() async
+        {
+            bool logged = await serverUserLoggedIn;
+            
+            if (! logged)
+            {
+                router.go
+                (
+                    'login', {},
+                    forceReload: true
+                );
+                return false;
+            }
+            
+            bool admin = await serverUserAdmin;
+            
+            print ("Auth admin $admin");
+            
+            if (! admin)
+            {
+                router.go
+                (
+                    'home', {},
+                    forceReload: true
+                );
+                return false;
+            }
+            
+            return true;
+        }());          
+    }
+    
     authenticateAdmin (String route, [Function onEnter])
     {
+        print ("Cheking admin in $route");
         checkAdmin();
         
         return (RouteEnterEvent e) 
@@ -53,21 +141,20 @@ void recipeBookRouteInitializer(Router router, RouteViewFactory view)
         (
             path: '/login',
             defaultRoute: true,
-            enter : (RouteEnterEvent e)
+            enter : view ('view/login_view.html'),
+            preEnter: (RoutePreEnterEvent event)
             {
-                checkLogin();
-                
-                if (loggedIn)
+                event.allowEnter (() async
                 {
-                    print ("go home");
-                    router.go('home', {});
-                }
-                else
-                {     
-                    print ("loggin");
-                    view ('view/login_view.html') (e);
-                }
-               
+                    print ("Loggin in");
+                    
+                    bool logged = await serverUserLoggedIn;
+                    
+                    if (logged)
+                        router.go('home', {}, forceReload: true);
+                    
+                    return ! logged;
+                }());          
             },
             mount: 
             {
@@ -82,46 +169,56 @@ void recipeBookRouteInitializer(Router router, RouteViewFactory view)
         'home': ngRoute
         (
             path: '/home',
-            enter: authenticate ('view/home_view.html')                  
+            enter: view ('view/home_view.html'),
+            preEnter: authenticate2
         ),
                 
         'evento': ngRoute 
         (
             path: '/evento/:eventoID',
-            preEnter: (RoutePreEnterEvent e)
+            preEnter: (RoutePreEnterEvent event)
             {   
-                var id = e.parameters['eventoID'];
+                var id = event.parameters['eventoID'];
                 
                 if (id == null)
-                    router.go('home', {});
+                {
+                    router.go('home', {}, forceReload: true);
+                    return;
+                }
+                
+                authenticate2 (event);
                 
             },
-            enter: authenticate ('view/evento_view.html')
+            enter: view ('view/evento_view.html')
         ),
         
         'vista' : ngRoute
         (
             path: '/vista/:eventoID/:vistaID',
-            preEnter: (RoutePreEnterEvent e)
+            preEnter: (RoutePreEnterEvent event)
             {   
-                e.parameters.keys.forEach(print);
+                event.parameters.keys.forEach(print);
                 
-                var eventoID = e.parameters['eventoID'];
-                var viewID = e.parameters['vistaID'];
+                var eventoID = event.parameters['eventoID'];
+                var viewID = event.parameters['vistaID'];
                 
                 if (viewID == null || eventoID == null)
                 {
                     dom.window.alert("eventoID $eventoID, viewID $viewID");
-                    router.go('home', {});
+                    router.go('home', {}, forceReload: true);
+                    return;
                 }
+                
+                authenticate2(event);
             },
-            enter: authenticate ('view/vista_view.html')
+            enter: view ('view/vista_view.html')
         ),
         
         'admin' : ngRoute
         (
             path: '/admin',
-            enter: authenticateAdmin('view/admin.html') 
+            enter: view('view/admin.html'),
+            preEnter: authenticateAdmin2
         ),
         
         'A' : ngRoute 
@@ -158,11 +255,7 @@ void recipeBookRouteInitializer(Router router, RouteViewFactory view)
         )
         
   });
-}
-
-bool get loggedIn => storage['id'] != null;
-bool get loggedAdmin => storage['admin'] != null && storage['admin'] == true.toString(); 
-    
+} 
 
 
 checkLogin () async
@@ -186,7 +279,7 @@ checkAdmin () async
     (
          IdResp,
          Method.GET,
-         "user/isadmin"
+         "private/user/isadmin"
      );
     
     if (resp.success)

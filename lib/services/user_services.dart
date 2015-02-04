@@ -21,6 +21,8 @@ addUser(@app.Attr() MongoDb dbConn, @Decode() UserComplete user) async
             ..error = "User Exists";
     }    
 
+    var plainPassword = user.password;
+    
     user.id = new ObjectId().toHexString();
     user.password = encryptPassword (user.password);
     user.admin = false;
@@ -28,9 +30,13 @@ addUser(@app.Attr() MongoDb dbConn, @Decode() UserComplete user) async
           
     await dbConn.insert(Col.user, user);
 
-    return new IdResp()
-        ..success = true
-        ..id = user.id;
+    return login 
+    (   
+        dbConn, 
+        new UserSecure()
+            ..email = user.email
+            ..password = plainPassword
+    );
 }
 
 @app.Route("/user/login", methods: const[app.POST])
@@ -73,9 +79,14 @@ login(@app.Attr() MongoDb dbConn, @Decode() UserSecure user) async
     
     session["roles"] = roles;
     
-    return new IdResp()
+    return new UserAdminResp()
         ..success = true
-        ..id = foundUser.id;
+        ..user = (new UserAdmin()
+            ..id = foundUser.id
+            ..admin = foundUser.admin
+            ..email = foundUser.email
+            ..nombre = foundUser.nombre
+            ..apellido = foundUser.apellido);
 }
 
 @app.Route ('/private/user/isadmin')

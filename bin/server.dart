@@ -59,8 +59,8 @@ authenticationFilter ()
     {
         app.chain.interrupt 
         (
-                statusCode : HttpStatus.UNAUTHORIZED,
-                responseValue : {"error": "NOT_AUTHENTICATED"}
+            statusCode : HttpStatus.UNAUTHORIZED,
+            responseValue : {"error": "NOT_AUTHENTICATED"}
         );
     } 
     else 
