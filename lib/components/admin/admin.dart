@@ -2,7 +2,7 @@ part of arista_client;
 
 @Component
 (
-    selector : "admin",
+    selector : 'admin',
     templateUrl: 'components/admin/admin.html',
     useShadowDom: false
 )

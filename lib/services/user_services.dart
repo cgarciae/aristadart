@@ -80,7 +80,7 @@ login(@app.Attr() MongoDb dbConn, @Decode() UserSecure user) async
 
 @app.Route ('/private/user/isadmin')
 @Encode()
-idAdmin ()
+isAdmin ()
 {
     try
     {   
