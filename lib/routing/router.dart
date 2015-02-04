@@ -26,25 +26,24 @@ void recipeBookRouteInitializer(Router router, RouteViewFactory view)
     
     authenticateAdmin (String route, [Function onEnter])
     {
-        return (RouteEnterEvent e) async
+        checkAdmin();
+        
+        return (RouteEnterEvent e) 
         {
-            if (! await loggedIn)
+            if (! loggedIn)
             {
                 router.go('login', {});
             }
-            else if (! await loggedAdmin) 
+            else
             {
-                router.go('home', {});
-            }
-            else{
                 if (onEnter != null)
                     onEnter ();
                 
-                view (route) (e);                        
+                view (route) (e);
             }
         };
     }
-    
+
     view.configure(
     {
         'login': ngRoute
@@ -179,16 +178,19 @@ checkLogin () async
     else
         storage.remove('id');
 }
-//var userCollection = conn.collection("user");
-Future<bool> get loggedAdmin async{
-    BoolResp resp = await requestDecoded(
-             BoolResp,
-             Method.GET,
-             '/private/user/isadmin');
+
+checkAdmin () async
+{
+    IdResp resp = await requestDecoded
+    (
+         IdResp,
+         Method.GET,
+         "user/isadmin"
+     );
     
-    if( resp.success)
-        return resp.value;
+    if (resp.success)
+        storage['id'] = resp.id;
     else
-        return false;
+        storage.remove('id');
 }
 
