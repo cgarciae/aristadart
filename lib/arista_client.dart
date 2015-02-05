@@ -16,6 +16,7 @@ part 'components/login/nuevo_usuario.dart';
 part 'components/home/home.dart';
 part 'routing/router.dart';
 part 'components/admin/admin.dart';
+part 'components/admin/model.dart';
 
 dom.Storage get storage => dom.window.localStorage;
 

@@ -12,4 +12,10 @@ class AdminVista{
     AdminVista(this.router){
         
     }
+    
+    goModel ()
+        {
+            router.go('model',{});
+        }
+    
 }

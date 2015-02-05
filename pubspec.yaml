@@ -25,3 +25,4 @@ transformers:
     - lib/components/evento/evento.html
     - lib/components/vista/vista.html
     - lib/components/admin/admin.html
+    - lib/components/admin/model.html

@@ -5,15 +5,28 @@
         <!--<div ng-repeat="modelo in vistas"> -->
          <fieldset>
          <div class="row medium-uncollapse large-collapse">
-            <h2>
+            <h3>
                 <!--{{modelo.name}} -->
                 Nombre modelo
-            </h2>
+            </h3>
             <br>
             <a class="button radius secondary left tiny" ng-click="descargarModelo">Download User Model</a>
             <!--<p>Versión modelo: {{modelo.version}}</p>-->
             <p> Versión modelo: #001</p>
             <br>
+            
+            <div class="small-6 columns">
+                <h3>Info Usuario</h3>
+                <br>
+                <div class="large-4 columns">
+                    <p>foto de perfil</p>
+                  <!-- <img alt="foto perfil" ng-src="{{}}"> -->
+                </div>
+                <div class="large-8 columns">
+                    <p>Nombre de usuario</p>
+                    <p>Correo</p>
+                </div>
+            </div>
             <div class="small-6 columns">
                 <h3>Imágen preview</h3>
                 <br>
