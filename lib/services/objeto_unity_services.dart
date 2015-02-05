@@ -1,10 +1,16 @@
 part of arista_server;
 
+//POST private/objetounity () -> ObjetoUnitySendResp
+//PUT private/objetounity (json ObjetoUnity) -> Resp
+//GET private/objetounity/:id () -> ObjetoUnitySendResp
+//DELETE private/objetounity/:id () -> Resp
+//POST|PUT private/objetounity/:id/userfile (form) ->
+//ADMIN >> POST|PUT private/objetounity/:id/modelfile/:system (form FormElement) -> ObjetoUnitySendResp
+//GET private/user/objetounitymodels () -> ObjetoUnitySendListResp
 
-@app.Route('/private/objetounity', methods: const [app.POST])
-@Encode()
+
 newObjetoUnity (@app.Attr() MongoDb dbConn) async
-{
+{   
     try
     {
         var obj = new ObjetoUnitySend()
@@ -109,18 +115,32 @@ deleteObjetoUnity (@app.Attr() MongoDb dbConn, String id) async
 }
 
 
-@app.Route('/private/objetounity/:id/userfile', methods: const [app.POST], allowMultipartRequest: true)
+@app.Route('/private/objetounity/:id/userfile', methods: const [app.POST, app.PUT], allowMultipartRequest: true)
 @Encode()
-postObjetoUnityUserFile (@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, String id) async
+postOrPutObjetoUnityUserFile (@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, String id) async
 {
     try
     {
-        Resp resp = await newFile(dbConn, form);
-        IdResp idResp = resp as IdResp;
+        Resp resp;
+        IdResp idResp;
         
-        if (! resp.success || idResp == null)
+        var respObj = await getObjetoUnity(dbConn, id);
+        
+        if (respObj is ObjetoUnitySendResp && respObj.success)
+        {
+            var fileID = respObj.obj.userFileId;
+            resp = await updateFile (dbConn, form, fileID);
+        }
+        else
+        {
+            resp = await newFile(dbConn, form);
+        }
+        
+        
+        if (! resp.success)
             return resp;
         
+        idResp = resp as IdResp;
         
         await dbConn.update
         (
@@ -134,37 +154,7 @@ postObjetoUnityUserFile (@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map for
             }
         );
         
-        return idResp;    
-    }
-    catch (e, stacktrace)
-    {
-        return new Resp()
-            ..success = false
-            ..error = e.toString() + stacktrace.toString();
-    }
-}
-
-@app.Route('/private/objetounity/:id/userfile/:fileId', methods: const [app.PUT], allowMultipartRequest: true)
-@Encode()
-putObjetoUnityUserFile (@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, String id, String fileId) async
-{
-    try
-    {
-        var resp = await updateFile(dbConn, form, fileId);
-        
-        await dbConn.update
-        (
-            Col.objetoUnity,
-            where.id (StringToId (id)),
-            {
-                r'$set' : 
-                {
-                    'updatePending' : true
-                }
-            }
-        );
-        
-        return resp;
+        return idResp; 
     }
     catch (e, stacktrace)
     {
@@ -249,12 +239,12 @@ Future newOrUpdateObjetoUnityModelFile (@app.Attr() MongoDb dbConn, @app.Body(ap
 {
     try
     {
-        ObjetoUnitySendResp objResp = await getObjetoUnity(dbConn, id);
+        Resp objResp = await getObjetoUnity(dbConn, id);
                 
         if (! objResp.success)
             return objResp;
         
-        ObjetoUnitySend obj = objResp.obj;
+        ObjetoUnitySend obj = (objResp as ObjetoUnitySendResp).obj;
         
         Resp resp = await saveOrUpdateModelFile (dbConn, form, obj, system);
         
@@ -303,3 +293,5 @@ userModels (@app.Attr() MongoDb dbConn) async
             ..error = e.toString() + stacktrace.toString();
     }
 }
+
+//TODO: New or Update ObjetoUnitySend.screenshotId
