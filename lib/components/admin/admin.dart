@@ -15,7 +15,7 @@ class AdminVista{
     
     goModel ()
         {
-            router.go('model',{});
+            router.go('adminModel',{});
         }
     
 }
