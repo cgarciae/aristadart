@@ -51,6 +51,12 @@ class Resp
 {
     @Field() bool success;
     @Field() String error;
+    
+    Resp();
+    
+    Resp.sucess() : success = true;
+    
+    Resp.failed (this.error);
 }
 
 class VistasResp extends Resp
@@ -76,6 +82,11 @@ class IdResp extends Resp
 class BoolResp extends Resp
 {
     @Field() bool value;
+}
+
+class UserResp extends Resp
+{
+    @Field() User user;
 }
 
 class UserAdminResp extends Resp
