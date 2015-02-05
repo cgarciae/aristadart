@@ -51,6 +51,12 @@ class Resp
 {
     @Field() bool success;
     @Field() String error;
+    
+    Resp();
+    
+    Resp.sucess() : success = true;
+    
+    Resp.failed (this.error);
 }
 
 class VistasResp extends Resp

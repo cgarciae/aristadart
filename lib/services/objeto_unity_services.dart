@@ -4,10 +4,9 @@ part of arista_server;
 //PUT private/objetounity (json ObjetoUnity) -> Resp
 //GET private/objetounity/:id () -> ObjetoUnitySendResp
 //DELETE private/objetounity/:id () -> Resp
-//POST|PUT private/objetounity/:id/userfile (form) ->
+//POST|PUT private/objetounity/:id/userfile (form FormElement) ->
 //ADMIN >> POST|PUT private/objetounity/:id/modelfile/:system (form FormElement) -> ObjetoUnitySendResp
 //GET private/user/objetounitymodels () -> ObjetoUnitySendListResp
-
 
 newObjetoUnity (@app.Attr() MongoDb dbConn) async
 {   
@@ -145,13 +144,11 @@ postOrPutObjetoUnityUserFile (@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Ma
         await dbConn.update
         (
             Col.objetoUnity,
-            where.id (StringToId (id)),
-            {
-                r'$set' : {
-                    'userFileId' : StringToId (idResp.id),
-                    'updatePending' : true
-                }
-            }
+            where
+                .id (StringToId (id)),
+            modify
+                .set('userFileId', StringToId (idResp.id))
+                .set('updatePending', true)
         );
         
         return idResp; 
@@ -232,6 +229,98 @@ Future saveOrUpdateModelFile (MongoDb dbConn, Map form, ObjetoUnitySend obj, Str
     return idResp;   
 }
 
+newOrUpdateScreenshot (MongoDb dbConn, Map form, ObjetoUnitySend obj) async
+{
+    Resp resp;
+    IdResp idResp;
+    
+    if (notNullOrEmpty (obj.screenshotId))
+    {
+        resp = await updateFile(dbConn, form, obj.screenshotId);
+    }
+    else
+    {
+        resp = await newFile(dbConn, form);
+    }
+    
+    idResp = resp as IdResp;
+    
+    if (idResp == null)
+        return resp;
+    
+    obj.screenshotId =  idResp.id;
+    
+    await dbConn.update
+    (
+        Col.objetoUnity,
+        where.id (StringToId (obj.id)), 
+        modify.set ('screenshotId', StringToId (idResp.id))
+    );
+    
+    return idResp;
+}
+
+@app.Route ('/private/objetounity/:id/screenshot', methods: const [app.POST, app.PUT], allowMultipartRequest: true)
+@Encode ()
+@Secure (ADMIN)
+Future newOrUpdateObjetoUnityScreenshot (@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, String id) async
+{
+    try
+    {
+        ObjetoUnitySendResp objResp;
+        IdResp idResp;
+        Resp resp = await getObjetoUnity(dbConn, id);
+                
+        if (! resp.success)
+            return resp;
+        
+        objResp = resp as ObjetoUnitySendResp;
+        
+        //Updates screenshotId, return IdResp
+        return newOrUpdateScreenshot (dbConn, form, objResp.obj);
+    }
+    catch (e, stacktrace)
+    {
+        return new Resp.failed
+        (
+            e.toString() + stacktrace.toString()
+        );
+    }
+}
+
+@app.Route ('/private/objetounity/:id/publish', methods: const [app.GET])
+@Encode ()
+@Secure (ADMIN)
+Future publishObjetoUnity (@app.Attr() MongoDb dbConn, String id) async
+{
+    ObjetoUnitySendResp objResp;
+    
+    Resp resp = await getObjetoUnity(dbConn, id);
+    
+    if (! resp.success)
+        return resp;
+    
+    objResp = resp as ObjetoUnitySendResp;
+    
+    if (! objResp.obj.active)
+        return new Resp.failed
+        (
+            "Object Unity is not active"
+        );
+    
+    await dbConn.update
+    (
+        Col.objetoUnity,
+        where.id(StringToId(id)),
+        modify
+            .set('updatePending', false)
+            .inc('version', 1)
+    );
+    
+    return new Resp.sucess();
+}
+
+
 @app.Route('/private/objetounity/:id/modelfile/:system', methods: const [app.POST, app.PUT], allowMultipartRequest: true)
 @Encode()
 @Secure(ADMIN)
@@ -294,4 +383,29 @@ userModels (@app.Attr() MongoDb dbConn) async
     }
 }
 
-//TODO: New or Update ObjetoUnitySend.screenshotId
+@app.Route ('/private/objetounity/pending', methods: const [app.GET], allowMultipartRequest: true)
+@Encode ()
+@Secure (ADMIN)
+Future getObjetoUnityPending (@app.Attr() MongoDb dbConn) async
+{
+    try
+    {
+        List<ObjetoUnitySend> objs = await dbConn.find
+        (
+            Col.objetoUnity,
+            ObjetoUnitySend,
+            where
+                .eq ('updatePending', true)
+        );
+        
+        return new ObjetoUnitySendListResp()
+            ..success = true
+            ..objs = objs;
+    }
+    catch (e, stacktrace)
+    {
+        return new Resp()
+            ..success = false
+            ..error = e.toString() + stacktrace.toString();
+    }
+}
