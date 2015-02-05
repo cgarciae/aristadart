@@ -46,7 +46,7 @@ class ModelVista{
         
     }
     
-    uploadModel(ObjetoUnitySend obj, String system, dom.MouseEvent event) async
+    uploadModel(ModelAdminInfo info, String system, dom.MouseEvent event) async
     {
         dom.FormElement form = getFormElement (event);
         
@@ -54,9 +54,13 @@ class ModelVista{
         (   
             ObjetoUnitySendResp,
             Method.PUT,
-            'private/objetounity/${obj.modelIdWindows}/modelfile/${system}',
+            'private/objetounity/${info.model.modelIdWindows}/modelfile/${system}',
             form
         );
+        
+        if(!resp.success)
+            return resp.error;
+        info.model = resp.obj; 
     }
 }
 
