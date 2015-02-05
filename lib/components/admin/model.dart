@@ -8,35 +8,83 @@ part of arista_client;
 )
 class ModelVista{
     
-    List<ModelAdminInfo> modelos = [ ];
+    List<ModelAdminInfo> infoList = [ ];
     
     Router router;
     ModelVista(this.router){
-        getModels();
+        setModels();
     }
     
-    getModels() async
+    setModels() async
     {
-        ObjetoUnitySendListResp resp = await requestDecoded(ObjetoUnitySendListResp, Method.GET, ''); //falta ruta
+        ObjetoUnitySendListResp resp = await requestDecoded
+        (
+            ObjetoUnitySendListResp,
+            Method.GET,
+            'private/objetounity/pending'
+        );
         if(! resp.success){
             return print(resp.error);
         }
         for( ObjetoUnitySend obj in resp.objs ){
             ModelAdminInfo info = new ModelAdminInfo();
             info.model = obj;
-            User resp1 = await requestDecoded(User, Method.GET, '');
+            UserResp userResp = await requestDecoded
+            (
+                UserResp,
+                Method.GET,
+                'user/${obj.owner}'
+            );
+            if(! userResp.success)
+            {
+                print(userResp.error);
+                continue;
+            }
+            info.user = userResp.user;
+            infoList.add(info);
         }
-    }
-    
-    Future<User> getUser(ObjetoUnitySend modelo) async
-    {
         
-        return await requestDecoded(User, Method.GET, '/user/${modelo.owner}');
     }
     
-    uploadModel(String system) async
+    uploadModel(ObjetoUnitySend obj, String system) async
     {
-        await requestDecoded(ObjetoUnitySendResp, Method.PUT, 'private/objetounity/:id/{{modelo}}/{{system}}');//ojo con id y modelfile
+        switch ( system )
+        {
+            case 'ios':
+                await requestDecoded
+                (
+                    ObjetoUnitySendResp,
+                    Method.PUT,
+                    'private/objetounity/${obj.modelIdIOS}/modelfile/${system}'
+                );//ojo con id y modelfile
+                break;
+            case 'mac':
+                await requestDecoded
+                (
+                    ObjetoUnitySendResp,
+                    Method.PUT,
+                    'private/objetounity/${obj.modelIdMAC}/modelfile/${system}'
+                );
+                break;
+            case 'android':
+                await requestDecoded
+                (
+                    ObjetoUnitySendResp,
+                    Method.PUT,
+                    'private/objetounity/${obj.modelIdAndroid}/modelfile/${system}'
+                );
+                break;
+            case 'windows':
+                await requestDecoded
+                (
+                    ObjetoUnitySendResp,
+                    Method.PUT,
+                    'private/objetounity/${obj.modelIdWindows}/modelfile/${system}'
+                );
+                break;
+            default:
+                break; 
+        }   
     }
 }
 
