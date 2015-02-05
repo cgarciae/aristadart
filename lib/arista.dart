@@ -84,6 +84,11 @@ class BoolResp extends Resp
     @Field() bool value;
 }
 
+class UserResp extends Resp
+{
+    @Field() User user;
+}
+
 class UserAdminResp extends Resp
 {
     @Field() UserAdmin user;
