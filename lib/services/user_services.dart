@@ -5,7 +5,7 @@ part of arista_server;
 //A public service. Anyone can create a new user
 @app.Route("/user", methods: const[app.POST])
 @Encode()
-addUser(@app.Attr() MongoDb dbConn, @Decode() UserComplete user) async
+postUser(@app.Attr() MongoDb dbConn, @Decode() UserComplete user) async
 {   
     UserComplete foundUser = await dbConn.findOne 
     (
@@ -37,6 +37,28 @@ addUser(@app.Attr() MongoDb dbConn, @Decode() UserComplete user) async
             ..email = user.email
             ..password = plainPassword
     );
+}
+
+//A public service. Anyone can create a new user
+@app.Route("/user/:id", methods: const[app.POST])
+@Encode()
+getUser(@app.Attr() MongoDb dbConn, String id) async
+{
+    User user = await dbConn.findOne
+    (
+        Col.user,
+        User,
+        where
+            .id(StringToId(id))
+    );
+    
+    if (user == null)
+        return new Resp.failed("User not found");
+    
+        
+    return new UserResp()
+        ..success = true
+        ..user = user;
 }
 
 @app.Route("/user/login", methods: const[app.POST])
