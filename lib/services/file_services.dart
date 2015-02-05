@@ -55,18 +55,27 @@ Future<Resp> deleteFile(@app.Attr() MongoDb dbConn, String fileID) async
 @Encode()
 Future<Resp> updateFile(@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, String fileID) async
 {
-    HttpBodyFileUpload file = form ['file'];
-    var gridFS = new GridFS (dbConn.innerConn);
-    var input = new Stream.fromIterable([file.content]);
+    try
+    {
+        HttpBodyFileUpload file = form ['file'];
+        var gridFS = new GridFS (dbConn.innerConn);
+        var input = new Stream.fromIterable([file.content]);
+            
+        var gridIn = gridFS.createFile(input, file.filename)
+            ..id = StringToId (fileID)
+            ..contentType = file.contentType.value;
         
-    var gridIn = gridFS.createFile(input, file.filename)
-        ..id = StringToId (fileID)
-        ..contentType = file.contentType.value;
+        await deleteFile (dbConn, fileID);
+        await gridIn.save();
     
-    await deleteFile (dbConn, fileID);
-    await gridIn.save();
-
-    return new IdResp()
-        ..success = true
-        ..id = gridIn.id.toHexString();
+        return new IdResp()
+            ..success = true
+            ..id = gridIn.id.toHexString();
+    }
+    catch (e, stacktrace)
+    {
+        return new Resp()
+            ..success = false
+            ..error = e.toString() + stacktrace.toString();
+    }
 }

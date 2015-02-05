@@ -6,8 +6,9 @@ part of arista_server;
 @Encode()
 Future<IdResp> newEvent(@app.Attr() MongoDb dbConn) async
 {
-    var evento = new Evento()
-        ..id = new ObjectId().toHexString();
+    EventoCompleto evento = new EventoCompleto()
+        ..id = new ObjectId().toHexString()
+        ..active = false;
 
     await dbConn.insert (Col.evento, evento);
 
@@ -22,7 +23,7 @@ Future<IdResp> newEvent(@app.Attr() MongoDb dbConn) async
     (
         Col.user,
         where.id (userId), 
-        modify.push('eventos', evento.id)
+        modify.push ('eventos', StringToId (evento.id))
     );
 
     return new IdResp()

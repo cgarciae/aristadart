@@ -35,3 +35,12 @@ Future<Resp> pushIdToList(@app.Attr() MongoDb dbConn, String collection, String 
     return new Resp()
         ..success = true;
 }
+
+@app.Route('/private/query/:collection', methods: const [app.POST])
+@Secure(ADMIN)
+queryCollection (@app.Attr() MongoDb dbConn, @app.Body(app.JSON) Map query, String collection)
+{
+    return dbConn.collection (collection)
+            .find(query)
+            .toList();
+}

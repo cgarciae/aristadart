@@ -62,6 +62,7 @@ class HomeVista
     
     ver (Evento e)
     {
+        print ("VER EVENTO");
         router.go('evento', {'eventoID': e.id});
     }
     
@@ -69,17 +70,15 @@ class HomeVista
     {
         event.stopImmediatePropagation();
         
-        deleteFromCollection ('evento', e.id)
-        .then(doIfSuccess((Resp resp)
+        () async
         {
-            return removeEvento (e);
-        }));
-    }
+            print ("ELIMINAR");
+            
+            Resp resp = await deleteFromCollection ('evento', e.id);
     
-    Future removeEvento (Evento e)
-    {
-        return pullIDfromList('user', storage['id'], 'eventos', e.id)
-        .then(doIfSuccess ((Resp resp) => eventos.remove(e)));
+            if (resp.success)
+                eventos.remove (e);
+        }();
     }
     
 //    upload (dom.MouseEvent event)

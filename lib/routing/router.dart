@@ -36,29 +36,7 @@ Future<bool> get serverUserAdmin async
 
 void recipeBookRouteInitializer(Router router, RouteViewFactory view) 
 {
-    //TODO: Usar con pre-enter que acepta utilizar Future<bool> y utilizar async
     
-    authenticate (String route, [Function onEnter]) 
-    {
-        checkLogin();
-        
-        print ("Trying to enter $route");
-        
-        return (RouteEnterEvent e)
-        {
-            if (! loggedIn)
-            {
-                 router.go('login', {});
-            }
-            else
-            {
-                if (onEnter != null)
-                    onEnter ();
-                
-                view (route) (e);
-            }
-        };
-    }
     
     authenticate2 (RoutePreEnterEvent event)
     {
@@ -109,30 +87,6 @@ void recipeBookRouteInitializer(Router router, RouteViewFactory view)
             
             return true;
         }());          
-    }
-    
-    authenticateAdmin (String route, [Function onEnter])
-    {
-        print ("Cheking admin in $route");
-        checkAdmin();
-        
-        return (RouteEnterEvent e) 
-        {
-            if (! loggedIn)
-            {
-                router.go('login', {});
-            }
-            else if (! loggedAdmin) 
-            {
-                router.go('home', {});
-            }
-            else{
-                if (onEnter != null)
-                    onEnter ();
-                
-                view (route) (e);                        
-            }
-        };
     }
     
     view.configure(
