@@ -46,45 +46,17 @@ class ModelVista{
         
     }
     
-    uploadModel(ObjetoUnitySend obj, String system) async
+    uploadModel(ObjetoUnitySend obj, String system, dom.MouseEvent event) async
     {
-        switch ( system )
-        {
-            case 'ios':
-                await requestDecoded
-                (
-                    ObjetoUnitySendResp,
-                    Method.PUT,
-                    'private/objetounity/${obj.modelIdIOS}/modelfile/${system}'
-                );//ojo con id y modelfile
-                break;
-            case 'mac':
-                await requestDecoded
-                (
-                    ObjetoUnitySendResp,
-                    Method.PUT,
-                    'private/objetounity/${obj.modelIdMAC}/modelfile/${system}'
-                );
-                break;
-            case 'android':
-                await requestDecoded
-                (
-                    ObjetoUnitySendResp,
-                    Method.PUT,
-                    'private/objetounity/${obj.modelIdAndroid}/modelfile/${system}'
-                );
-                break;
-            case 'windows':
-                await requestDecoded
-                (
-                    ObjetoUnitySendResp,
-                    Method.PUT,
-                    'private/objetounity/${obj.modelIdWindows}/modelfile/${system}'
-                );
-                break;
-            default:
-                break; 
-        }   
+        dom.FormElement form = getFormElement (event);
+        
+        ObjetoUnitySendResp resp = await formRequestDecoded
+        (   
+            ObjetoUnitySendResp,
+            Method.PUT,
+            'private/objetounity/${obj.modelIdWindows}/modelfile/${system}',
+            form
+        );
     }
 }
 
