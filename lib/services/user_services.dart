@@ -40,7 +40,7 @@ postUser(@app.Attr() MongoDb dbConn, @Decode() UserComplete user) async
 }
 
 //A public service. Anyone can create a new user
-@app.Route("/user/:id", methods: const[app.POST])
+@app.Route("/user/:id", methods: const[app.GET])
 @Encode()
 getUser(@app.Attr() MongoDb dbConn, String id) async
 {

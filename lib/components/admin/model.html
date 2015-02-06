@@ -10,7 +10,11 @@
                 Nombre modelo
             </h3>
             <br>
-            <a class="button radius secondary left tiny" ng-click="descargarModelo">Download User Model</a>
+            <a  class="button radius secondary left tiny"
+                ng-href="{{'public/file/'+info.model.userFileId}}"
+                target="_blank" >
+                Download User Model
+            </a>
             <p>Versión modelo: Nº{{info.model.version}}</p>
             <br>
             <div class="small-6 columns">
@@ -26,7 +30,7 @@
                          Choose a file to upload: <input name="file" type="file"><br>
                          <button class="button tiny radius" ng-click="upload ($event)">Upload</button>
                          <h5>{{info.user.nombre}} {{info.user.apellido}}</h5>
-                         <h5>{{info.user.correo}}</h5>
+                         <h5>{{info.user.email}}</h5>
                     </form>
                 </div>
             </div>
