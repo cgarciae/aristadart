@@ -125,13 +125,19 @@ postOrPutObjetoUnityUserFile (@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Ma
     {
         Resp resp;
         IdResp idResp;
+        ObjetoUnitySendResp objResp;
         
-        var respObj = await getObjetoUnity(dbConn, id);
+        resp = await getObjetoUnity(dbConn, id);
         
-        if (respObj is ObjetoUnitySendResp && respObj.success)
+        if (! resp.success)
+            return resp;
+        
+        objResp = resp as ObjetoUnitySendResp;
+        
+        if (notNullOrEmpty (objResp.obj.userFileId))
         {
-            var fileID = respObj.obj.userFileId;
-            resp = await updateFile (dbConn, form, fileID);
+            resp = await updateFile 
+                    (dbConn, form, objResp.obj.userFileId);
         }
         else
         {
