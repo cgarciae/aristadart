@@ -33,11 +33,10 @@
                             <form enctype="multipart/form-data" method="POST">
                                  Choose a file to upload: <input name="file" type="file"><br>
                                  <button class="button tiny" ng-click="uploadObjetoUnityUserFile ($event)">Upload</button>
-                                 <p class="button tiny"
-                                    ng-href = "{{vista.modelo.url_objeto}}" 
-                                    target="_blank">
-                                    Download
-                                </p>
+                                 <a class="button tiny" ng-href = "{{vista.modelo.url_objeto}}" 
+                                target="_blank">
+                                Download
+                            </a>
                             </form>
                         </li>
                        <!-- <li><label>Versión:</label> <input type="number" ng-model="vista.modelo.version"></li> -->

@@ -171,7 +171,14 @@ void recipeBookRouteInitializer(Router router, RouteViewFactory view)
         'admin' : ngRoute
         (
             path: '/admin',
-            enter: view('view/admin.html'),
+            enter: view('view/admin_view.html'),
+            preEnter: authenticateAdmin2
+        ),
+        
+        'adminModel' : ngRoute
+        (
+            path: '/admin/model',
+            enter: view('view/model_view.html'),
             preEnter: authenticateAdmin2
         ),
         
