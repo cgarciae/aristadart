@@ -8,6 +8,9 @@ part of arista_server;
 //ADMIN >> POST|PUT private/objetounity/:id/modelfile/:system (form FormElement) -> ObjetoUnitySendResp
 //GET private/user/objetounitymodels () -> ObjetoUnitySendListResp
 
+
+@app.Route('/private/objetounity', methods: const [app.POST])
+@Encode()
 newObjetoUnity (@app.Attr() MongoDb dbConn) async
 {   
     try
@@ -229,6 +232,44 @@ Future saveOrUpdateModelFile (MongoDb dbConn, Map form, ObjetoUnitySend obj, Str
     return idResp;   
 }
 
+@app.Route('/private/objetounity/:id/modelfile/:system', methods: const [app.POST, app.PUT], allowMultipartRequest: true)
+@Encode()
+@Secure(ADMIN)
+Future newOrUpdateObjetoUnityModelFile (@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, String id, String system) async
+{
+    try
+    {
+        Resp objResp = await getObjetoUnity(dbConn, id);
+                
+        if (! objResp.success)
+            return objResp;
+        
+        ObjetoUnitySend obj = (objResp as ObjetoUnitySendResp).obj;
+        
+        Resp resp = await saveOrUpdateModelFile (dbConn, form, obj, system);
+        
+        if (! resp.success)
+            return resp;
+        
+        await dbConn.update
+        (
+            Col.objetoUnity,
+            where.id (StringToId (id)),
+            obj,
+            override: false
+        );
+        
+        return objResp;
+        
+    }
+    catch (e, stacktrace)
+    {
+        return new Resp()
+            ..success = false
+            ..error = e.toString() + stacktrace.toString();
+    }
+}
+
 newOrUpdateScreenshot (MongoDb dbConn, Map form, ObjetoUnitySend obj) async
 {
     Resp resp;
@@ -321,42 +362,7 @@ Future publishObjetoUnity (@app.Attr() MongoDb dbConn, String id) async
 }
 
 
-@app.Route('/private/objetounity/:id/modelfile/:system', methods: const [app.POST, app.PUT], allowMultipartRequest: true)
-@Encode()
-@Secure(ADMIN)
-Future newOrUpdateObjetoUnityModelFile (@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, String id, String system) async
-{
-    try
-    {
-        Resp objResp = await getObjetoUnity(dbConn, id);
-                
-        if (! objResp.success)
-            return objResp;
-        
-        ObjetoUnitySend obj = (objResp as ObjetoUnitySendResp).obj;
-        
-        Resp resp = await saveOrUpdateModelFile (dbConn, form, obj, system);
-        
-        if (! resp.success)
-            return resp;
-        
-        await dbConn.update
-        (
-            Col.objetoUnity,
-            where.id (StringToId (id)),
-            obj
-        );
-        
-        return objResp;
-        
-    }
-    catch (e, stacktrace)
-    {
-        return new Resp()
-            ..success = false
-            ..error = e.toString() + stacktrace.toString();
-    }
-}
+
 
 @app.Route('/private/user/objetounitymodels', methods: const [app.GET])
 @Encode()
