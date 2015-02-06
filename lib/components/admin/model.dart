@@ -60,11 +60,14 @@ class ModelVista{
         
         if(!resp.success)
             return resp.error;
-        info.model = resp.obj; 
+        info.model = resp.obj;
+        print('completo??'+resp.success.toString());
+        info.success = resp.success;
     }
 }
 
 class ModelAdminInfo{
     ObjetoUnitySend model;
     User user;
+    bool success = false; 
 }
