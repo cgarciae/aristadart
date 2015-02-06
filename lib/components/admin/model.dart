@@ -9,9 +9,10 @@ part of arista_client;
 class ModelVista{
     
     List<ModelAdminInfo> infoList = [ ];
-    
     Router router;
-    ModelVista(this.router){
+    
+    ModelVista(this.router)
+    {
         setModels();
     }
     
@@ -28,6 +29,8 @@ class ModelVista{
         {
             return print(resp.error);
         }
+        
+        infoList.clear();
         
         for( ObjetoUnitySend obj in resp.objs )
         {
@@ -73,13 +76,28 @@ class ModelVista{
             form
         );
         
-        print ("Resp: ${encodeJson(resp)}");
-        
         if(! resp.success)
             return print (resp.error);
         
+        
         info.model = resp.obj;
         info.success = resp.success;
+    }
+    
+    publish (ModelAdminInfo info) async
+    {
+        
+        Resp resp = await requestDecoded
+        (
+            Resp,
+            Method.GET,
+            'private/objetounity/${info.model.id}/publish'
+        );
+        
+        if (resp.success)
+            setModels();
+        else
+            print (resp.error);
     }
 }
 
