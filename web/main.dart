@@ -46,6 +46,7 @@ class ListInt
 
 void main()
 {
+    
     bootstrapMapper();
 
     Logger.root.level = Level.FINEST;
@@ -55,4 +56,5 @@ void main()
         .addModule(new MyAppModule())
         .rootContextType (MainController)
         .run();
+
 }

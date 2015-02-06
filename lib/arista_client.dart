@@ -238,6 +238,12 @@ class MainController
             
     bool get isLoggedIn => loggedIn;
     
+
+
+    go2home(){
+        router.go('home',{});
+    }
+    
 }
 
 bool get loggedIn => storage['logged'] == true.toString();
