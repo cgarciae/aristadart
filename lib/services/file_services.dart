@@ -25,6 +25,10 @@ getFile(@app.Attr() MongoDb dbConn, String fileID) async
 newFile(@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form) async
 {
     HttpBodyFileUpload file = form ['file'];
+    
+    if (file == null || file.content == null || file.content.length == 0)
+        return new Resp.failed("Empty File");
+    
     var gridFS = new GridFS (dbConn.innerConn);
     
     var input = new Stream.fromIterable([file.content]);
@@ -58,6 +62,10 @@ Future<Resp> updateFile(@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form
     try
     {
         HttpBodyFileUpload file = form ['file'];
+        
+        if (file == null || file.content == null || file.content.length == 0)
+                return new Resp.failed("Empty File");
+        
         var gridFS = new GridFS (dbConn.innerConn);
         var input = new Stream.fromIterable([file.content]);
             

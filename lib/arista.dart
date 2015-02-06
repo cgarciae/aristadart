@@ -56,7 +56,7 @@ class Resp
     
     Resp.sucess() : success = true;
     
-    Resp.failed (this.error);
+    Resp.failed (this.error) : success = false;
 }
 
 class VistasResp extends Resp

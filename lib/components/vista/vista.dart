@@ -102,17 +102,14 @@ class VistaVista
                 'vista', 
                 id
             );
+            
+            if (! resp.success)
+                return print (resp.error);
 
-            if (resp.success)
-            {
-                vista = resp.vista;
-                icono = vista.icon.urlTextura.split (r'/').last;
-                urlIcono = 'images/webapp/${icono}.png';
-            }
-            else
-            {
-                print (resp.error);
-            }
+            
+            vista = resp.vista;
+            icono = vista.icon.urlTextura.split (r'/').last;
+            urlIcono = 'images/webapp/${icono}.png';
         }
     }
     
@@ -155,6 +152,10 @@ class VistaVista
                 break;
             default:
                 break;
+                
+                dom.InputElement el;
+                
+                
                 
         }
     }
