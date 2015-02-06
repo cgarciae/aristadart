@@ -221,18 +221,22 @@ Future saveOrUpdateModelFile (MongoDb dbConn, Map form, ObjetoUnitySend obj, Str
     if (system == 'android')
     {
         obj.modelIdAndroid = idResp.id;
+        obj.updatedAndroid = true;
     }
     else if (system == 'ios')
     {
         obj.modelIdIOS = idResp.id;
+        obj.updatedIOS = true;
     }
     else if (system == 'windows')
     {
         obj.modelIdWindows = idResp.id;
+        obj.updatedWindows = true;
     }
     else if (system == 'mac')
     {
         obj.modelIdMAC = idResp.id;
+        obj.updatedMAC = true;
     }
     
     return idResp;   
@@ -349,10 +353,10 @@ Future publishObjetoUnity (@app.Attr() MongoDb dbConn, String id) async
     
     objResp = resp as ObjetoUnitySendResp;
     
-    if (! objResp.obj.active)
+    if (! objResp.obj.updatedAll)
         return new Resp.failed
         (
-            "Object Unity is not active"
+            "No se han actualizado todos los modelos del Objetos Unity"
         );
     
     await dbConn.update
