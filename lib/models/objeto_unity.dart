@@ -17,22 +17,14 @@ class ObjetoUnitySend extends ObjetoUnity
     @Field() bool updatePending;
     
     @ReferenceId() String modelIdAndroid;
-    @Field() bool get activeAndroid => modelIdAndroid != null && modelIdAndroid != '';
+    @Field() bool get activeAndroid => notNullOrEmpty(modelIdAndroid);
     
     @ReferenceId() String modelIdIOS;
-    @Field() bool activeIOS = false;
+    @Field() bool get activeIOS => notNullOrEmpty(modelIdIOS);
     
     @ReferenceId() String modelIdWindows;
-    @Field() bool activeWindows = false;
+    @Field() bool get activeWindows => notNullOrEmpty(modelIdWindows);
     
     @ReferenceId() String modelIdMAC;
-    @Field() bool activeMAC = false;
-    
-    @Field() String get url_objeto
-    {
-        if (! active)
-            return "";
-        
-        return localHost + 'public/file/' + modelId;
-    }
+    @Field() bool get activeMAC => notNullOrEmpty(modelIdMAC);
 }
