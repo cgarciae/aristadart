@@ -81,6 +81,10 @@ class HomeVista
         }();
     }
     
+    go2Admin(){
+        router.go('admin', {});
+    }
+    
 //    upload (dom.MouseEvent event)
 //    {
 //        dom.FormElement form = (event.target as dom.ButtonElement).parent as dom.FormElement;
