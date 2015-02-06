@@ -1,4 +1,8 @@
 <fieldset>
+    <a  ng-if="isAdmin"
+        ng-click="router.go ('admin', {}, forceReload: true)">
+        Go to Admin
+    </a>
     <br>
     <h4 class="text-center">
         Hola <b> {{user.nombre}}  {{user.apellido}}! </b>
@@ -36,13 +40,14 @@
                     
                     <br>
                     <i>{{evento.descripcion}}</i>
-            </div>
         </div>
     </div>
     
     <div class="clearfix">
         <a ng-click='nuevoEvento()' class="button radius right">Nuevo Evento</a>
     </div>
+    
+    
   
 </fieldset>
 

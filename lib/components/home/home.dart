@@ -1,7 +1,6 @@
 part of arista_client;
 
 
-
 @Component
 (
     selector : "home",
@@ -21,6 +20,8 @@ class HomeVista
     {
         getUser();
     }
+    
+    bool get isAdmin => loggedAdmin;
     
     getUser ()
     {

@@ -9,9 +9,10 @@ part of arista_client;
 class ModelVista{
     
     List<ModelAdminInfo> infoList = [ ];
-    
     Router router;
-    ModelVista(this.router){
+    
+    ModelVista(this.router)
+    {
         setModels();
     }
     
@@ -23,23 +24,38 @@ class ModelVista{
             Method.GET,
             'private/objetounity/pending'
         );
-        if(! resp.success){
+        
+        if(! resp.success)
+        {
             return print(resp.error);
         }
-        for( ObjetoUnitySend obj in resp.objs ){
+        
+        infoList.clear();
+        
+        for( ObjetoUnitySend obj in resp.objs )
+        {
             ModelAdminInfo info = new ModelAdminInfo();
             info.model = obj;
+            
+            if (! notNullOrEmpty(obj.owner))
+            {
+                print("Owner undefined");
+                continue;
+            }
+            
             UserResp userResp = await requestDecoded
             (
                 UserResp,
                 Method.GET,
                 'user/${obj.owner}'
             );
+            
             if(! userResp.success)
             {
                 print(userResp.error);
                 continue;
             }
+            
             info.user = userResp.user;
             infoList.add(info);
         }
@@ -48,21 +64,40 @@ class ModelVista{
     
     uploadModel(ModelAdminInfo info, String system, dom.MouseEvent event) async
     {
+        print ("Uploading to $system");
+        
         dom.FormElement form = getFormElement (event);
         
         ObjetoUnitySendResp resp = await formRequestDecoded
         (   
             ObjetoUnitySendResp,
             Method.PUT,
-            'private/objetounity/${info.model.modelIdWindows}/modelfile/${system}',
+            'private/objetounity/${info.model.id}/modelfile/${system}',
             form
         );
         
-        if(!resp.success)
-            return resp.error;
+        if(! resp.success)
+            return print (resp.error);
+        
+        
         info.model = resp.obj;
-        print('completo??'+resp.success.toString());
         info.success = resp.success;
+    }
+    
+    publish (ModelAdminInfo info) async
+    {
+        
+        Resp resp = await requestDecoded
+        (
+            Resp,
+            Method.GET,
+            'private/objetounity/${info.model.id}/publish'
+        );
+        
+        if (resp.success)
+            setModels();
+        else
+            print (resp.error);
     }
 }
 

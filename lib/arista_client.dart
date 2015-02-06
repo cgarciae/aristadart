@@ -234,11 +234,9 @@ class MainController
         }
     }
             
-    bool get isLoggedIn
-    {
-        var logged = storage['logged'];
-        
-        return logged != null && logged == true.toString();
-    }
+    bool get isLoggedIn => loggedIn;
     
 }
+
+bool get loggedIn => storage['logged'] == true.toString();
+bool get loggedAdmin => storage['admin'] == true.toString();
