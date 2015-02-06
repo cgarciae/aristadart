@@ -37,46 +37,50 @@
             <br>
             </div>
             <br>
-            <div class="row medium-uncollapse large-collapse">
-                <div class="small-6 columns">
-                    <h4>Versión iOS</h4> <p> listo? {{info.success}}</p>
+            <ul class="small-block-grid-2 medium-block-grid-3 large-block-grid-2">
+                <li>
+                    <h4>Versión iOS</h4>
+                    <img ng-if="info.success" alt="screenshoot Model" ng-src="/images/webapp/check.png">
                     <div class="large-8 columns">
                         <form enctype="multipart/form-data">
-                             Choose a file to upload: <input name="file" type="file"><br>
+                             <input name="file" type="file"><br>
                              <button class="button tiny radius" ng-click="uploadModel (info, 'ios', $event)">Upload</button>
                         </form>
                     </div>
-                </div>
-                <div class="small-6 columns">
+                </li>
+                <li>
                     <h4>Versión MACOSX</h4>
+                    <img ng-if="info.success" alt="screenshoot Model" ng-src="/images/webapp/check.png">
                     <div class="large-8 columns">
                         <form enctype="multipart/form-data">
-                             Choose a file to upload: <input name="file" type="file"><br>
+                             <input name="file" type="file"><br>
                              <button class="button tiny radius" ng-click="uploadModel (info, 'mac', $event)">Upload</button>
                         </form>
                     </div>
-                </div>
-                <div class="small-6 columns">
+                </li>
+                <li>
                     <h4>Versión Android</h4>
+                    <img ng-if="info.success" alt="screenshoot Model" ng-src="/images/webapp/check.png">
                     <div class="large-8 columns">
                         <form enctype="multipart/form-data">
                              Choose a file to upload: <input name="file" type="file"><br>
                              <button class="button tiny radius" ng-click="uploadModel (info, 'android', $event)">Upload</button>
                         </form>
                     </div>
-                </div>
-                <div class="small-6 columns">
+                </li>
+                <li>
                     <h4>Versión windows</h4>
+                    <img ng-if="info.success" alt="screenshoot Model" ng-src="/images/webapp/check.png">
                     <div class="large-8 columns">
                         <form enctype="multipart/form-data">
                              Choose a file to upload: <input name="file" type="file"><br>
                              <button class="button tiny radius" ng-click="uploadModel (info, 'windows', $event)">Upload</button>
                         </form>
                     </div>
-                </div>
+                </li>
                 
-                <button class="button tiny radius" ng-click="publish (info)">Upload</button>
-            </div>
+                <button class="button small right radius" ng-click="publish (info)">Publicar</button>
+            </ul>
         </fieldset>
         <br>
        </div>
