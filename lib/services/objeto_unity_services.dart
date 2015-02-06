@@ -8,6 +8,9 @@ part of arista_server;
 //ADMIN >> POST|PUT private/objetounity/:id/modelfile/:system (form FormElement) -> ObjetoUnitySendResp
 //GET private/user/objetounitymodels () -> ObjetoUnitySendListResp
 
+
+@app.Route('/private/objetounity', methods: const [app.POST])
+@Encode()
 newObjetoUnity (@app.Attr() MongoDb dbConn) async
 {   
     try
