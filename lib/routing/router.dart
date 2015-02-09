@@ -182,6 +182,13 @@ void recipeBookRouteInitializer(Router router, RouteViewFactory view)
             preEnter: authenticateAdmin2
         ),
         
+        'adminTarget' : ngRoute
+        (
+            path: '/admin/target',
+            enter: view('view/target_view.html'),
+            preEnter: authenticateAdmin2
+        ),
+        
         'A' : ngRoute 
         (
             path : '/A/:parA',

@@ -14,8 +14,13 @@ class AdminVista{
     }
     
     goModel ()
-        {
-            router.go('adminModel',{});
-        }
+    {
+        router.go('adminModel',{});
+    }
+    
+    goTarget ()
+    {
+        router.go('adminTarget',{});
+    }
     
 }

@@ -34,6 +34,7 @@ class MyAppModule extends Module
         bind (NuevoUsuarioVista);
         bind (AdminVista);
         bind (ModelVista);
+        bind (TargetVista);
         bind (RouteInitializerFn, toValue: recipeBookRouteInitializer);
         bind (NgRoutingUsePushState, toValue: new NgRoutingUsePushState.value(false));
     }
