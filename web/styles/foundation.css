@@ -1143,7 +1143,7 @@ select {
     position: relative;
     right: 91.66667%;
     left: auto; } }
-button, .button {
+button, .buton {
   border-style: solid;
   border-width: 0;
   cursor: pointer;
@@ -1165,7 +1165,8 @@ button, .button {
   background-color: #8fc5d2;
   border-color: #F0ED54;
   color: #FFFFFF;
-  transition: background-color 300ms ease-out; }
+  transition: background-color 300ms ease-out;
+  }
   button:hover, button:focus, .button:hover, .button:focus {
     background-color: #F0ED54 !important; }
   button:hover, button:focus, .button:hover, .button:focus {
@@ -1610,6 +1611,9 @@ fieldset {
   padding: 1.25rem  !important;
   margin: 1.125rem 0  !important; 
   background: #FFFFFF !important;
+  width: auto;
+  height: auto;
+  box-shadow: 5px 5px 3px rgba(0,0,0,.07);
   }
   fieldset legend {
     font-weight: bold;
