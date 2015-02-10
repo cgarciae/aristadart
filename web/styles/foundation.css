@@ -1162,7 +1162,7 @@ button, .button {
   padding-bottom: 1.0625rem;
   padding-left: 2rem;
   font-size: 1rem;
-  background-color: #e3e050;
+  background-color: #8fc5d2;
   border-color: #F0ED54;
   color: #FFFFFF;
   transition: background-color 300ms ease-out; }
@@ -1608,7 +1608,9 @@ input[type="file"] {
 fieldset {
   border: 1px solid #DDDDDD  !important;
   padding: 1.25rem  !important;
-  margin: 1.125rem 0  !important; }
+  margin: 1.125rem 0  !important; 
+  background: #FFFFFF !important;
+  }
   fieldset legend {
     font-weight: bold;
     background: #FFFFFF;
@@ -2659,7 +2661,7 @@ meta.foundation-mq-topbar {
   border-color: #d8d8d8;
   margin-bottom: 1.25rem;
   padding: 1.25rem;
-  background: #f2f2f2;
+  background: #f5f5f5;
   color: #333333; }
   .panel > :first-child {
     margin-top: 0; }

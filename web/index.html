@@ -58,7 +58,12 @@
       <h1 class="logo">Arista Web Client</h1>
       <section class="app-bar-actions">
       <!-- Put App Bar Buttons Here -->
-      <!-- e.g <button><i class="icon icon-star"></i></button> -->
+      <!--<button><i class="icon icon-star"></i></button> -->
+      <button ng-if="isLoggedIn">
+        <i href="#" ng-click="logout()">
+            Logout
+        </i>
+        </button>
       </section>
     </div>
   </header>
@@ -73,7 +78,9 @@
   </nav>
 
 
-    <div class="large-8 small-centered columns" style="background-color:white" class="sombra">
+    <div class="large-8 small-centered columns" 
+        style="background-color:none;"
+        class="sombra">
         <br>
         <ng-view></ng-view>
     </div>
