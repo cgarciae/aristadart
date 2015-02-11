@@ -10,6 +10,7 @@ class ObjetoUnitySend extends ObjetoUnity
 {
     @ReferenceId() String owner;
     @ReferenceId() String userFileId;
+    
     @Field() bool get active => activeAndroid && activeIOS;
     @Field() bool get activeAll => activeAndroid && activeIOS && activeMAC && activeWindows;
     @Field() bool get updatedAll => updatedAndroid && updatedIOS && updatedMAC && updatedWindows;

@@ -9,7 +9,7 @@ class Vista
 
     //ConstruccionRA
     @ReferenceId() String modeloId;
-    @Field() AristaImageTarget target;
+    @Field() LocalImageTarget target;
     @Field() List<ElementoConstruccion> cuartos;
     @Field() List<ElementoConstruccion> muebles;
     

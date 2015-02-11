@@ -1,4 +1,4 @@
-part of arista_client;
+part of arista_client;  
 
 @Component
 (
@@ -8,8 +8,8 @@ part of arista_client;
 )
 class EventoVista
 {
-    
     Evento evento = new Evento ();
+    
     List<Vista> vistas = [];
     String targetImageUrl = "";
     

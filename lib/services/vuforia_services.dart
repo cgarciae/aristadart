@@ -93,10 +93,10 @@ updateImageVuforia(@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, Str
     
     var cloudRecoID = evento.cloudRecoTargetId;
     
-    AristaCloudRecoTarget reco = await dbConn.findOne
+    CloudImageTarget reco = await dbConn.findOne
     (
         Col.recoTarget,
-        AristaCloudRecoTarget, 
+        CloudImageTarget, 
         where.id (StringToId (cloudRecoID))
     );
         
@@ -143,10 +143,10 @@ Future<Resp> getVuforiaTarget(@app.Attr() MongoDb dbConn, String eventoID) async
         ..success = false
         ..error = "Evento not found";
     
-    AristaCloudRecoTarget reco = await dbConn.findOne
+    CloudImageTarget reco = await dbConn.findOne
     (
         Col.recoTarget, 
-        AristaCloudRecoTarget,
+        CloudImageTarget,
         where.id (StringToId (evento.cloudRecoTargetId))
     );
     
@@ -171,10 +171,10 @@ Future<Resp> getVuforiaTarget(@app.Attr() MongoDb dbConn, String eventoID) async
 @Encode()
 Future<RecoTargetResp> getCloudRecoTarget(@app.Attr() MongoDb dbConn, String recoID) async
 {
-    AristaCloudRecoTarget reco = await dbConn.findOne
+    CloudImageTarget reco = await dbConn.findOne
     (
         Col.recoTarget,
-        AristaCloudRecoTarget,
+        CloudImageTarget,
         where.id(StringToId(recoID))
     );
     
@@ -189,7 +189,7 @@ Future<RecoTargetResp> getCloudRecoTarget(@app.Attr() MongoDb dbConn, String rec
 
 Future<RecoTargetResp> createRecoTarget (MongoDb dbConn, String eventoID, String imageID, String targetID) async
 {
-    var recoTarget = new AristaCloudRecoTarget()
+    var recoTarget = new CloudImageTarget()
         ..imageId = imageID
         ..targetId = targetID
         ..id = new ObjectId().toHexString();
@@ -205,7 +205,7 @@ Future<RecoTargetResp> createRecoTarget (MongoDb dbConn, String eventoID, String
     
     return new RecoTargetResp()
         ..success = true
-        ..recoTarget = (new AristaCloudRecoTarget()
+        ..recoTarget = (new CloudImageTarget()
             ..id = recoTarget.id
             ..imageId = imageID
             ..targetId = targetID);

@@ -153,10 +153,6 @@ class VistaVista
             default:
                 break;
                 
-                dom.InputElement el;
-                
-                
-                
         }
     }
     

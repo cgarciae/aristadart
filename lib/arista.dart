@@ -13,11 +13,13 @@ part 'models/experiencia.dart';
 part 'models/elemento_contacto.dart';
 part 'models/elemento_info.dart';
 part 'models/vista.dart';
-part 'models/arista_image_target.dart';
+part 'models/local_image_target.dart';
+part 'models/cloud_image_target.dart';
 part 'models/elemento_construccion.dart';
 part 'models/objeto_unity.dart';
 part 'models/user.dart';
 part 'models/panel_info.dart';
+part 'models/validation_rules/truth.dart';
 
 String get localHost => "http://localhost:9090/";
 
@@ -121,7 +123,7 @@ class ObjetoUnitySendListResp extends Resp
 
 class RecoTargetResp extends Resp
 {
-    @Field() AristaCloudRecoTarget recoTarget;
+    @Field() CloudImageTarget recoTarget;
 }
 
 class MapResp extends Resp

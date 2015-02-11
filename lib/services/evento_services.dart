@@ -72,7 +72,7 @@ Future<Resp> activateEvento(@app.Attr() MongoDb dbConn, bool status, String even
     (
         Col.evento, 
         EventoCompleto, 
-        where.id(StringToId(eventoID))
+        where.id (StringToId (eventoID))
     );
     
     if (evento == null) 
@@ -82,10 +82,10 @@ Future<Resp> activateEvento(@app.Attr() MongoDb dbConn, bool status, String even
 
     aristaRecoID = evento.cloudRecoTargetId;
     
-    AristaCloudRecoTarget reco = await dbConn.findOne
+    CloudImageTarget reco = await dbConn.findOne
     (
         Col.recoTarget,
-        AristaCloudRecoTarget, 
+        CloudImageTarget, 
         where.id(StringToId(aristaRecoID))
     );
     
