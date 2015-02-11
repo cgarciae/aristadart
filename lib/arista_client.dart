@@ -17,6 +17,7 @@ part 'components/home/home.dart';
 part 'routing/router.dart';
 part 'components/admin/admin.dart';
 part 'components/admin/model.dart';
+part 'components/admin/target.dart';
 
 dom.Storage get storage => dom.window.localStorage;
 
@@ -237,6 +238,12 @@ class MainController
     }
             
     bool get isLoggedIn => loggedIn;
+    
+
+
+    go2home(){
+        router.go('home',{});
+    }
     
 }
 

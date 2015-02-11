@@ -12,8 +12,10 @@ dependencies:
   redstone: any
   redstone_mapper: any
   redstone_mapper_mongo: any
+  route_hierarchical: '>=0.5.0 <0.7.0'
+  sass: '>=0.4.0 <0.5.0'
+  script_inliner: '>=1.0.0 <2.0.0'
   shelf_static: any
-
 transformers:
 - async_await
 - redstone_mapper
@@ -26,3 +28,9 @@ transformers:
     - lib/components/vista/vista.html
     - lib/components/admin/admin.html
     - lib/components/admin/model.html
+    - lib/components/admin/target.html
+- script_inliner
+- sass:
+    style: compressed
+    copy-sources: true 
+    

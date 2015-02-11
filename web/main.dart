@@ -34,6 +34,7 @@ class MyAppModule extends Module
         bind (NuevoUsuarioVista);
         bind (AdminVista);
         bind (ModelVista);
+        bind (TargetVista);
         bind (RouteInitializerFn, toValue: recipeBookRouteInitializer);
         bind (NgRoutingUsePushState, toValue: new NgRoutingUsePushState.value(false));
     }
@@ -46,6 +47,7 @@ class ListInt
 
 void main()
 {
+    
     bootstrapMapper();
 
     Logger.root.level = Level.FINEST;
@@ -55,4 +57,5 @@ void main()
         .addModule(new MyAppModule())
         .rootContextType (MainController)
         .run();
+
 }
