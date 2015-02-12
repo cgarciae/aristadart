@@ -242,67 +242,6 @@ Future newOrUpdateLocalTargetImageFile (@app.Attr() MongoDb dbConn, @app.Body(ap
     }
 }
 
-newOrUpdateLocalTargetScreenshot (MongoDb dbConn, Map form, LocalImageTargetSend obj) async
-{
-    try
-    {
-        IdResp idResp;
-        
-        if (notNullOrEmpty (obj.imageId))
-        {
-            idResp = await updateFile(dbConn, form, obj.imageId);
-        }
-        else
-        {
-            idResp = await newFile(dbConn, form);
-        }
-        
-        
-        if (! idResp.success)
-            return idResp;
-        
-        obj.imageId =  idResp.id;
-        
-        await dbConn.update
-        (
-            Col.localTarget,
-            where.id (StringToId (obj.id)), 
-            modify.set ('imageId', StringToId (idResp.id))
-        );
-        
-        return idResp;
-    }
-    catch (e, stacktrace)
-    {
-        return new IdResp()
-            ..error = e.toString() + stacktrace.toString();
-    }
-}
-
-@app.Route ('/private/localtarget/:id/screenshot', methods: const [app.POST, app.PUT], allowMultipartRequest: true)
-@Encode ()
-@Secure (ADMIN)
-Future<IdResp> newOrUpdateLocalTargetScreenshotRoute (@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, String id) async
-{
-    try
-    {
-        IdResp idResp;
-        LocalImageTargetSendResp objResp = await getLocalTarget (dbConn, id);
-                
-        if (! objResp.success)
-            return objResp;
-       
-        
-        //Updates screenshotId, return IdResp
-        return newOrUpdateLocalTargetScreenshot (dbConn, form, objResp.obj);
-    }
-    catch (e, stacktrace)
-    {
-        return new IdResp()
-            ..error = e.toString() + stacktrace.toString();
-    }
-}
-
 @app.Route ('/private/localtarget/:id/publish', methods: const [app.GET])
 @Encode ()
 @Secure (ADMIN)
