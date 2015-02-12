@@ -35,16 +35,6 @@ ObjectId get userId => session['id'];
 
 const String ADMIN = "ADMIN";
 
-abstract class Col
-{
-    static String user = 'user';
-    static String evento = 'evento';
-    static String vista = 'vista';
-    static String recoTarget = 'recoTarget';
-    static String objetoUnity = 'objetoUnity';
-    static String localTarget = 'localTarget';
-}
-
 
 Future<List<dynamic>> deleteFiles (GridFS fs, dynamic fileSelector)
 {

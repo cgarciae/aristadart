@@ -8,8 +8,8 @@ class Vista
     @Field() TextureGUI icon = new TextureGUI();
 
     //ConstruccionRA
-    @ReferenceId() String modeloId;
-    @Field() LocalImageTarget target;
+    @ReferenceId() String objetoUnityId;
+    @ReferenceId() String localTargetId;
     @Field() List<ElementoConstruccion> cuartos;
     @Field() List<ElementoConstruccion> muebles;
     
@@ -28,12 +28,14 @@ class Vista
     void NuevoElementoContacto (){
         if(elementosContacto == null)
             elementosContacto =[];
+        
         elementosContacto.add(new ElementoContacto());
     }
     
     void NuevoElementoInfo (){
         if(elementosInfo == null)
-                    elementosInfo =[];
+            elementosInfo =[];
+        
         elementosInfo.add(new ElementoInfo());
     }
     

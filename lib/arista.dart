@@ -148,10 +148,21 @@ abstract class ContType
 
 abstract class Method
 {
-    static String POST = "POST";
-    static String PUT = "PUT";
-    static String GET = "GET";
-    static String DELETE = "DELETE";
+    static final String POST = "POST";
+    static final String PUT = "PUT";
+    static final String GET = "GET";
+    static final String DELETE = "DELETE";
+}
+
+abstract class Col
+{
+    static final String user = 'user';
+    static final String evento = 'evento';
+    static final String vista = 'vista';
+    static final String recoTarget = 'recoTarget';
+    static final String objetoUnity = 'objetoUnity';
+    static final String localTarget = 'localTarget';
 }
 
 bool notNullOrEmpty (String s) => ! (s == null || s == '');
+bool nullOrEmpty (String s) => ! notNullOrEmpty (s);

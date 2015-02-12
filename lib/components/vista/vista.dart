@@ -12,6 +12,8 @@ class VistaVista
     VistaExportable vista = new VistaExportable();
     String eventoID;
     
+    LocalImageTargetSend localImageTarget;
+    
     List<TipoDeVista> tiposDeVista = const 
     [
         const TipoDeVista (
@@ -81,7 +83,7 @@ class VistaVista
         {
             print ('NUEVA VISTA');
             //Crear nuevo evento
-            IdResp resp = await newFromCollection ('vista');
+            IdResp resp = await newFromCollection (Col.vista);
             
             if (resp.success)
             {
@@ -110,12 +112,28 @@ class VistaVista
             vista = resp.vista;
             icono = vista.icon.urlTextura.split (r'/').last;
             urlIcono = 'images/webapp/${icono}.png';
+            
+            if (notNullOrEmpty (vista.localTargetId))
+            {
+                LocalImageTargetSendResp targetResp = await getFromCollection
+                (
+                    LocalImageTargetSendResp,
+                    Col.localTarget,
+                    vista.localTargetId
+                );
+                
+                if (! targetResp.success)
+                    return print (targetResp.error);
+                
+                localImageTarget = targetResp.obj;
+            }
         }
     }
     
     save () async
     {
-        Resp resp = await saveInCollection ('vista', vista);
+        print ('Local Target Id: ${vista.localTargetId}');
+        Resp resp = await saveInCollection (Col.vista, vista);
 
         if (resp.success)
             router.go('evento', {'eventoID' : eventoID});
@@ -125,17 +143,42 @@ class VistaVista
 
     
     
-    seleccionarTipoVista (TipoDeVista tipo)
+    seleccionarTipoVista (TipoDeVista tipo) async
     {
-
         vista.type__ = tipo.type__;
         setIcono();
+        print ("TYPE: ${vista.type__}");
         switch(vista.type__){
             case 'ConstruccionRAJS, Assembly-CSharp':
                 vista
                     ..muebles = []
-                    ..cuartos = []
-                    ..target = new LocalImageTarget ();
+                    ..cuartos = [];
+                
+                IdResp idResp = await requestDecoded(IdResp, Method.POST, 'private/objetounity');
+                
+                if (idResp.success)
+                    vista.objetoUnityId = idResp.id;
+                else
+                    print ('Failed to load new Objeto Unity: ${idResp.error}');
+                
+                LocalImageTargetSendResp targetResp = await requestDecoded
+                (
+                    LocalImageTargetSendResp,
+                    Method.POST, 
+                    'private/localTarget'
+                );
+                
+                print (encodeJson(targetResp));
+                
+                if (targetResp.success)
+                {
+                    localImageTarget = targetResp.obj;
+                    vista.localTargetId = localImageTarget.id;
+                    
+                    print (localImageTarget);
+                }
+                else
+                    print ('Failed to load new LocalTarget: ${idResp.error}');
                 
                 //TODO: Vista ya no tiene el campo "modelo", ahora tiene "modeloId" que es el _id
                 //de Mongo del UnityObject. Verificar si es null y pedir uno nuevo, sino pedir el existente.
@@ -219,8 +262,8 @@ class VistaVista
         vista.modelo.path = s;
     }
     
-    guardarUrlTarget(String s, _){
-        vista.target.path = s;
+    guardarTargetId (String s){
+        vista.objetoUnityId = s;
     }
     
     guardarUrlImagenElemento(String s, elemento){
@@ -269,17 +312,54 @@ class VistaVista
         }));
     }
     
+    uploadToFileId (dom.MouseEvent event, String id, [void guardar (String id)]) async
+    {
+        dom.FormElement form = getFormElement (event);
+        
+        IdResp idResp;
+  
+        if (notNullOrEmpty (id))
+        {
+            idResp = await formRequestDecoded
+            (
+                IdResp, 
+                Method.PUT,
+                'private/file/$id',
+                form
+            );
+        }
+        else
+        {
+            idResp = await formRequestDecoded
+            (
+                IdResp, 
+                Method.POST,
+                'private/file',
+                form
+            );
+        }
+        
+        if (! idResp.success)
+        {
+            print (idResp.error);
+            return;
+        }
+        
+        if (guardar != null)
+            guardar (idResp.id);
+    }
+    
     uploadObjetoUnityUserFile (dom.MouseEvent event) async
     {
         dom.FormElement form = getFormElement (event);
         
-        if (notNullOrEmpty (vista.modeloId))
+        if (notNullOrEmpty (vista.objetoUnityId))
         {
             IdResp resp = await formRequestDecoded
             (
                 IdResp,
                 Method.PUT,
-                "private/objetounity/${vista.modeloId}/modelfile",
+                "private/objetounity/${vista.objetoUnityId}/userfile",
                 form
             );
             
@@ -288,10 +368,41 @@ class VistaVista
                 print ("Upload Failed: ${resp.error}");
             }
         }
+        else
+        {
+            print ("Upload Failed: Null or Empty vista.objetoUnityId}");
+        }
         
     }
+    
+    uploadLocalTargetImageFile (dom.MouseEvent event) async
+    {
+        dom.FormElement form = getFormElement (event);
+        
+        if (localImageTarget != null)
+        {
+            IdResp resp = await formRequestDecoded
+            (
+                IdResp,
+                Method.PUT,
+                "private/localTarget/${localImageTarget.id}/userfile",
+                form
+            );
+    
+            if (! resp.success)
+            {
+                print ("Upload Failed: ${resp.error}");
+            }
+            
+            localImageTarget.imageId = resp.id;
+        }
+        else
+        {
+            print ("Upload Failed: Null or Empty vista.localTargetId}");
+        }
+                    
+    }
 }
-
 
 
 class TipoDeVista

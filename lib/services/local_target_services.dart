@@ -9,7 +9,7 @@ part of arista_server;
 //GET private/user/objetounitymodels () -> ObjetoUnitySendListResp
 
 
-@app.Route('/private/localtarget', methods: const [app.POST])
+@app.Route('/private/localTarget', methods: const [app.POST])
 @Encode()
 newLocalTarget (@app.Attr() MongoDb dbConn) async
 {   
@@ -38,7 +38,7 @@ newLocalTarget (@app.Attr() MongoDb dbConn) async
     }
 }
 
-@app.Route('/private/localtarget', methods: const [app.PUT])
+@app.Route('/private/localTarget', methods: const [app.PUT])
 @Encode()
 putLocalTarget (@app.Attr() MongoDb dbConn, @Decode() LocalImageTarget obj) async
 {
@@ -62,7 +62,7 @@ putLocalTarget (@app.Attr() MongoDb dbConn, @Decode() LocalImageTarget obj) asyn
     }
 }
 
-@app.Route('/private/localtarget/:id', methods: const [app.GET])
+@app.Route('/private/localTarget/:id', methods: const [app.GET])
 @Encode()
 Future<LocalImageTargetSendResp> getLocalTarget (@app.Attr() MongoDb dbConn, String id) async
 {
@@ -90,7 +90,7 @@ Future<LocalImageTargetSendResp> getLocalTarget (@app.Attr() MongoDb dbConn, Str
     }
 }
 
-@app.Route('/private/localtarget/:id', methods: const [app.DELETE])
+@app.Route('/private/localTarget/:id', methods: const [app.DELETE])
 @Encode()
 deleteLocalTarget (@app.Attr() MongoDb dbConn, String id) async
 {
@@ -112,7 +112,7 @@ deleteLocalTarget (@app.Attr() MongoDb dbConn, String id) async
 }
 
 
-@app.Route('/private/localtarget/:id/userfile', methods: const [app.POST, app.PUT], allowMultipartRequest: true)
+@app.Route('/private/localTarget/:id/userfile', methods: const [app.POST, app.PUT], allowMultipartRequest: true)
 @Encode()
 postOrPutLocalTargetImageFile (@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, String id) async
 {
@@ -207,7 +207,7 @@ Future saveOrUpdateImageFile (MongoDb dbConn, Map form, LocalImageTargetSend obj
     return idResp;   
 }
 
-@app.Route('/private/localtarget/:id/targetfile/:extension', methods: const [app.POST, app.PUT], allowMultipartRequest: true)
+@app.Route('/private/localTarget/:id/targetfile/:extension', methods: const [app.POST, app.PUT], allowMultipartRequest: true)
 @Encode()
 @Secure(ADMIN)
 Future newOrUpdateLocalTargetImageFile (@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, String id, String extension) async
@@ -242,7 +242,7 @@ Future newOrUpdateLocalTargetImageFile (@app.Attr() MongoDb dbConn, @app.Body(ap
     }
 }
 
-@app.Route ('/private/localtarget/:id/publish', methods: const [app.GET])
+@app.Route ('/private/localTarget/:id/publish', methods: const [app.GET])
 @Encode ()
 @Secure (ADMIN)
 Future publishLocalTarget (@app.Attr() MongoDb dbConn, String id) async
@@ -280,7 +280,7 @@ Future publishLocalTarget (@app.Attr() MongoDb dbConn, String id) async
 
 
 
-@app.Route('/private/user/localtargets', methods: const [app.GET])
+@app.Route('/private/user/localTargets', methods: const [app.GET])
 @Encode()
 Future<LocalTargetSendListResp> userLocalTargets (@app.Attr() MongoDb dbConn) async
 {
@@ -304,7 +304,7 @@ Future<LocalTargetSendListResp> userLocalTargets (@app.Attr() MongoDb dbConn) as
     }
 }
 
-@app.Route ('/private/localtarget/pending', methods: const [app.GET], allowMultipartRequest: true)
+@app.Route ('/private/localTarget/pending', methods: const [app.GET], allowMultipartRequest: true)
 @Encode ()
 @Secure (ADMIN)
 Future<LocalTargetSendListResp> getLocalTargetPending (@app.Attr() MongoDb dbConn) async

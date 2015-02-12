@@ -48,15 +48,21 @@
             <fieldset>
                 <legend> Target </legend>
                 <ul class="no-bullet">
-                    <li class = "large-5 columns"><label>URL:</label> <input type="text" ng-model="vista.target.url"></li>
                     <li class = "large-7 columns">
                         <form enctype="multipart/form-data" method="POST">
                              Choose a file to upload: <input name="file" type="file"><br>
-                             <button class="button tiny" ng-click="upload ($event, vista.target.path, guardarUrlTarget )">Upload</button>
-                             <p class="button tiny" ng-href = "{{vista.target.url}}" 
-                            target="_blank">
-                            Download
-                        </p>
+                             
+                             <button class="button tiny" ng-click="uploadLocalTargetImageFile ($event)">Upload</button>
+                             
+                            <a class="button tiny"
+                                ng-if="localImageTarget != null && localImageTarget.imageId != null && localImageTarget.imageId != ''" 
+                                ng-href = "{{'public/file/' + localImageTarget.imageId}}" 
+                                target="_blank">
+                                    Download
+                            </a>
+                            <img alt=""
+                                ng-if="localImageTarget.imageId != null"
+                                ng-src="{{'public/file/' + localImageTarget.imageId}}">
                         </form>
                     </li>
                    <!-- <li class = "large-3 columns"><label>Versión:</label> <input type="number" ng-model="vista.target.version"></li> -->
