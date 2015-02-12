@@ -9,263 +9,226 @@ part of arista_server;
 //GET private/user/objetounitymodels () -> ObjetoUnitySendListResp
 
 
-@app.Route('/private/objetounity', methods: const [app.POST])
+@app.Route('/private/localtarget', methods: const [app.POST])
 @Encode()
-newObjetoUnity (@app.Attr() MongoDb dbConn) async
+newLocalTarget (@app.Attr() MongoDb dbConn) async
 {   
     try
     {
-        var obj = new ObjetoUnitySend()
+        var obj = new LocalImageTargetSend()
             ..id = new ObjectId().toHexString()
-            ..name = 'Nuevo Modelo'
+            ..name = 'Nuevo Target Local'
             ..version = 0
             ..updatePending = false
             ..owner = (session["id"] as ObjectId).toHexString();
         
-        await dbConn.insert (Col.objetoUnity, obj);
+        await dbConn.insert
+        (
+            Col.localTarget, 
+            obj
+        );
         
-        return new ObjetoUnitySendResp()
-            ..success = true
+        return new LocalImageTargetSendResp()
             ..obj = obj;
     }
     catch (e, stacktrace)
     {
-        return new Resp()
-            ..success = false
+        return new LocalImageTargetSendResp()
             ..error = e.toString() + stacktrace.toString();
     }
 }
 
-@app.Route('/private/objetounity', methods: const [app.PUT])
+@app.Route('/private/localtarget', methods: const [app.PUT])
 @Encode()
-putObjetoUnity (@app.Attr() MongoDb dbConn, @Decode() ObjetoUnity obj) async
+putLocalTarget (@app.Attr() MongoDb dbConn, @Decode() LocalImageTarget obj) async
 {
     print (encodeJson(obj));
     try 
     {
         await dbConn.update
         (
-            Col.objetoUnity,
+            Col.localTarget,
             where.id (StringToId(obj.id)),
             obj,
             override: false
         );
         
-        return new Resp()
-            ..success = true;
+        return new Resp();
     }
     catch (e, stacktrace)
     {
         return new Resp()
-            ..success = false
             ..error = e.toString() + stacktrace.toString();
     }
 }
 
-@app.Route('/private/objetounity/:id', methods: const [app.GET])
+@app.Route('/private/localtarget/:id', methods: const [app.GET])
 @Encode()
-getObjetoUnity (@app.Attr() MongoDb dbConn, String id) async
+Future<LocalImageTargetSendResp> getLocalTarget (@app.Attr() MongoDb dbConn, String id) async
 {
     try
     {   
-        ObjetoUnitySend obj = await dbConn.findOne
+        LocalImageTargetSend obj = await dbConn.findOne
         (
-            Col.objetoUnity,
-            ObjetoUnitySend,
-            where.id(StringToId(id))
+            Col.localTarget,
+            LocalImageTargetSend,
+            where.id (StringToId (id))
         );
         
         if (obj == null)
-            return new Resp()
-                ..success = false
-                ..error = "Objeto Unity not found";
+            return new LocalImageTargetSendResp ()
+                ..error = "Local Target not found";
         
         
-        return new ObjetoUnitySendResp()
-            ..success = true
+        return new LocalImageTargetSendResp()
             ..obj = obj;
     }
     catch (e, stacktrace)
     {
-        return new Resp()
-            ..success = false
+        return new LocalImageTargetSendResp()
             ..error = e.toString() + stacktrace.toString();
     }
 }
 
-@app.Route('/private/objetounity/:id', methods: const [app.DELETE])
+@app.Route('/private/localtarget/:id', methods: const [app.DELETE])
 @Encode()
-deleteObjetoUnity (@app.Attr() MongoDb dbConn, String id) async
+deleteLocalTarget (@app.Attr() MongoDb dbConn, String id) async
 {
     try
     {   
         await dbConn.remove
         (
-            Col.objetoUnity,
-            where.id(StringToId(id))
+            Col.localTarget,
+            where.id (StringToId (id))
         );
 
-        return new Resp()
-            ..success = true;
+        return new Resp();
     }
     catch (e, stacktrace)
     {
         return new Resp()
-            ..success = false
             ..error = e.toString() + stacktrace.toString();
     }
 }
 
 
-@app.Route('/private/objetounity/:id/userfile', methods: const [app.POST, app.PUT], allowMultipartRequest: true)
+@app.Route('/private/localtarget/:id/userfile', methods: const [app.POST, app.PUT], allowMultipartRequest: true)
 @Encode()
-postOrPutObjetoUnityUserFile (@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, String id) async
+postOrPutLocalTargetImageFile (@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, String id) async
 {
     try
     {
-        Resp resp;
-        IdResp idResp;
-        ObjetoUnitySendResp objResp;
+        IdResp fileIdResp;
         
-        resp = await getObjetoUnity(dbConn, id);
+        LocalImageTargetSendResp objResp = await getLocalTarget (dbConn, id);
         
-        if (! resp.success)
-            return resp;
+        if (! objResp.success)
+            return objResp;
         
-        objResp = resp as ObjetoUnitySendResp;
-        
-        if (notNullOrEmpty (objResp.obj.userFileId))
+        if (notNullOrEmpty (objResp.obj.imageId))
         {
-            resp = await updateFile 
-                    (dbConn, form, objResp.obj.userFileId);
+            fileIdResp = await updateFile
+            (
+                dbConn, form, 
+                objResp.obj.imageId
+            );
         }
         else
         {
-            resp = await newFile(dbConn, form);
+            fileIdResp = await newFile(dbConn, form);
         }
         
         
-        if (! resp.success)
-            return resp;
-        
-        idResp = resp as IdResp;
+        if (! fileIdResp.success)
+            return fileIdResp;
         
         await dbConn.update
         (
-            Col.objetoUnity,
+            Col.localTarget,
             where
                 .id (StringToId (id)),
             modify
-                .set('userFileId', StringToId (idResp.id))
+                .set('imageId', StringToId (fileIdResp.id))
                 .set('updatePending', true)
         );
         
-        return idResp; 
+        return fileIdResp; 
     }
     catch (e, stacktrace)
     {
-        return new Resp()
-            ..success = false
+        return new IdResp()
             ..error = e.toString() + stacktrace.toString();
     }
 }
 
-Future saveOrUpdateModelFile (MongoDb dbConn, Map form, ObjetoUnitySend obj, String system) async
+Future saveOrUpdateImageFile (MongoDb dbConn, Map form, LocalImageTargetSend obj, String extension) async
 {
     String fileId;
     
-    if (system == 'android')
+    if (extension == 'dat')
     {
-        fileId = obj.modelIdAndroid;
+        fileId = obj.datId;
     }
-    else if (system == 'ios')
+    else if (extension == 'xml')
     {
-        fileId = obj.modelIdIOS;
-    }
-    else if (system == 'windows')
-    {
-        fileId = obj.modelIdWindows;
-    }
-    else if (system == 'mac')
-    {
-        fileId = obj.modelIdMAC;
+        fileId = obj.xmlId;
     }
     else
     {
-        return new Resp()
-            ..success = false
-            ..error = "Invalid system path variable: ${system}";
+        return new IdResp()
+            ..error = "Invalid extension path variable: ${extension}";
     }
     
-    Resp resp;
     IdResp idResp;
     
     if (fileId == null)
     {
-        resp = await newFile (dbConn, form);
+        idResp = await newFile (dbConn, form);
     }
     else
     {
-        resp = await updateFile(dbConn, form, fileId);
+        idResp = await updateFile(dbConn, form, fileId);
     }
     
-    if (resp is IdResp && resp.success)
-    {
-        idResp = resp;
-    }
-    else
-    {
-        return resp;
-    }
+    if (! idResp.success)
+        return idResp;
     
-    if (system == 'android')
+    if (extension == 'dat')
     {
-        obj.modelIdAndroid = idResp.id;
-        obj.updatedAndroid = true;
+        obj.datId = idResp.id;
+        obj.updatedDat = true;
     }
-    else if (system == 'ios')
+    else if (extension == 'xml')
     {
-        obj.modelIdIOS = idResp.id;
-        obj.updatedIOS = true;
-    }
-    else if (system == 'windows')
-    {
-        obj.modelIdWindows = idResp.id;
-        obj.updatedWindows = true;
-    }
-    else if (system == 'mac')
-    {
-        obj.modelIdMAC = idResp.id;
-        obj.updatedMAC = true;
+        obj.xmlId = idResp.id;
+        obj.updatedXml = true;
     }
     
     return idResp;   
 }
 
-@app.Route('/private/objetounity/:id/modelfile/:system', methods: const [app.POST, app.PUT], allowMultipartRequest: true)
+@app.Route('/private/localtarget/:id/targetfile/:extension', methods: const [app.POST, app.PUT], allowMultipartRequest: true)
 @Encode()
 @Secure(ADMIN)
-Future newOrUpdateObjetoUnityModelFile (@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, String id, String system) async
+Future newOrUpdateLocalTargetImageFile (@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, String id, String extension) async
 {
     try
     {
-        Resp objResp = await getObjetoUnity(dbConn, id);
+        LocalImageTargetSendResp objResp = await getLocalTarget(dbConn, id);
                 
         if (! objResp.success)
             return objResp;
         
-        ObjetoUnitySend obj = (objResp as ObjetoUnitySendResp).obj;
+        IdResp idResp = await saveOrUpdateImageFile (dbConn, form, objResp.obj, extension);
         
-        Resp resp = await saveOrUpdateModelFile (dbConn, form, obj, system);
-        
-        if (! resp.success)
-            return resp;
+        if (! idResp.success)
+            return idResp;
         
         await dbConn.update
         (
-            Col.objetoUnity,
+            Col.localTarget,
             where.id (StringToId (id)),
-            obj,
+            objResp.obj,
             override: false
         );
         
@@ -274,155 +237,155 @@ Future newOrUpdateObjetoUnityModelFile (@app.Attr() MongoDb dbConn, @app.Body(ap
     }
     catch (e, stacktrace)
     {
-        return new Resp()
-            ..success = false
+        return new LocalImageTargetSendResp()
             ..error = e.toString() + stacktrace.toString();
     }
 }
 
-newOrUpdateScreenshot (MongoDb dbConn, Map form, ObjetoUnitySend obj) async
-{
-    Resp resp;
-    IdResp idResp;
-    
-    if (notNullOrEmpty (obj.screenshotId))
-    {
-        resp = await updateFile(dbConn, form, obj.screenshotId);
-    }
-    else
-    {
-        resp = await newFile(dbConn, form);
-    }
-    
-    idResp = resp as IdResp;
-    
-    if (idResp == null)
-        return resp;
-    
-    obj.screenshotId =  idResp.id;
-    
-    await dbConn.update
-    (
-        Col.objetoUnity,
-        where.id (StringToId (obj.id)), 
-        modify.set ('screenshotId', StringToId (idResp.id))
-    );
-    
-    return idResp;
-}
-
-@app.Route ('/private/objetounity/:id/screenshot', methods: const [app.POST, app.PUT], allowMultipartRequest: true)
-@Encode ()
-@Secure (ADMIN)
-Future newOrUpdateObjetoUnityScreenshot (@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, String id) async
+newOrUpdateLocalTargetScreenshot (MongoDb dbConn, Map form, LocalImageTargetSend obj) async
 {
     try
     {
-        ObjetoUnitySendResp objResp;
         IdResp idResp;
-        Resp resp = await getObjetoUnity(dbConn, id);
-                
-        if (! resp.success)
-            return resp;
         
-        objResp = resp as ObjetoUnitySendResp;
+        if (notNullOrEmpty (obj.imageId))
+        {
+            idResp = await updateFile(dbConn, form, obj.imageId);
+        }
+        else
+        {
+            idResp = await newFile(dbConn, form);
+        }
         
-        //Updates screenshotId, return IdResp
-        return newOrUpdateScreenshot (dbConn, form, objResp.obj);
+        
+        if (! idResp.success)
+            return idResp;
+        
+        obj.imageId =  idResp.id;
+        
+        await dbConn.update
+        (
+            Col.localTarget,
+            where.id (StringToId (obj.id)), 
+            modify.set ('imageId', StringToId (idResp.id))
+        );
+        
+        return idResp;
     }
     catch (e, stacktrace)
     {
-        return new Resp.failed
-        (
-            e.toString() + stacktrace.toString()
-        );
+        return new IdResp()
+            ..error = e.toString() + stacktrace.toString();
     }
 }
 
-@app.Route ('/private/objetounity/:id/publish', methods: const [app.GET])
+@app.Route ('/private/localtarget/:id/screenshot', methods: const [app.POST, app.PUT], allowMultipartRequest: true)
 @Encode ()
 @Secure (ADMIN)
-Future publishObjetoUnity (@app.Attr() MongoDb dbConn, String id) async
+Future<IdResp> newOrUpdateLocalTargetScreenshotRoute (@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, String id) async
 {
-    ObjetoUnitySendResp objResp;
-    
-    Resp resp = await getObjetoUnity(dbConn, id);
-    
-    if (! resp.success)
-        return resp;
-    
-    objResp = resp as ObjetoUnitySendResp;
-    
-    if (! objResp.obj.updatedAll)
-        return new Resp.failed
+    try
+    {
+        IdResp idResp;
+        LocalImageTargetSendResp objResp = await getLocalTarget (dbConn, id);
+                
+        if (! objResp.success)
+            return objResp;
+       
+        
+        //Updates screenshotId, return IdResp
+        return newOrUpdateLocalTargetScreenshot (dbConn, form, objResp.obj);
+    }
+    catch (e, stacktrace)
+    {
+        return new IdResp()
+            ..error = e.toString() + stacktrace.toString();
+    }
+}
+
+@app.Route ('/private/localtarget/:id/publish', methods: const [app.GET])
+@Encode ()
+@Secure (ADMIN)
+Future publishLocalTarget (@app.Attr() MongoDb dbConn, String id) async
+{
+    try
+    {
+        LocalImageTargetSendResp objResp = await getLocalTarget(dbConn, id);
+        
+        if (! objResp.success)
+            return objResp;
+        
+        if (! objResp.obj.updatedAll)
+            return new Resp ()
+               ..error = "No se han actualizado todos los archivos del Local Target";
+        
+        await dbConn.update
         (
-            "No se han actualizado todos los modelos del Objetos Unity"
+            Col.localTarget,
+            where.id (StringToId (id)),
+            modify
+                .set('updatePending', false)
+                .inc('version', 1)
         );
-    
-    await dbConn.update
-    (
-        Col.objetoUnity,
-        where.id(StringToId(id)),
-        modify
-            .set('updatePending', false)
-            .inc('version', 1)
-    );
-    
-    return new Resp.sucess();
+        
+        return new Resp();
+    }
+    catch (e, stacktrace)
+    {
+        return new Resp()
+            ..error = e.toString() + stacktrace.toString();
+    }
 }
 
 
 
 
 
-@app.Route('/private/user/objetounitymodels', methods: const [app.GET])
+@app.Route('/private/user/localtargets', methods: const [app.GET])
 @Encode()
-userModels (@app.Attr() MongoDb dbConn) async
+Future<LocalTargetSendListResp> userLocalTargets (@app.Attr() MongoDb dbConn) async
 {
     try
     {  
-        List<ObjetoUnitySend> objs = await dbConn.find
+        List<LocalImageTargetSend> objs = await dbConn.find
         (
-            Col.objetoUnity,
-            ObjetoUnitySend,
-            where.eq('owner', userId)
+            Col.localTarget,
+            LocalImageTargetSend,
+            where
+                .eq('owner', userId)
         );
 
-        return new ObjetoUnitySendListResp()
-            ..success = true
+        return new LocalTargetSendListResp()
             ..objs = objs;
     }
     catch (e, stacktrace)
     {
-        return new Resp()
-            ..success = false
+        return new LocalTargetSendListResp()
             ..error = e.toString() + stacktrace.toString();
     }
 }
 
-@app.Route ('/private/objetounity/pending', methods: const [app.GET], allowMultipartRequest: true)
+@app.Route ('/private/localtarget/pending', methods: const [app.GET], allowMultipartRequest: true)
 @Encode ()
 @Secure (ADMIN)
-Future getObjetoUnityPending (@app.Attr() MongoDb dbConn) async
+Future<LocalTargetSendListResp> getLocalTargetPending (@app.Attr() MongoDb dbConn) async
 {
     try
     {
-        List<ObjetoUnitySend> objs = await dbConn.find
+        List<LocalImageTargetSend> objs = await dbConn.find
         (
-            Col.objetoUnity,
-            ObjetoUnitySend,
+            Col.localTarget,
+            LocalImageTargetSend,
             where
                 .eq ('updatePending', true)
         );
         
-        return new ObjetoUnitySendListResp()
-            ..success = true
+        return new LocalTargetSendListResp()
             ..objs = objs;
     }
     catch (e, stacktrace)
     {
-        return new Resp()
-            ..success = false
+        return new LocalTargetSendListResp()
             ..error = e.toString() + stacktrace.toString();
     }
 }

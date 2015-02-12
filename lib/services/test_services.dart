@@ -93,6 +93,5 @@ testEsteban (@app.Attr() MongoDb dbConn, @Decode() User usuario) async
     await dbConn.insert(Col.user, usuario);
     
     return new IdResp()
-        ..success = true
         ..id = usuario.id;
 }

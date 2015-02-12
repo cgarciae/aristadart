@@ -17,7 +17,6 @@ postUser(@app.Attr() MongoDb dbConn, @Decode() UserComplete user) async
     if (foundUser != null)
     {
         return new Resp()
-            ..success = false
             ..error = "User Exists";
     }    
 
@@ -57,7 +56,6 @@ getUser(@app.Attr() MongoDb dbConn, String id) async
     
         
     return new UserResp()
-        ..success = true
         ..user = user;
 }
 
@@ -71,7 +69,6 @@ login(@app.Attr() MongoDb dbConn, @Decode() UserSecure user) async
     if (user.email == null || user.password == null)
     {
         return new IdResp()
-            ..success = false
             ..error = "WRONG_USER_OR_PASSWORD";
     }
     
@@ -84,7 +81,6 @@ login(@app.Attr() MongoDb dbConn, @Decode() UserSecure user) async
     if (foundUser == null)
     {
         return new IdResp()
-            ..success = false
             ..error = "WRONG USERNAME OR PASSWORD";
     }
     
@@ -102,7 +98,6 @@ login(@app.Attr() MongoDb dbConn, @Decode() UserSecure user) async
     session["roles"] = roles;
     
     return new UserAdminResp()
-        ..success = true
         ..user = (new UserAdmin()
             ..id = foundUser.id
             ..admin = foundUser.admin
@@ -118,13 +113,11 @@ isAdmin ()
     try
     {   
         return new BoolResp()
-            ..success = true
             ..value = session['admin'];
     }
     catch (e, stacktrace)
     {
-        return new Resp()
-            ..success = false
+        return new BoolResp()
             ..error = e.toString() + stacktrace.toString();
     }
 }
@@ -163,17 +156,14 @@ isLoggedIn()
         
         if (id != null)
             return new IdResp()
-                ..success = true
                 ..id = id.toHexString();
         
         return new Resp()
-            ..success = false
             ..error = "User not logged in";
     }
     catch (e, stacktrace)
     {
         return new Resp()
-            ..success = false
             ..error = e.toString() + stacktrace.toString();
     }
 }
@@ -200,12 +190,11 @@ setAdmin (@app.Attr() MongoDb dbConn, String userid) async
             modify.set('admin', true)
         );
     
-        return new Resp()..success = true;
+        return new Resp();
     }
     catch (e, stacktrace)
     {
         return new Resp()
-            ..success = false
             ..error = e.toString() + stacktrace.toString();
     }
 }

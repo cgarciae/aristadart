@@ -24,6 +24,7 @@ part 'services/vista_services.dart';
 part 'services/general_services.dart';
 part 'services/file_services.dart';
 part 'services/objeto_unity_services.dart';
+part 'services/local_target_services.dart';
 part 'services/test_services.dart';
 part 'services/vuforia_services.dart';
 
@@ -41,6 +42,7 @@ abstract class Col
     static String vista = 'vista';
     static String recoTarget = 'recoTarget';
     static String objetoUnity = 'objetoUnity';
+    static String localTarget = 'localTarget';
 }
 
 
@@ -111,7 +113,6 @@ Function ifNotNull (String failMessage, dynamic f (dynamic))
     {
         if (obj == null)
             return new Resp()
-                ..success = false
                 ..error = failMessage;
         
         return f (obj);

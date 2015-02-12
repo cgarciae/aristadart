@@ -14,8 +14,7 @@ Future<Resp> pullIdFromList(@app.Attr() MongoDb dbConn, String collection, Strin
         modify.pull (fieldName, referenceID)
     );
     
-    return new Resp()
-        ..success = true;
+    return new Resp();
 }
 
 @app.Route("/private/push/:collection/:obj_id/:fieldName/:reference_id")
@@ -32,8 +31,7 @@ Future<Resp> pushIdToList(@app.Attr() MongoDb dbConn, String collection, String 
         modify.push(fieldName, referenceID)
     );
 
-    return new Resp()
-        ..success = true;
+    return new Resp();
 }
 
 @app.Route('/private/query/:collection', methods: const [app.POST])

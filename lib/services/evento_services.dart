@@ -15,8 +15,7 @@ Future<IdResp> newEvent(@app.Attr() MongoDb dbConn) async
     var userId = session['id'];
     
     if (userId == null)
-        return new Resp()
-            ..success = false
+        return new IdResp()
             ..error = 'User not found';
 
     await dbConn.update
@@ -27,7 +26,6 @@ Future<IdResp> newEvent(@app.Attr() MongoDb dbConn) async
     );
 
     return new IdResp()
-      ..success = true
       ..id = evento.id;
 }
 
@@ -38,7 +36,6 @@ Future<IdResp> saveEvent(@app.Attr() MongoDb dbConn, @Decode() Evento evento) as
     await dbConn.update(Col.evento, where.id(StringToId(evento.id)), evento);
 
     return new IdResp()
-        ..success = true
         ..id = evento.id;
 }
 
@@ -46,7 +43,13 @@ Future<IdResp> saveEvent(@app.Attr() MongoDb dbConn, @Decode() Evento evento) as
 @Encode()
 Future<Evento> getEvento(@app.Attr() MongoDb dbConn, String id) async
 {
-    return dbConn.findOne(Col.evento, Evento, where.id(StringToId(id)));
+    //TODO: Retornar EventoResp
+    return dbConn.findOne
+    (
+        Col.evento, 
+        Evento, 
+        where.id(StringToId(id))
+    );
 }
 
 @app.Route("/private/evento/:id", methods: const [app.DELETE])
@@ -59,7 +62,7 @@ deleteEvento(@app.Attr() MongoDb dbConn, String id) async
     await dbConn.update (Col.user, where.id(userID), modify.pull('eventos', eventoId));
     await dbConn.remove (Col.evento, where.id(eventoId));
     
-    return new Resp()..success = true;
+    return new Resp();
 }
 
 @app.Route("/private/activate/:status/evento/:eventoID")
@@ -77,7 +80,6 @@ Future<Resp> activateEvento(@app.Attr() MongoDb dbConn, bool status, String even
     
     if (evento == null) 
         return new Resp()
-            ..success = false
             ..error = "Evento not found";
 
     aristaRecoID = evento.cloudRecoTargetId;
@@ -91,7 +93,6 @@ Future<Resp> activateEvento(@app.Attr() MongoDb dbConn, bool status, String even
     
     if (reco == null)
         return new Resp()
-            ..success = false
             ..error = "Cloud Reco not found";
 
     await dbConn.update
@@ -118,12 +119,11 @@ Future<Resp> activateEvento(@app.Attr() MongoDb dbConn, bool status, String even
 
     if (map.result_code == "Success") 
     {
-        return new Resp()..success = true;
+        return new Resp();
     } 
     else 
     {
         return new Resp()
-            ..success = false
             ..error = map.result_code;
     }
 }
@@ -155,12 +155,12 @@ exportEvento(@app.Attr() MongoDb dbConn, String id) async
     if (resp.success)
     {
         return new EventoExportableResp()
-            ..success = true
             ..evento = evento;
     }
     else
     {
-        return resp..error = "Evento Invalido: ${resp.error}";
+        return new EventoExportableResp()
+            ..error = "Evento Invalido: ${resp.error}";
     }
 }
 
@@ -188,17 +188,14 @@ Future<Resp> validEvento (EventoExportable evento) async
 {
     if (evento.id == null || evento.id == "")
         return new Resp()
-            ..success = false
             ..error = "Id de Evento Invalida";
     
     if (evento.active == null || ! evento.active)
         return new Resp()
-            ..success = false
             ..error = "Evento inactivo";
     
     if (evento.cloudRecoTargetId == null || evento.cloudRecoTargetId == "")
         return new Resp()
-            ..success = false
             ..error = "Target ID Invalida";
     
     
@@ -216,8 +213,7 @@ Future<Resp> validEvento (EventoExportable evento) async
     
     if (evento.vistas.length == 0)
         return new Resp()
-            ..success = false
             ..error = "Ninguna vista valida disponible";
     
-    return new Resp()..success = true;
+    return new Resp();
 }

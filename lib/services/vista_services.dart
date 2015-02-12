@@ -11,7 +11,6 @@ Future<VistasResp> getVistas(@app.Attr() MongoDb dbConn, String id) async
     if (evento == null)
     {
         return new VistasResp()
-            ..success = false
             ..error = "Evento no encontrado";
     }
     
@@ -20,7 +19,6 @@ Future<VistasResp> getVistas(@app.Attr() MongoDb dbConn, String id) async
     List<Vista> vistas = await dbConn.find(Col.vista, Vista, where.oneFrom('_id', vistasID));
 
     return new VistasResp()
-        ..success = true
         ..vistas = vistas;
 }
 
@@ -35,7 +33,6 @@ Future<VistasResp> newVista(@app.Attr() MongoDb dbConn) async
     await dbConn.insert (Col.vista, vista);
     
     return new IdResp()
-        ..success = true
         ..id = vista.id;
 }
 
@@ -46,7 +43,6 @@ Future<IdResp> saveVista(@app.Attr() MongoDb dbConn, @Decode() Vista vista) asyn
     await dbConn.update(Col.vista, where.id(StringToId(vista.id)), vista);
     
     return new IdResp()
-        ..success = true
         ..id = vista.id; 
 }
 
@@ -61,13 +57,11 @@ Future<IdResp> getVista(@app.Attr() MongoDb dbConn, String vistaID) async
     if (vista == null)
     {
         return new VistaResp()
-            ..success = false
             ..error = "Vista not found";
     }
     else
     {
         return new VistaResp()
-            ..success = true
             ..vista = vista;
     }
 }
@@ -78,8 +72,7 @@ Future<IdResp> deleteVista(@app.Attr() MongoDb dbConn, String vistaID) async
 {           
     await dbConn.remove(Col.vista, where.id(StringToId(vistaID)));
     
-    return new Resp()
-        ..success = true;
+    return new Resp();
 }
 
 @app.Route("/export/vista/:vistaID", methods: const [app.GET])
@@ -117,7 +110,6 @@ Future<Resp> validVista (VistaExportable vista) async
 {
     if (vista.type__ == null || vista.type__ == "")
         return new Resp()
-            ..success = false
             ..error = "type__ undefined.";
     
     switch (vista.type__)
@@ -126,12 +118,10 @@ Future<Resp> validVista (VistaExportable vista) async
             
             if (vista.modelo == null)
                 return new Resp()
-                    ..success = false
                     ..error = "modeloId undefined.";
             
             break;
     }
     
-    return new Resp()
-        ..success = true;
+    return new Resp();
 }

@@ -68,7 +68,6 @@ newImageVuforia(@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, String
         await deleteFile (dbConn, imageID);
                 
         return new Resp()
-            ..success = false
             ..error = map.result_code;
     }
 }
@@ -88,7 +87,6 @@ updateImageVuforia(@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, Str
     );
     
     if (evento == null) return new Resp()
-        ..success = false
         ..error = "Evento not found";
     
     var cloudRecoID = evento.cloudRecoTargetId;
@@ -101,7 +99,6 @@ updateImageVuforia(@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, Str
     );
         
     if (reco == null) return new Resp ()
-        ..success = false
         ..error = "Cloud Reco found";
     
     var targetID = reco.targetId;
@@ -117,13 +114,11 @@ updateImageVuforia(@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, Str
         
     if (map.result_code == "TargetCreated" || map.result_code == "Success")
     {
-        return new Resp()
-            ..success = true;
+        return new Resp();
     }
     else
     {
         return new Resp()
-            ..success = false
             ..error = map.result_code;
     }
 }
@@ -139,9 +134,9 @@ Future<Resp> getVuforiaTarget(@app.Attr() MongoDb dbConn, String eventoID) async
         where.id (StringToId (eventoID))
     );
     
-    if (evento == null) return new Resp()
-        ..success = false
-        ..error = "Evento not found";
+    if (evento == null) 
+        return new Resp()
+            ..error = "Evento not found";
     
     CloudImageTarget reco = await dbConn.findOne
     (
@@ -159,11 +154,9 @@ Future<Resp> getVuforiaTarget(@app.Attr() MongoDb dbConn, String eventoID) async
     
     if (map.result_code == "Success") 
         return new MapResp()
-            ..success = true
             ..map = map;
     
-    return new Resp()
-        ..success = false
+    return new MapResp ()
         ..error = map.result_code;
 }
 
@@ -178,12 +171,11 @@ Future<RecoTargetResp> getCloudRecoTarget(@app.Attr() MongoDb dbConn, String rec
         where.id(StringToId(recoID))
     );
     
-    if (reco == null) return new Resp()
-        ..success = false
-        ..error = "Cloud Reco not found";
+    if (reco == null) 
+        return new RecoTargetResp ()
+            ..error = "Cloud Reco not found";
     
-    return new RecoTargetResp()
-        ..success = true
+    return new RecoTargetResp ()
         ..recoTarget = reco;
 }
 
@@ -203,8 +195,7 @@ Future<RecoTargetResp> createRecoTarget (MongoDb dbConn, String eventoID, String
         modify.set ('cloudRecoTargetId', recoTarget.id)
     );
     
-    return new RecoTargetResp()
-        ..success = true
+    return new RecoTargetResp ()
         ..recoTarget = (new CloudImageTarget()
             ..id = recoTarget.id
             ..imageId = imageID

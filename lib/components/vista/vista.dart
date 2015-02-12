@@ -135,7 +135,7 @@ class VistaVista
                 vista
                     ..muebles = []
                     ..cuartos = []
-                    ..target = new AristaImageTarget();
+                    ..target = new LocalImageTarget ();
                 
                 //TODO: Vista ya no tiene el campo "modelo", ahora tiene "modeloId" que es el _id
                 //de Mongo del UnityObject. Verificar si es null y pedir uno nuevo, sino pedir el existente.

@@ -51,14 +51,12 @@ QueryMap MapToQueryMap (Map map) => new QueryMap(map);
 
 class Resp
 {
-    @Field() bool success;
+    @Field() bool get success => ! notNullOrEmpty(error);
     @Field() String error;
     
     Resp();
     
-    Resp.sucess() : success = true;
-    
-    Resp.failed (this.error) : success = false;
+    Resp.failed (this.error);
 }
 
 class VistasResp extends Resp
@@ -116,9 +114,19 @@ class ObjetoUnitySendResp extends Resp
     @Field() ObjetoUnitySend obj;
 }
 
+class LocalImageTargetSendResp extends Resp
+{
+    @Field() LocalImageTargetSend obj;
+}
+
 class ObjetoUnitySendListResp extends Resp
 {
     @Field() List<ObjetoUnitySend> objs;
+}
+
+class LocalTargetSendListResp extends Resp
+{
+    @Field() List<LocalImageTargetSend> objs;
 }
 
 class RecoTargetResp extends Resp

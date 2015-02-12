@@ -2,11 +2,8 @@ part of arista;
 
 class LocalImageTarget
 {
-    
-    
-    @Field () String path;
-    @Field() String get url => path != null && path != '' ? localHost + path : '';
-    
+    @Id () String id;
+    @Field() String name;
 }
 
 class LocalImageTargetSend extends LocalImageTarget
@@ -23,11 +20,13 @@ class LocalImageTargetSend extends LocalImageTarget
     @Range(min: 0)
     @Field () int version = 0;
     
+    @Field() bool get updatedAll => updatedDat && updatedXml;
+    
     @ReferenceId() String datId;
     @Field() bool get activeDat => notNullOrEmpty(datId);
     @Field() bool updatedDat = false;
     
-    @ReferenceId() String XmlId;
-    @Field() bool get activeXml => notNullOrEmpty(XmlId);
+    @ReferenceId() String xmlId;
+    @Field() bool get activeXml => notNullOrEmpty(xmlId);
     @Field() bool updatedXml = false;
 }

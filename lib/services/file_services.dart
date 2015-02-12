@@ -22,25 +22,33 @@ getFile(@app.Attr() MongoDb dbConn, String fileID) async
 
 @app.Route("/private/file", methods: const [app.POST], allowMultipartRequest: true)
 @Encode()
-newFile(@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form) async
+Future<IdResp> newFile(@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form) async
 {
-    HttpBodyFileUpload file = form ['file'];
-    
-    if (file == null || file.content == null || file.content.length == 0)
-        return new Resp.failed("Empty File");
-    
-    var gridFS = new GridFS (dbConn.innerConn);
-    
-    var input = new Stream.fromIterable([file.content]);
-    
-    var gridIn = gridFS.createFile(input, file.filename)
-        ..contentType = file.contentType.value;
-            
-    await gridIn.save();
-    
-    return new IdResp()
-        ..success = true
-        ..id = gridIn.id.toHexString();
+    try
+    {
+        HttpBodyFileUpload file = form ['file'];
+        
+        if (file == null || file.content == null || file.content.length == 0)
+            return new IdResp()
+                ..error = "Empty File";
+        
+        var gridFS = new GridFS (dbConn.innerConn);
+        
+        var input = new Stream.fromIterable([file.content]);
+        
+        var gridIn = gridFS.createFile(input, file.filename)
+            ..contentType = file.contentType.value;
+                
+        await gridIn.save();
+        
+        return new IdResp()
+            ..id = gridIn.id.toHexString();
+    }
+    catch (e, stacktrace)
+    {
+        return new IdResp()
+            ..error = e.toString() + stacktrace.toString();
+    }
 }
 
 @app.Route("/private/file/:fileID", methods: const [app.DELETE])
@@ -51,13 +59,12 @@ Future<Resp> deleteFile(@app.Attr() MongoDb dbConn, String fileID) async
 
     await deleteFiles (fs, where.id(new ObjectId.fromHexString(fileID)));
     
-    return new Resp()
-        ..success = true;
+    return new Resp();
 }
 
 @app.Route("/private/file/:fileID", methods: const [app.PUT], allowMultipartRequest: true)
 @Encode()
-Future<Resp> updateFile(@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, String fileID) async
+Future<IdResp> updateFile(@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, String fileID) async
 {
     try
     {
@@ -77,13 +84,11 @@ Future<Resp> updateFile(@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form
         await gridIn.save();
     
         return new IdResp()
-            ..success = true
             ..id = gridIn.id.toHexString();
     }
     catch (e, stacktrace)
     {
-        return new Resp()
-            ..success = false
+        return new IdResp()
             ..error = e.toString() + stacktrace.toString();
     }
 }

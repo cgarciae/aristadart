@@ -25,13 +25,11 @@ newObjetoUnity (@app.Attr() MongoDb dbConn) async
         await dbConn.insert (Col.objetoUnity, obj);
         
         return new ObjetoUnitySendResp()
-            ..success = true
             ..obj = obj;
     }
     catch (e, stacktrace)
     {
-        return new Resp()
-            ..success = false
+        return new ObjetoUnitySendResp()
             ..error = e.toString() + stacktrace.toString();
     }
 }
@@ -51,20 +49,18 @@ putObjetoUnity (@app.Attr() MongoDb dbConn, @Decode() ObjetoUnity obj) async
             override: false
         );
         
-        return new Resp()
-            ..success = true;
+        return new Resp();
     }
     catch (e, stacktrace)
     {
         return new Resp()
-            ..success = false
             ..error = e.toString() + stacktrace.toString();
     }
 }
 
 @app.Route('/private/objetounity/:id', methods: const [app.GET])
 @Encode()
-getObjetoUnity (@app.Attr() MongoDb dbConn, String id) async
+Future<ObjetoUnitySendResp> getObjetoUnity (@app.Attr() MongoDb dbConn, String id) async
 {
     try
     {   
@@ -76,19 +72,16 @@ getObjetoUnity (@app.Attr() MongoDb dbConn, String id) async
         );
         
         if (obj == null)
-            return new Resp()
-                ..success = false
+            return new ObjetoUnitySendResp()
                 ..error = "Objeto Unity not found";
         
         
         return new ObjetoUnitySendResp()
-            ..success = true
             ..obj = obj;
     }
     catch (e, stacktrace)
     {
-        return new Resp()
-            ..success = false
+        return new ObjetoUnitySendResp()
             ..error = e.toString() + stacktrace.toString();
     }
 }
@@ -105,13 +98,11 @@ deleteObjetoUnity (@app.Attr() MongoDb dbConn, String id) async
             where.id(StringToId(id))
         );
 
-        return new Resp()
-            ..success = true;
+        return new Resp();
     }
     catch (e, stacktrace)
     {
         return new Resp()
-            ..success = false
             ..error = e.toString() + stacktrace.toString();
     }
 }
@@ -165,7 +156,6 @@ postOrPutObjetoUnityUserFile (@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Ma
     catch (e, stacktrace)
     {
         return new Resp()
-            ..success = false
             ..error = e.toString() + stacktrace.toString();
     }
 }
@@ -193,7 +183,6 @@ Future saveOrUpdateModelFile (MongoDb dbConn, Map form, ObjetoUnitySend obj, Str
     else
     {
         return new Resp()
-            ..success = false
             ..error = "Invalid system path variable: ${system}";
     }
     
@@ -275,40 +264,47 @@ Future newOrUpdateObjetoUnityModelFile (@app.Attr() MongoDb dbConn, @app.Body(ap
     catch (e, stacktrace)
     {
         return new Resp()
-            ..success = false
             ..error = e.toString() + stacktrace.toString();
     }
 }
 
-newOrUpdateScreenshot (MongoDb dbConn, Map form, ObjetoUnitySend obj) async
+Future<IdResp> newOrUpdateScreenshot (MongoDb dbConn, Map form, ObjetoUnitySend obj) async
 {
-    Resp resp;
-    IdResp idResp;
-    
-    if (notNullOrEmpty (obj.screenshotId))
+    try
     {
-        resp = await updateFile(dbConn, form, obj.screenshotId);
+        Resp resp;
+        IdResp idResp;
+        
+        if (notNullOrEmpty (obj.screenshotId))
+        {
+            resp = await updateFile(dbConn, form, obj.screenshotId);
+        }
+        else
+        {
+            resp = await newFile(dbConn, form);
+        }
+        
+        idResp = resp as IdResp;
+        
+        if (idResp == null)
+            return resp;
+        
+        obj.screenshotId =  idResp.id;
+        
+        await dbConn.update
+        (
+            Col.objetoUnity,
+            where.id (StringToId (obj.id)), 
+            modify.set ('screenshotId', StringToId (idResp.id))
+        );
+        
+        return idResp;
     }
-    else
+    catch (e, stacktrace)
     {
-        resp = await newFile(dbConn, form);
+        return new IdResp()
+            ..error = e.toString() + stacktrace.toString();
     }
-    
-    idResp = resp as IdResp;
-    
-    if (idResp == null)
-        return resp;
-    
-    obj.screenshotId =  idResp.id;
-    
-    await dbConn.update
-    (
-        Col.objetoUnity,
-        where.id (StringToId (obj.id)), 
-        modify.set ('screenshotId', StringToId (idResp.id))
-    );
-    
-    return idResp;
 }
 
 @app.Route ('/private/objetounity/:id/screenshot', methods: const [app.POST, app.PUT], allowMultipartRequest: true)
@@ -368,7 +364,7 @@ Future publishObjetoUnity (@app.Attr() MongoDb dbConn, String id) async
             .inc('version', 1)
     );
     
-    return new Resp.sucess();
+    return new Resp ();
 }
 
 
@@ -389,13 +385,11 @@ userModels (@app.Attr() MongoDb dbConn) async
         );
 
         return new ObjetoUnitySendListResp()
-            ..success = true
             ..objs = objs;
     }
     catch (e, stacktrace)
     {
         return new Resp()
-            ..success = false
             ..error = e.toString() + stacktrace.toString();
     }
 }
@@ -416,13 +410,11 @@ Future getObjetoUnityPending (@app.Attr() MongoDb dbConn) async
         );
         
         return new ObjetoUnitySendListResp()
-            ..success = true
             ..objs = objs;
     }
     catch (e, stacktrace)
     {
-        return new Resp()
-            ..success = false
+        return new ObjetoUnitySendListResp()
             ..error = e.toString() + stacktrace.toString();
     }
 }
