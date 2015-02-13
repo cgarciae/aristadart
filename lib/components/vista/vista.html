@@ -1,6 +1,6 @@
 <fieldset>
     <legend>EDICIÓN VISTA</legend>
-    <a class="button radius right" ng-click='save()'>Save</a>
+    <a class="button radius right" ng-click='saveAndLeave()'>Save</a>
     
     <br>
     <hr>
@@ -29,15 +29,26 @@
             <fieldset>
                 <legend> Modelo </legend>
                 <ul class="no-bullet">
-                    <li class = "large-5 columns"><label>URL:</label> <input type="text" ng-model="vista.modelo.url_objeto"></li>
                     <li class = "large-7 columns">
+                        <!--FORM-->
                         <form enctype="multipart/form-data" method="POST">
+                        
+                            <!--UPLOAD-->
                              Choose a file to upload: <input name="file" type="file"><br>
-                             <button class="button tiny" ng-click="uploadObjetoUnityUserFile ($event)">Upload</button>
-                             <a class="button tiny" ng-href = "{{vista.modelo.url_objeto}}" 
-                            target="_blank">
-                            Download
-                        </a>
+                            <button 
+                                class="button tiny"
+                                ng-click="uploadObjetoUnityUserFile ($event)">
+                                    Upload
+                            </button>
+                             
+                            <!--DOWNLOAD-->
+                            <a class="button tiny"
+                                ng-if="objetoUnity != null && objetoUnity.userFileId != null && objetoUnity.userFileId != ''" 
+                                ng-href = "{{'public/file/' + objetoUnity.userFileId}}" 
+                                target="_blank">
+                                    Download
+                            </a>
+                            
                         </form>
                     </li>
                    <!-- <li><label>Versión:</label> <input type="number" ng-model="vista.modelo.version"></li> -->
@@ -78,19 +89,28 @@
                             
                              <a class="button secondary right tiny" ng-click="EliminarElemento(elemento, vista.muebles)">x</a>
                             
-                            <li><label>ID:</label> {{elemento.id}}</li>
                             <li><label>Nombre:</label> <input type="text" ng-model="elemento.nombre"></li>
                             <li><label>Titulo:</label> <input type="text" ng-model="elemento.titulo"></li>
                             <li>
-                                <img alt="Imágen" ng-src="{{elemento.urlImagen}}">
+                                
                                 <form enctype="multipart/form-data" method="POST">
                                      Choose a file to upload: <input name="file" type="file"><br>
-                                     <button class="button tiny" ng-click="upload ($event, elemento.path, guardarUrlImagenElemento, elemento )">Upload</button>
-                                    Download
-                                </p>
+                                     
+                                     <!--UPLOAD-->
+                                    <button class="button tiny" 
+                                        ng-click="uploadElementoConstruccion ($event, elemento)">
+                                            Upload
+                                    </button>
+                                     
+                                    <a ng-if="elemento.imageId != null"
+                                        ng-href="{{'public/file/' + elemento.imageId}}"
+                                        target="_blank">
+                                        
+                                        <img alt=""
+                                            ng-src="{{'public/file/' + elemento.imageId}}">
+                                    </a>
                                 </form>
                             </li>
-                            <li><label>URL Imágen:</label> <input type="text" ng-model="elemento.path"></li>
                             <li><label>Texto:</label> <textarea type="text" ng-model="elemento.texto"></textarea></li>
                         </ul>
                     </li>   
@@ -107,19 +127,30 @@
                     <li ng-repeat="elemento in vista.cuartos"> 
                         <ul class="large-3 columns no-bullet panel">
                             
-                            <a class="button secondary right tiny" ng-click="EliminarElemento(elemento, vista.cuartos)">x</a>
+                            <a class="button secondary right tiny" ng-click="EliminarElemento(elemento, vista.muebles)">x</a>
                             
-                            <li><label>ID:</label> {{elemento.id}}</li>
                             <li><label>Nombre:</label> <input type="text" ng-model="elemento.nombre"></li>
                             <li><label>Titulo:</label> <input type="text" ng-model="elemento.titulo"></li>
                             <li>
+                                
                                 <form enctype="multipart/form-data" method="POST">
-                                    <img alt="Imágen" ng-src="{{elemento.urlImagen}}">
                                      Choose a file to upload: <input name="file" type="file"><br>
-                                     <button class="button tiny" ng-click="upload ($event, elemento.path, guardarUrlImagenElemento, elemento )">Upload</button>
+                                     
+                                     <!--UPLOAD-->
+                                    <button class="button tiny" 
+                                        ng-click="uploadElementoConstruccion ($event, elemento)">
+                                            Upload
+                                    </button>
+                                     
+                                    <a ng-if="elemento.imageId != null"
+                                        ng-href="{{'public/file/' + elemento.imageId}}"
+                                        target="_blank">
+                                        
+                                        <img alt=""
+                                            ng-src="{{'public/file/' + elemento.imageId}}">
+                                    </a>
                                 </form>
                             </li>
-                            <li><label>URL Imágen:</label> <input type="text" ng-model="elemento.path"></li>
                             <li><label>Texto:</label> <textarea type="text" ng-model="elemento.texto"></textarea></li>
                         </ul>
                     </li>   

@@ -40,10 +40,12 @@ Future<VistasResp> newVista(@app.Attr() MongoDb dbConn) async
 @Encode()
 Future<IdResp> saveVista(@app.Attr() MongoDb dbConn, @Decode() Vista vista) async
 {
-    print (encodeJson(vista));
+    print (app.request.body);
+    
+    print (vista.muebles[0].imageId);
     
     await dbConn.update
-    (
+    (   
         Col.vista, 
         where.id(StringToId(vista.id)), 
         vista

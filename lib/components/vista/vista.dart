@@ -13,6 +13,7 @@ class VistaVista
     String eventoID;
     
     LocalImageTargetSend localImageTarget;
+    ObjetoUnitySend objetoUnity;
     
     List<TipoDeVista> tiposDeVista = const 
     [
@@ -109,6 +110,8 @@ class VistaVista
                 return print (resp.error);
 
             
+            print (encodeJson (resp.vista));
+            
             vista = resp.vista;
             icono = vista.icon.urlTextura.split (r'/').last;
             urlIcono = 'images/webapp/${icono}.png';
@@ -127,10 +130,25 @@ class VistaVista
                 
                 localImageTarget = targetResp.obj;
             }
+            
+            if (notNullOrEmpty (vista.objetoUnityId))
+            {
+                ObjetoUnitySendResp objResp = await getFromCollection
+                (
+                    ObjetoUnitySendResp,
+                    'objetounity',
+                    vista.objetoUnityId
+                );
+                
+                if (! objResp.success)
+                    return print (objResp.error);
+                
+                objetoUnity = objResp.obj;
+            }
         }
     }
     
-    save () async
+    saveAndLeave () async
     {
         print ('Local Target Id: ${vista.localTargetId}');
         Resp resp = await saveInCollection (Col.vista, vista);
@@ -140,6 +158,17 @@ class VistaVista
         else
             print (resp.error);
     }
+    
+    saveAndStay () async
+    {
+        print (encodeJson(vista));
+        
+        Resp resp = await saveInCollection (Col.vista, vista);
+
+        if (! resp.success)
+            print (resp.error);
+    }
+    
 
     
     
@@ -154,21 +183,26 @@ class VistaVista
                     ..muebles = []
                     ..cuartos = [];
                 
-                IdResp idResp = await requestDecoded(IdResp, Method.POST, 'private/objetounity');
-                
-                if (idResp.success)
-                    vista.objetoUnityId = idResp.id;
-                else
-                    print ('Failed to load new Objeto Unity: ${idResp.error}');
-                
-                LocalImageTargetSendResp targetResp = await requestDecoded
+                ObjetoUnitySendResp objResp = await newFromCollection
                 (
-                    LocalImageTargetSendResp,
-                    Method.POST, 
-                    'private/localTarget'
+                    'objetounity',
+                    ObjetoUnitySendResp
                 );
                 
-                print (encodeJson(targetResp));
+                if (objResp.success)
+                {
+                    objetoUnity = objResp.obj;
+                    vista.objetoUnityId = objetoUnity.id;
+                }
+                else
+                    print ('Failed to load new ObjetoUnity: ${objResp.error}');
+                
+                
+                LocalImageTargetSendResp targetResp = await newFromCollection
+                (
+                    Col.localTarget,
+                    LocalImageTargetSendResp
+                );
                 
                 if (targetResp.success)
                 {
@@ -179,9 +213,6 @@ class VistaVista
                 }
                 else
                     print ('Failed to load new LocalTarget: ${idResp.error}');
-                
-                //TODO: Vista ya no tiene el campo "modelo", ahora tiene "modeloId" que es el _id
-                //de Mongo del UnityObject. Verificar si es null y pedir uno nuevo, sino pedir el existente.
                 
                 break;
             case 'InfoContactoJS, Assembly-CSharp':
@@ -252,22 +283,17 @@ class VistaVista
     
     void EliminarElemento (dynamic elem, List<dynamic> listElem)
     {
-        listElem.remove(elem);        
-        
+        listElem.remove(elem);
     }
     
-    guardarUrlObjeto(String s, _){
-        //TODO: Vista ya no tiene el campo "modelo", ademas ya "path" es
-        //una propiedad "get". Mirar el nuevo API para ver como interactuar con ObjetoUnity.
-        vista.modelo.path = s;
-    }
+
     
     guardarTargetId (String s){
         vista.objetoUnityId = s;
     }
     
-    guardarUrlImagenElemento(String s, elemento){
-        elemento.urlImagen = s;
+    guardarImagenElemento(String s, elemento){
+        elemento.imageId = s;
     }
     
     guardarUrlInfo(String s, info){
@@ -312,19 +338,19 @@ class VistaVista
         }));
     }
     
-    uploadToFileId (dom.MouseEvent event, String id, [void guardar (String id)]) async
+    uploadElementoConstruccion (dom.MouseEvent event, ElementoConstruccion elemento) async
     {
         dom.FormElement form = getFormElement (event);
         
         IdResp idResp;
   
-        if (notNullOrEmpty (id))
+        if (notNullOrEmpty (elemento.imageId))
         {
             idResp = await formRequestDecoded
             (
                 IdResp, 
                 Method.PUT,
-                'private/file/$id',
+                'private/file/${elemento.imageId}',
                 form
             );
         }
@@ -345,8 +371,9 @@ class VistaVista
             return;
         }
         
-        if (guardar != null)
-            guardar (idResp.id);
+        elemento.imageId = idResp.id;
+        
+        await saveAndStay();
     }
     
     uploadObjetoUnityUserFile (dom.MouseEvent event) async
@@ -367,6 +394,8 @@ class VistaVista
             {
                 print ("Upload Failed: ${resp.error}");
             }
+            
+            objetoUnity.userFileId = resp.id;
         }
         else
         {
@@ -385,7 +414,7 @@ class VistaVista
             (
                 IdResp,
                 Method.PUT,
-                "private/localTarget/${localImageTarget.id}/userfile",
+                "private/${Col.localTarget}/${localImageTarget.id}/userfile",
                 form
             );
     
