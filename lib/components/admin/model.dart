@@ -124,8 +124,3 @@ class ModelAdminInfo{
     User user;
     bool success = false; 
 }
-
-class LocalTargetAdminInfo{
-    LocalImageTargetSend target;
-    User user;
-}

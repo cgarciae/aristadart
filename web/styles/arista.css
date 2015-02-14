@@ -28,3 +28,19 @@
     height: auto;
     box-shadow: 10px 10px 5px #888888;
 }
+
+.active:before {
+    content: ' \25CF';
+    font-size: 20px;
+    color: green;
+}
+
+.no-active:before {
+    content: ' \25CF';
+    font-size: 20px;
+    color: red;
+}
+
+.pending-sync {
+    background-image: url("https://cdn1.iconfinder.com/data/icons/outline-imperial-seo/128/SEO_C_100_09.12.14-3_Artboard_45-256.png");
+}
