@@ -310,28 +310,22 @@ Future<IdResp> newOrUpdateScreenshot (MongoDb dbConn, Map form, ObjetoUnitySend 
 @app.Route ('/private/objetounity/:id/screenshot', methods: const [app.POST, app.PUT], allowMultipartRequest: true)
 @Encode ()
 @Secure (ADMIN)
-Future newOrUpdateObjetoUnityScreenshot (@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, String id) async
+Future<IdResp> newOrUpdateObjetoUnityScreenshot (@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, String id) async
 {
     try
     {
-        ObjetoUnitySendResp objResp;
-        IdResp idResp;
-        Resp resp = await getObjetoUnity(dbConn, id);
+        ObjetoUnitySendResp objResp = await getObjetoUnity(dbConn, id);
                 
-        if (! resp.success)
-            return resp;
-        
-        objResp = resp as ObjetoUnitySendResp;
+        if (! objResp.success)
+            return objResp;
         
         //Updates screenshotId, return IdResp
         return newOrUpdateScreenshot (dbConn, form, objResp.obj);
     }
     catch (e, stacktrace)
     {
-        return new Resp.failed
-        (
-            e.toString() + stacktrace.toString()
-        );
+        return new IdResp ()
+            ..error = e.toString() + stacktrace.toString();
     }
 }
 
@@ -355,12 +349,18 @@ Future publishObjetoUnity (@app.Attr() MongoDb dbConn, String id) async
             "No se han actualizado todos los modelos del Objetos Unity"
         );
     
+    ObjetoUnitySend obj;
+    
     await dbConn.update
     (
         Col.objetoUnity,
         where.id(StringToId(id)),
         modify
             .set('updatePending', false)
+            .set('updatedIOS', false)
+            .set('updatedAndroid', false)
+            .set('updatedMAC', false)
+            .set('updatedWindows', false)
             .inc('version', 1)
     );
     

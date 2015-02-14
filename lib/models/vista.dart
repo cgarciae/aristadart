@@ -49,5 +49,5 @@ class Vista
 class VistaExportable extends Vista
 {
     //ConstruccionRA
-    @Field() ObjetoUnitySend modelo;
+    @Field() ObjetoUnitySend objetoUnity;
 }

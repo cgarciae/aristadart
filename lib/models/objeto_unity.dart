@@ -13,6 +13,7 @@ class ObjetoUnitySend extends ObjetoUnity
     
     @Field() bool get active => activeAndroid && activeIOS;
     @Field() bool get activeAll => activeAndroid && activeIOS && activeMAC && activeWindows;
+    @Field() bool get updated => updatedAndroid && updatedIOS;
     @Field() bool get updatedAll => updatedAndroid && updatedIOS && updatedMAC && updatedWindows;
     @Field() int version;
     @ReferenceId() String screenshotId;

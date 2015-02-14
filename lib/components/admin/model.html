@@ -11,7 +11,7 @@
             </h3>
             <br>
             <a  class="button radius secondary left tiny"
-                ng-href="{{'public/file/'+info.model.userFileId}}"
+                ng-href="{{'public/file/' + info.model.userFileId}}"
                 target="_blank" >
                 Download User Model
             </a> 
@@ -27,16 +27,29 @@
                 <h3>Imágen preview</h3>
                 <br>
                 <div class="large-4 columns">
-                    <a ng-if="info.model.screenshotId != null && info.model.screenshotId !=''">
-                        <img alt="screenshoot Model" ng-src="{{'public/file/'+info.model.screenshotId}}">
+                
+                    <a ng-if="info.model.screenshotId != null && info.model.screenshotId !=''"
+                        ng-href="{{'public/file/'+info.model.screenshotId}}"
+                        target="_blank">
+                    
+                        <img alt="screenshoot Model" 
+                            ng-src="{{'public/file/'+info.model.screenshotId}}">
                     </a> 
+                    
                 </div>
+                
                 <div class="large-8 columns">
+                
                     <form enctype="multipart/form-data" method="POST">
                          Choose a file to upload: <input name="file" type="file"><br>
-                         <button class="button tiny radius" ng-click="upload ($event)">Upload</button>
+                         
+                         <button class="button tiny radius"
+                            ng-click="uploadScreenshot ($event, info.model)">
+                                Upload
+                        </button>
                     </form>
                 </div>
+                
             </div>
             <br>
             </div>
@@ -45,54 +58,123 @@
                 <li>
                     <h4>
                         Versión iOS
-                        <img ng-if="info.model.updatedIOS" alt="screenshoot Model" ng-src="/images/webapp/check.png">
+                        
+                        <img ng-if="info.model.updatedIOS"
+                            alt="screenshoot Model" 
+                            ng-src="/images/webapp/check.png">
+                        
                     </h4>
                     <div class="large-8 columns">
+                    
                         <form class="panel" enctype="multipart/form-data">
-                             <input name="file" type="file"><br>
-                             <button class="button tiny radius" ng-click="uploadModel (info, 'ios', $event)">Upload</button>
+                        
+                            <input name="file" type="file"><br>
+                            
+                            <button class="button tiny radius" 
+                                ng-click="uploadModel (info, 'ios', $event)">
+                                    Upload
+                            </button>
+                            
+                            
+                            
                         </form>
+                        <a ng-if="info.model.modelIdIOS != null"
+                            ng-href="{{'public/file/' + info.model.modelIdIOS}}"
+                            target="_blank">
+                            <button class="button tiny radius">
+                                    Actual
+                            </button>
+                        </a>
                     </div>
                 </li>
                 <li>
                     <h4>
                         Versión MACOSX
-                        <img ng-if="info.model.updatedMAC" alt="screenshoot Model" ng-src="/images/webapp/check.png">
+                        <img alt="screenshoot Model"
+                            ng-if="info.model.updatedMAC"
+                            ng-src="/images/webapp/check.png">
                     </h4>     
                     <div class="large-8 columns">
+                    
                         <form class="panel" enctype="multipart/form-data">
+                        
                              <input name="file" type="file"><br>
+                             
                              <button class="button tiny radius" ng-click="uploadModel (info, 'mac', $event)">Upload</button>
                         </form>
+                        
+                        <a ng-if="info.model.modelIdMAC != null"
+                            ng-href="{{'public/file/' + info.model.modelIdMAC}}"
+                            target="_blank">
+                            <button class="button tiny radius">
+                                    Actual
+                            </button>
+                        </a>
                     </div>
                 </li>
                 <li>
                     <h4>
                         Versión Android
-                        <img ng-if="info.model.updatedAndroid" alt="screenshoot Model" ng-src="/images/webapp/check.png">
+                        <img ng-if="info.model.updatedAndroid" 
+                            ng-src="/images/webapp/check.png">
                     </h4>
                     
                     <div class="large-8 columns">
+                    
                         <form class="panel" enctype="multipart/form-data">
-                             Choose a file to upload: <input name="file" type="file"><br>
-                             <button class="button tiny radius" ng-click="uploadModel (info, 'android', $event)">Upload</button>
+                        
+                             <input name="file" type="file"><br>
+                             
+                            <button class="button tiny radius" 
+                                ng-click="uploadModel (info, 'android', $event)">
+                                    Upload
+                            </button>
                         </form>
+                        
+                        <a ng-if="info.model.modelIdAndroid != null"
+                            ng-href="{{'public/file/' + info.model.modelIdAndroid}}"
+                            target="_blank">
+                            <button class="button tiny radius">
+                                    Actual
+                            </button>
+                        </a>
                     </div>
                 </li>
                 <li>
                     <h4>
                         Versión windows
-                        <img ng-if="info.model.updatedWindows" alt="screenshoot Model" ng-src="/images/webapp/check.png">
+                        <img ng-if="info.model.updatedWindows" 
+                            ng-src="/images/webapp/check.png">
                     </h4>
                     <div class="large-8 columns">
+                    
                         <form class="panel" enctype="multipart/form-data">
-                             Choose a file to upload: <input name="file" type="file"><br>
-                             <button class="button tiny radius" ng-click="uploadModel (info, 'windows', $event)">Upload</button>
+                        
+                             <input name="file" type="file"><br>
+                             
+                            <button class="button tiny radius" 
+                                ng-click="uploadModel (info, 'windows', $event)">
+                                    Upload
+                            </button>
+                            
+                            
                         </form>
+                        
+                        <a ng-if="info.model.modelIdWindows != null"
+                            ng-href="{{'public/file/' + info.model.modelIdWindows}}"
+                            target="_blank">
+                            <button class="button tiny radius">
+                                    Actual
+                            </button>
+                        </a>
                     </div>
                 </li>
                 
-                <button class="button small right radius" ng-click="publish (info)">Publicar</button>
+                <button class="button small right radius" 
+                    ng-if="info.model.updated"
+                    ng-click="publish (info)">
+                        Publicar
+                </button>
             </ul>
         </fieldset>
         <br>

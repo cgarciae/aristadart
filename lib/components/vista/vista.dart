@@ -13,7 +13,6 @@ class VistaVista
     String eventoID;
     
     LocalImageTargetSend localImageTarget;
-    ObjetoUnitySend objetoUnity;
     
     List<TipoDeVista> tiposDeVista = const 
     [
@@ -143,7 +142,7 @@ class VistaVista
                 if (! objResp.success)
                     return print (objResp.error);
                 
-                objetoUnity = objResp.obj;
+                vista.objetoUnity = objResp.obj;
             }
         }
     }
@@ -191,8 +190,8 @@ class VistaVista
                 
                 if (objResp.success)
                 {
-                    objetoUnity = objResp.obj;
-                    vista.objetoUnityId = objetoUnity.id;
+                    vista.objetoUnity = objResp.obj;
+                    vista.objetoUnityId = vista.objetoUnity.id;
                 }
                 else
                     print ('Failed to load new ObjetoUnity: ${objResp.error}');
@@ -212,7 +211,7 @@ class VistaVista
                     print (localImageTarget);
                 }
                 else
-                    print ('Failed to load new LocalTarget: ${idResp.error}');
+                    print ('Failed to load new LocalTarget: ${targetResp.error}');
                 
                 break;
             case 'InfoContactoJS, Assembly-CSharp':
@@ -395,7 +394,7 @@ class VistaVista
                 print ("Upload Failed: ${resp.error}");
             }
             
-            objetoUnity.userFileId = resp.id;
+            vista.objetoUnity.userFileId = resp.id;
         }
         else
         {

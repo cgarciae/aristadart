@@ -97,13 +97,13 @@ Future<VistaExportable> buildVista (MongoDb dbConn, VistaExportable vista) async
     switch (vista.type__)
     {
         case 'ConstruccionRAJS, Assembly-CSharp':
-            if (notNullOrEmpty(vista.modeloId))
+            if (notNullOrEmpty(vista.objetoUnityId))
             {
-                vista.modelo = await dbConn.findOne
+                vista.objetoUnity = await dbConn.findOne
                 (
                     Col.objetoUnity,
                     ObjetoUnitySend,
-                    where.id (StringToId (vista.modeloId))
+                    where.id (StringToId (vista.objetoUnityId))
                 );
             }
             break;
@@ -125,7 +125,7 @@ Future<Resp> validVista (VistaExportable vista) async
     {
         case 'ConstruccionRAJS, Assembly-CSharp':
             
-            if (vista.modelo == null)
+            if (vista.objetoUnity == null)
                 return new Resp()
                     ..error = "modeloId undefined.";
             

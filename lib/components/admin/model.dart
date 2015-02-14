@@ -8,7 +8,7 @@ part of arista_client;
 )
 class ModelVista{
     
-    List<ModelAdminInfo> infoList = [ ];
+    List<ModelAdminInfo> infoList = [];
     Router router;
     
     ModelVista(this.router)
@@ -62,6 +62,24 @@ class ModelVista{
         
     }
     
+    uploadScreenshot (dom.MouseEvent event, ObjetoUnitySend obj) async
+    {
+        dom.FormElement form = getFormElement(event);
+        
+        IdResp idResp = await formRequestDecoded
+        (
+            IdResp,
+            Method.POST,
+            'private/objetounity/${obj.id}/screenshot',
+            form
+        );
+        
+        if (! idResp.success)
+            return print (idResp.error);
+        
+        obj.screenshotId = idResp.id;
+    }
+    
     uploadModel(ModelAdminInfo info, String system, dom.MouseEvent event) async
     {
         print ("Uploading to $system");
@@ -105,4 +123,9 @@ class ModelAdminInfo{
     ObjetoUnitySend model;
     User user;
     bool success = false; 
+}
+
+class LocalTargetAdminInfo{
+    LocalImageTargetSend target;
+    User user;
 }

@@ -27,7 +27,12 @@
         
         <div class="large-6 columns">
             <fieldset>
-                <legend> Modelo </legend>
+                <legend> 
+                    Modelo
+                    --<span ng-if="vista.objetoUnity != null">active {{vista.objetoUnity.active}}</span>
+                    --<span ng-if="vista.objetoUnity != null">pending {{vista.objetoUnity.updatePending}}</span>
+                    --<span ng-if="vista.objetoUnity != null">version {{vista.objetoUnity.version}}</span>
+                </legend>
                 <ul class="no-bullet">
                     <li class = "large-7 columns">
                         <!--FORM-->
@@ -43,10 +48,19 @@
                              
                             <!--DOWNLOAD-->
                             <a class="button tiny"
-                                ng-if="objetoUnity != null && objetoUnity.userFileId != null && objetoUnity.userFileId != ''" 
-                                ng-href = "{{'public/file/' + objetoUnity.userFileId}}" 
+                                ng-if="vista.objetoUnity != null && vista.objetoUnity.userFileId != null && vista.objetoUnity.userFileId != ''" 
+                                ng-href = "{{'public/file/' + vista.objetoUnity.userFileId}}" 
                                 target="_blank">
                                     Download
+                            </a>
+                            
+                            <!--SCREENSHOT-->
+                            <a ng-if="vista.objetoUnity.screenshotId != null && vista.objetoUnity.screenshotId !=''"
+                                ng-href="{{'public/file/' + vista.objetoUnity.screenshotId}}"
+                                target="_blank">
+                    
+                                <img alt="screenshoot Model" 
+                                    ng-src="{{'public/file/' + vista.objetoUnity.screenshotId}}">
                             </a>
                             
                         </form>
@@ -65,15 +79,16 @@
                              
                              <button class="button tiny" ng-click="uploadLocalTargetImageFile ($event)">Upload</button>
                              
-                            <a class="button tiny"
+                            <a class="tiny"
                                 ng-if="localImageTarget != null && localImageTarget.imageId != null && localImageTarget.imageId != ''" 
                                 ng-href = "{{'public/file/' + localImageTarget.imageId}}" 
                                 target="_blank">
-                                    Download
+                                
+                                <img alt=""
+                                    ng-if="localImageTarget.imageId != null"
+                                    ng-src="{{'public/file/' + localImageTarget.imageId}}">
                             </a>
-                            <img alt=""
-                                ng-if="localImageTarget.imageId != null"
-                                ng-src="{{'public/file/' + localImageTarget.imageId}}">
+                            
                         </form>
                     </li>
                    <!-- <li class = "large-3 columns"><label>Versión:</label> <input type="number" ng-model="vista.target.version"></li> -->

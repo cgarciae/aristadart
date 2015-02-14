@@ -8,9 +8,11 @@ part of arista_client;
 )
 class TargetVista{
     
-    List<ModelAdminInfo> infoList = [ ];
+    List<LocalTargetAdminInfo> infoList = [ ];
     Router router;
-        
+    
+    //TODO: Modificar todo ObjetoUnitySend -> LocalImageTargetSend
+    
     TargetVista(this.router){
         setModels();   
     }
