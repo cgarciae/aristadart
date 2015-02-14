@@ -71,7 +71,8 @@ Future<IdResp> updateFile(@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map fo
         HttpBodyFileUpload file = form ['file'];
         
         if (file == null || file.content == null || file.content.length == 0)
-                return new Resp.failed("Empty File");
+                return new Resp ()
+                    ..error = "Empty File";
         
         var gridFS = new GridFS (dbConn.innerConn);
         var input = new Stream.fromIterable([file.content]);

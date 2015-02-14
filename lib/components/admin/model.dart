@@ -99,7 +99,6 @@ class ModelVista{
         
         
         info.model = resp.obj;
-        info.success = resp.success;
     }
     
     publish (ModelAdminInfo info) async
@@ -121,11 +120,5 @@ class ModelVista{
 
 class ModelAdminInfo{
     ObjetoUnitySend model;
-    User user;
-    bool success = false; 
-}
-
-class LocalTargetAdminInfo{
-    LocalImageTargetSend target;
     User user;
 }

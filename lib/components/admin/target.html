@@ -1,74 +1,114 @@
 <div class="large-10 small-centered columns">
    
-    <h1>Edición marcadores Locales</h1>
+    <h1>Edición Local Targets</h1>
     <div class="row">
         <div ng-repeat="info in infoList">
          <fieldset>
          <div class="row medium-uncollapse large-collapse">
             <h3>
-                {{info.model.name}}
-                Nombre marcador
+                {{info.target.name}}
+                Nombre modelo
             </h3>
             <br>
             <a  class="button radius secondary left tiny"
-                ng-href="{{'public/file/'+info.model.userFileId}}"
+                ng-href="{{'public/file/' + info.target.imageId}}"
                 target="_blank" >
-                Download User Target
-            </a>
-            <p>Versión marcador: Nº{{info.model.version}}</p>
+                Download User Model
+            </a> 
+            <div class="panel right">
+                <h4>Usuario: <h5>{{info.user.nombre}} {{info.user.apellido}}</h5></h4>
+                <h4>Correo: <h5>{{info.user.email}}</h5></h4>
+            </div>  
             <br>
-            <div class="small-6 columns">
-                <h3>Textura-Imágen preview</h3>
+            <br>            
+            <p> Versión modelo: Nº{{info.target.version}}</p>
+            <br>
+            <div class="panel small-6 columns">
+                <h3>Imágen preview</h3>
                 <br>
                 <div class="large-4 columns">
-                    <a ng-if="info.model.screenshotId != null && info.model.screenshotId !=''">
-                        <img alt="screenshoot Model" ng-src="{{'public/file/'+info.model.screenshotId}}">
+                
+                    <a ng-if="info.target.imageId != null && info.target.imageId !=''"
+                        ng-href="{{'public/file/'+info.target.imageId}}"
+                        target="_blank">
+                    
+                        <img alt="screenshoot Model" 
+                            ng-src="{{'public/file/'+info.target.imageId}}">
                     </a> 
+                    
                 </div>
-                <div class="large-8 columns">
-                    <form enctype="multipart/form-data" method="POST">
-                         Choose a file to upload: <input name="file" type="file"><br>
-                         <button class="button tiny radius" ng-click="upload ($event)">Upload</button>
-                         <h5>{{info.user.nombre}} {{info.user.apellido}}</h5>
-                         <h5>{{info.user.email}}</h5>
-                    </form>
-                </div>
+                
             </div>
             <br>
             </div>
-            <br>
+            <hr>
             <ul class="small-block-grid-2 medium-block-grid-3 large-block-grid-2">
                 <li>
                     <h4>
-                        .XMl
-                        <img ng-if="info.model.updatedIOS" alt="screenshoot Model" ng-src="/images/webapp/check.png">
+                        Dat
+                        
+                        <img ng-if="info.target.updatedDat"
+                            alt="screenshoot Model" 
+                            ng-src="/images/webapp/check.png">
+                        
                     </h4>
                     <div class="large-8 columns">
-                        <form enctype="multipart/form-data">
-                             <input name="file" type="file"><br>
-                             <button class="button tiny radius" ng-click="uploadModel (info, 'ios', $event)">Upload</button>
+                    
+                        <form class="panel" enctype="multipart/form-data">
+                        
+                            <input name="file" type="file"><br>
+                            
+                            <button class="button tiny radius" 
+                                ng-click="uploadModel (info, 'dat', $event)">
+                                    Upload
+                            </button>
+                            
                         </form>
+                        
+                        <a ng-if="info.target.datId != null"
+                            ng-href="{{'public/file/' + info.target.datId}}"
+                            target="_blank">
+                            <button class="button tiny radius">
+                                    Actual
+                            </button>
+                        </a>
                     </div>
                 </li>
                 <li>
                     <h4>
-                        .DAT
-                        <img ng-if="info.model.updatedMAC" alt="screenshoot Model" ng-src="/images/webapp/check.png">
+                        Xml
+                        <img alt="screenshoot Model"
+                            ng-if="info.target.updatedXml"
+                            ng-src="/images/webapp/check.png">
                     </h4>     
                     <div class="large-8 columns">
-                        <form enctype="multipart/form-data">
+                    
+                        <form class="panel" enctype="multipart/form-data">
+                        
                              <input name="file" type="file"><br>
-                             <button class="button tiny radius" ng-click="uploadModel (info, 'mac', $event)">Upload</button>
+                             
+                             <button class="button tiny radius" ng-click="uploadModel (info, 'xml', $event)">Upload</button>
                         </form>
+                        
+                        <a ng-if="info.target.xmlId != null"
+                            ng-href="{{'public/file/' + info.target.xmlId}}"
+                            target="_blank">
+                            <button class="button tiny radius">
+                                    Actual
+                            </button>
+                        </a>
                     </div>
                 </li>
-                <button class="button small right radius" ng-click="publish (info)">Publicar</button>
+                
+                
+                <button class="button small right radius" 
+                    ng-if="info.target.updated"
+                    ng-click="publish (info)">
+                        Publicar
+                </button>
             </ul>
         </fieldset>
         <br>
        </div>
     </div>
 </div>
-
-
-

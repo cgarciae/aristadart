@@ -33,6 +33,7 @@
                     --<span ng-if="vista.objetoUnity != null">pending {{vista.objetoUnity.updatePending}}</span>
                     --<span ng-if="vista.objetoUnity != null">version {{vista.objetoUnity.version}}</span>
                 </legend>
+                Nombre <input type="text" ng-model="vista.objetoUnity.name">
                 <ul class="no-bullet">
                     <li class = "large-7 columns">
                         <!--FORM-->
@@ -71,7 +72,12 @@
         </div>
         <div class="row large-6 columns">
             <fieldset>
-                <legend> Target </legend>
+                <legend>
+                    Target
+                    --<span ng-if="vista.objetoUnity != null">active {{vista.localTarget.active}}</span>
+                    --<span ng-if="vista.objetoUnity != null">pending {{vista.localTarget.updatePending}}</span>
+                    --<span ng-if="vista.objetoUnity != null">version {{vista.localTarget.version}}</span>
+                </legend>
                 <ul class="no-bullet">
                     <li class = "large-7 columns">
                         <form enctype="multipart/form-data" method="POST">
@@ -80,13 +86,13 @@
                              <button class="button tiny" ng-click="uploadLocalTargetImageFile ($event)">Upload</button>
                              
                             <a class="tiny"
-                                ng-if="localImageTarget != null && localImageTarget.imageId != null && localImageTarget.imageId != ''" 
-                                ng-href = "{{'public/file/' + localImageTarget.imageId}}" 
+                                ng-if="vista.localTarget != null && vista.localTarget.imageId != null && vista.localTarget.imageId != ''" 
+                                ng-href = "{{'public/file/' + vista.localTarget.imageId}}" 
                                 target="_blank">
                                 
                                 <img alt=""
-                                    ng-if="localImageTarget.imageId != null"
-                                    ng-src="{{'public/file/' + localImageTarget.imageId}}">
+                                    ng-if="vista.localTarget.imageId != null"
+                                    ng-src="{{'public/file/' + vista.localTarget.imageId}}">
                             </a>
                             
                         </form>
