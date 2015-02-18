@@ -173,7 +173,8 @@ Future<EventoExportable> BuildEvento(MongoDb dbConn, EventoExportable evento) as
     (
         Col.vista, 
         VistaExportable, 
-        where.oneFrom('_id', objIDs)
+        where
+            .oneFrom('_id', objIDs)
     );
 
     var futures = evento.vistas.map((VistaExportable vista) 
