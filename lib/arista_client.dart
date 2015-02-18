@@ -143,7 +143,7 @@ Future<QueryMap> jsonRequestQueryMap (Type type, String method, String path, Obj
     );
 }
 
-Future<Resp> saveInCollection(String collection, Object obj){
+Future<Resp> saveInCollection (String collection, Object obj){
     return jsonRequestDecoded(Resp, Method.PUT, "private/$collection", obj);
 }
 

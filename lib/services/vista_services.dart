@@ -105,6 +105,8 @@ Future<VistaExportable> buildVista (MongoDb dbConn, VistaExportable vista) async
                     ObjetoUnitySend,
                     where.id (StringToId (vista.objetoUnityId))
                 );
+                
+                //TODO: vista.localTarget
             }
             break;
 
