@@ -53,10 +53,8 @@ class Resp
 {
     @Field() bool get success => nullOrEmpty(error);
     @Field() bool get failed => ! success;
+    
     @Field() String error;
-    
-    Resp();
-    
 }
 
 class VistasResp extends Resp
