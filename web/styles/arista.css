@@ -47,7 +47,7 @@
 }
 
 .round-button {
-    width:10%;
+    width:60px;
     float:right;
 }
 .round-button-circle {
@@ -58,11 +58,11 @@
     border:none;
     overflow:hidden;
     
-    background: #8fc5d2; 
+    background: #4586EF; 
     box-shadow: 5px 5px 3px rgba(0,0,0,.07); 
 }
 .round-button-circle:hover {
-    background:#F0ED54;
+    background:#FFFFFF;
 }
 .round-button a {
     display:block;
@@ -81,5 +81,21 @@
     text-decoration:none;
 }
 .round-button a :hover{
-    color:#FFFFFFF !important;
+    color:#FFFFFF !important;
+}
+
+.save {
+    display: block;
+    width:60px;
+    height:60px;
+    -moz-border-radius: 50px;
+    -webkit-border-radius: 50px;
+    background:#4586EF;
+    background-image: url("/images/icons/save.png") !important;
+    background-position:50% 50% !important;
+    background-repeat:no-repeat !important;   
+    box-shadow: 5px 5px 3px rgba(0,0,0,.07);  
+}
+.save:hover{
+    background:#51A9F7;
 }

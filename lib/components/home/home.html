@@ -7,13 +7,12 @@
 
 <div >
 <fieldset class="left">
-    <h4 class="text-center">
+    <h2 class="text-center">
         Hola <b> {{user.nombre}}  {{user.apellido}}! </b>
-    </h4>
+    </h2>
     <br>
     <h3>Edita y crea tus eventos</h3>
     <br>
-    <button ng-click='nuevoEvento()' class="button radius right">Nuevo Evento</button>
 </fieldset>
 </div>
 <div class="row">
@@ -28,6 +27,11 @@
             <br>
             <i>{{evento.descripcion}}</i>
         </fieldset>
+        <div class="round-button">
+            <div class="round-button-circle">
+                <a ng-click='nuevoEvento()' class="round-button">+</a>
+            </div>
+        </div>
     </div>
 </div>
 <br>

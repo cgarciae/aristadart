@@ -1,27 +1,16 @@
-<fieldset>
-    <legend>EDICIÓN VISTA</legend>
-    <a class="button radius right" ng-click='saveAndLeave()'>Save</a>
-    
-    <br>
-    <hr>
-    <div class="large-2 columns" ng-if="vista.type__ != null && vista.type__ != ''">
-        <div class="panel">
-            <h3> Icono </h3>
-            <ul class="no-bullet">
-                <li><img alt="Icono" ng-src="{{urlIcono}}" class="gray-b">
-                <br>
-                <li><label>Nombre:</label> <input type="text" ng-model="vista.icon.texto"></li>
-            </ul>
-        </div>
-    </div>
-    <br>
-    <div class="row collapse">
-        <br>   
-    </div>
+<div class="save right" ng-click='saveAndLeave()'></div>
+<fieldset class="large-2 columns" ng-if="vista.type__ != null && vista.type__ != ''">
+    <legend>Icono</legend>
+        <ul class="no-bullet">
+            <li><img alt="Icono" ng-src="{{urlIcono}}" class="gray-b">
+            <br>
+            <li><label>Nombre:</label> <input type="text" ng-model="vista.icon.texto"></li>
+        </ul>
 </fieldset>
+<br>
 <div ng-switch="vista.type__">
     <div ng-switch-when="ConstruccionRAJS, Assembly-CSharp">
-        <br>
+        <hr>
         <h2>Edición Vista Construcción RA</h2>
         <br>
         <div class="large-6 columns">
@@ -103,11 +92,12 @@
         </div>
         <div class="large-12 columns">
             <fieldset>
-                <legend> Muebles</legend> <p>{{vista.muebles.length}} Muebles</p>
-                
+                <legend>{{vista.muebles.length}} Muebles</legend>
                 <br>
-                <div class="clearfix">
-                    <a class="button large radius right" ng-click="NuevoMueble()">Nuevo Mueble</a>
+                <div class="round-button">
+                    <div class="round-button-circle">
+                        <a ng-click='NuevoMueble ()' class="round-button">+</a>
+                    </div>
                 </div>
                 <ul class="no-bullet">
                     <li ng-repeat="elemento in vista.muebles"> 
@@ -180,7 +170,11 @@
                 </ul>
                 <hr>
                 <br>
-                <a class="button large radius right" ng-click="NuevoCuarto()">Nuevo Cuarto</a>
+                <div class="round-button">
+                    <div class="round-button-circle">
+                        <a ng-click='NuevoCuarto()' class="round-button">+</a>
+                    </div>
+                </div>
            </fieldset>
        </div>
        <hr>
