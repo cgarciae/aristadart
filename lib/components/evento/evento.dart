@@ -48,12 +48,40 @@ class EventoVista
         }));
     }
     
-    nuevaVista ()
+    nuevaVista () async
     {
         print (Method.POST);
+        /*
         newFromCollection ('vista').then (doIfSuccess ((resp) 
             => addVistaId (resp.id))
         );
+         */
+        IdResp idResp = await newFromCollection ('vista');
+        
+        if(idResp.failed){
+            return print(idResp.error);
+        }
+        
+        //addVista
+        var eventoID = evento.id;
+        Resp resp = await pushIDtoList('evento', eventoID, 'viewIds', idResp.id);
+        if(resp.failed){
+            return print(resp.error);
+        }
+        var vista = new Vista()
+            ..id = idResp.id
+            ..icon.texto = "Nueva Vista";
+        
+        //saveVista
+        Resp resp2 = await saveInCollection('vista', vista);
+        
+        if(resp2.failed){
+            return print(resp2.error);
+        } 
+                      
+        vistas.add (vista);
+        evento.viewIds.add (vista.id);
+        
     }
     
     Future<Resp> addVistaId  (String vistaID)

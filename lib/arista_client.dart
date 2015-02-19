@@ -151,7 +151,7 @@ Future<Resp> deleteFromCollection(String collection, String id){
     return requestDecoded(Resp, Method.DELETE, "private/$collection/$id");
 }
 
-Future<IdResp> newFromCollection (String collection, [Type type = IdResp])
+Future<dynamic> newFromCollection (String collection, [Type type = IdResp])
 {
     return requestDecoded (type, Method.POST, "private/$collection");
 }

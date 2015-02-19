@@ -161,12 +161,46 @@ class VistaVista
         print (encodeJson(vista));
         
         Resp resp = await saveInCollection (Col.vista, vista);
+        
 
         if (! resp.success)
             print (resp.error);
+        
+        saveObjetoUnity();
+        saveLocaltarget();
     }
     
-
+    saveObjetoUnity() async
+    {
+        if (vista.objetoUnity == null)
+            return;
+                    
+        Resp resp = await jsonRequestDecoded
+        (
+            Resp,
+            Method.PUT,
+            'private/objetounity',
+            vista.objetoUnity
+        );
+        
+        if (resp.failed)
+            print (resp.error);
+    }
+    
+    saveLocaltarget () async
+    {
+        if (vista.localTarget == null)
+            return;
+        
+        Resp resp = await saveInCollection
+        (
+            Col.localTarget,
+            vista.localTarget
+        );
+        
+        if (resp.failed)
+            print (resp.error);
+    }
     
     
     seleccionarTipoVista (TipoDeVista tipo) async
