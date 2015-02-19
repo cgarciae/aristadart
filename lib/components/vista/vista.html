@@ -148,7 +148,7 @@
                     <li ng-repeat="elemento in vista.cuartos"> 
                         <ul class="large-3 columns no-bullet panel">
                             
-                            <a class="button secondary right tiny" ng-click="EliminarElemento(elemento, vista.muebles)">x</a>
+                            <a class="button secondary right tiny" ng-click="EliminarElemento(elemento, vista.cuartos)">x</a>
                             
                             <li><label>Nombre:</label> <input type="text" ng-model="elemento.nombre"></li>
                             <li><label>Titulo:</label> <input type="text" ng-model="elemento.titulo"></li>
@@ -237,20 +237,30 @@
                                 <label>Titulo:</label> <input type="text" ng-model="info.titulo">
                             </div>
                             <div ng-switch-when="ImagenInfoJS, Assembly-CSharp">
-                                <form enctype="multipart/form-data" method="POST">
-                                    <img alt="Imágen" ng-src="{{info.path}}">
-                                    <br>
-                                     Choose a file to upload: <input name="file" type="file"><br>
-                                     <button class="button tiny" ng-click="upload ($event, info.path, guardarUrlInfo, info )">Upload</button>
-                                </form>
-                                <label>Url Imágen:</label> <input type="text" ng-model="info.path">                                                
+                                <form enctype="multipart/form-data" method="POST">                                    
+                                    <!--UPLOAD FILE-->                                    
+                                    Choose a file to upload: <input name="file" type="file" accept="image/*"><br>
+                                    <button class="button tiny" ng-click="uploadElementosInfoImageFile ($event, info)">Upload</button>
+                                    
+                                    <!--SCREENSHOT-->
+                                    <div ng-switch="info.imageId != null && info.imageId !=''">  
+                                        <a ng-switch-when="true"
+                                            ng-href="{{'public/file/' + info.imageId}}"
+                                            target="_blank">
+                                            <img alt="screenshoot Elemento Info" 
+                                                ng-src="{{'public/file/' + info.imageId}}">
+                                        </a>
+                                        <img ng-switch-default
+                                              alt="screenshoot Elemento Info" 
+                                              ng-src="images/webapp/missing_image.png">
+                                    </div>
+                                </form>                                                
                             </div>
                             <div ng-switch-when="InfoTextoJS, Assembly-CSharp">
                                 <label>Titulo:</label> <input type="text" ng-model="info.titulo">
-                                <label>Descripción:</label> <input type="text" ng-model="info.descripcion">
+                                <label>Descripción:</label> <textarea ng-model="info.descripcion"></textarea>
                             </div>
                             <div ng-switch-default>
-                                <br>
                                 <a class="button radius left" data-dropdown="dropInfo"
                                    aria-controls="dropInfo" aria-expanded="false"
                                    data-options="align:left">
