@@ -105,6 +105,11 @@
         <div class="large-12 columns">
             <fieldset>
                 <legend> Muebles</legend> <p>{{vista.muebles.length}} Muebles</p>
+                
+                <br>
+                <div class="clearfix">
+                    <a class="button large radius right" ng-click="NuevoMueble()">Nuevo Mueble</a>
+                </div>
                 <ul class="no-bullet">
                     <li ng-repeat="elemento in vista.muebles"> 
                         <ul class="large-3 columns no-bullet panel">
@@ -137,9 +142,6 @@
                         </ul>
                     </li>   
                 </ul>
-                <hr>
-                <br>
-                <a class="button small radius right" ng-click="NuevoMueble()">Nuevo Mueble</a>
             </fieldset>
        </div>
        <div class="large-12 columns">
@@ -179,7 +181,7 @@
                 </ul>
                 <hr>
                 <br>
-                <a class="button small radius right" ng-click="NuevoCuarto()">Nuevo Cuarto</a>
+                <a class="button large radius right" ng-click="NuevoCuarto()">Nuevo Cuarto</a>
            </fieldset>
        </div>
        <hr>

@@ -1,55 +1,32 @@
-<fieldset>
-    <a  ng-if="isAdmin"
-        ng-click="router.go ('admin', {}, forceReload: true)">
-        Go to Admin
-    </a>
-    <br>
+<a  ng-if="isAdmin"
+    ng-click="router.go ('admin', {}, forceReload: true)"
+    ata-tooltip aria-haspopup="true"
+    title="Eres administrador!, ingresa desde aqui al panel de administrador.">
+    Go to Admin
+</a>
+<div >
+<fieldset class="left">
     <h4 class="text-center">
         Hola <b> {{user.nombre}}  {{user.apellido}}! </b>
     </h4>
     <br>
-    <div class="row medium-uncollapse large-collapse">
-        <div class="small-7 columns">
-            <h5>
-                Eres administrador!, ingresa desde aqui al panel de administrador.
-            </h5>
-        </div>
-        <div class="small-5 columns">
-            <a class="button tiny radius" ng-click="go2Admin()">Admin</a>
-         </div>
-    </div>
-    <div class="row">
-      <div class="small-11 small-centered columns">
-        <h1>Eventos</h1>
-      </div>
-    </div>
+    <h3>Edita y crea tus eventos</h3>
     <br>
-    <div class="row">
-        <div ng-repeat="evento in eventos" 
-            ng-click="ver (evento)">
-            
-                <div class="panel control-width boxes">
-                    <a ng-click="eliminar (evento, $event)"
-                       class="button secondary right tiny">X</a>
-                    
-                    <br>
-                    
-                    <b>{{evento.nombre}}</b>
-                    
-                    <br> 
-                    
-                    <br>
-                    <i>{{evento.descripcion}}</i>
-        </div>
-    </div>
-    
-    <div class="clearfix">
-        <a ng-click='nuevoEvento()' class="button radius right">Nuevo Evento</a>
-    </div>
-    
-    
-  
+    <button ng-click='nuevoEvento()' class="button radius right">Nuevo Evento</button>
 </fieldset>
-
-        
-<img alt="" ng-src="{{url}}">
+</div>
+<div class="row">
+    <div class="small-6 small-centered columns left">
+        <fieldset class="boxes" ng-repeat="evento in eventos" 
+            ng-click="ver (evento)">
+            <a ng-click="eliminar (evento, $event)"
+               class="button right tiny">X</a>
+            <br>
+            <b>{{evento.nombre}}</b>
+            <br> 
+            <br>
+            <i>{{evento.descripcion}}</i>
+        </fieldset>
+    </div>
+</div>
+<br>
