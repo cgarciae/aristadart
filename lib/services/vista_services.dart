@@ -24,7 +24,7 @@ Future<VistasResp> getVistas(@app.Attr() MongoDb dbConn, String id) async
 
 @app.Route("/private/vista",methods: const[app.POST])
 @Encode()
-Future<VistasResp> newVista(@app.Attr() MongoDb dbConn) async
+Future<IdResp> newVista(@app.Attr() MongoDb dbConn) async
 {
         
     var vista = new Vista()
@@ -38,11 +38,11 @@ Future<VistasResp> newVista(@app.Attr() MongoDb dbConn) async
 
 @app.Route("/private/vista", methods: const[app.PUT])
 @Encode()
-Future<IdResp> saveVista(@app.Attr() MongoDb dbConn, @Decode() Vista vista) async
+Future<Resp> saveVista(@app.Attr() MongoDb dbConn, @Decode() Vista vista) async
 {
     print (app.request.body);
     
-    print (vista.muebles[0].imageId);
+    //print (vista.muebles[0].imageId);
     
     await dbConn.update
     (   
@@ -51,8 +51,7 @@ Future<IdResp> saveVista(@app.Attr() MongoDb dbConn, @Decode() Vista vista) asyn
         vista
     );
     
-    return new IdResp()
-        ..id = vista.id; 
+    return new Resp();
 }
 
 @app.Route("/private/vista/:vistaID", methods: const [app.GET])
@@ -77,7 +76,7 @@ Future<IdResp> getVista(@app.Attr() MongoDb dbConn, String vistaID) async
 
 @app.Route("/private/vista/:vistaID", methods: const [app.DELETE])
 @Encode()
-Future<IdResp> deleteVista(@app.Attr() MongoDb dbConn, String vistaID) async
+Future<Resp> deleteVista(@app.Attr() MongoDb dbConn, String vistaID) async
 {           
     await dbConn.remove(Col.vista, where.id(StringToId(vistaID)));
     
@@ -93,7 +92,7 @@ Future<IdResp> exportarVista(@app.Attr() MongoDb dbConn, String vistaID) async
 
 Future<VistaExportable> buildVista (MongoDb dbConn, VistaExportable vista) async
 {
-    
+    print("buildVista");
     switch (vista.type__)
     {
         case 'ConstruccionRAJS, Assembly-CSharp':
@@ -104,10 +103,20 @@ Future<VistaExportable> buildVista (MongoDb dbConn, VistaExportable vista) async
                     Col.objetoUnity,
                     ObjetoUnitySend,
                     where.id (StringToId (vista.objetoUnityId))
-                );
+                );                
                 
-                //TODO: vista.localTarget
             }
+            
+            if (notNullOrEmpty(vista.localTargetId))
+            {
+                vista.localTarget = await dbConn.findOne
+                (
+                    Col.localTarget,
+                    LocalImageTargetSend,
+                    where.id(StringToId (vista.localTargetId))                    
+                );
+            }
+            
             break;
 
         default:
@@ -130,6 +139,15 @@ Future<Resp> validVista (VistaExportable vista) async
             if (vista.objetoUnity == null)
                 return new Resp()
                     ..error = "modeloId undefined.";
+            if (vista.objetoUnity.active == null || vista.objetoUnity.active == false)
+                return new Resp()
+                    ..error = "El objetoUnity no esta activo.";
+            if (vista.localTarget == null)
+                return new Resp()
+                    ..error = "localTarget undefined.";            
+            if (vista.localTarget.active == null || vista.localTarget.active == false)
+                 return new Resp()
+                    ..error = "El localTarget no esta activo.";            
             
             break;
     }

@@ -15,7 +15,7 @@ class Evento
 
 class EventoCompleto extends Evento
 {
-    @Field() bool active;
+    @Field() bool active = true;
 }
 
 class EventoExportable extends EventoCompleto
