@@ -41,6 +41,45 @@
     color: red;
 }
 
-.pending-sync {
-    background-image: url("https://cdn1.iconfinder.com/data/icons/outline-imperial-seo/128/SEO_C_100_09.12.14-3_Artboard_45-256.png");
+.pd{
+    width:40px;
+    height:40px;
+}
+
+.round-button {
+    width:10%;
+    float:right;
+}
+.round-button-circle {
+    width: 100%;
+    height:0;
+    padding-bottom: 100%;
+    border-radius: 50%;
+    border:none;
+    overflow:hidden;
+    
+    background: #8fc5d2; 
+    box-shadow: 5px 5px 3px rgba(0,0,0,.07); 
+}
+.round-button-circle:hover {
+    background:#F0ED54;
+}
+.round-button a {
+    display:block;
+    float:left;
+    width:100%;
+    padding-top:50%;
+    padding-bottom:50%;
+    line-height:1em;
+    margin-top:-0.5em;
+    
+    text-align:center;
+    color:#FFFFFF;
+    font-family:monospace;
+    font-size:3em;
+    font-weight:bold;
+    text-decoration:none;
+}
+.round-button a :hover{
+    color:#FFFFFFF !important;
 }
