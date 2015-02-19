@@ -50,4 +50,5 @@ class VistaExportable extends Vista
 {
     //ConstruccionRA
     @Field() ObjetoUnitySend objetoUnity;
+    @Field() LocalImageTargetSend localTarget;
 }

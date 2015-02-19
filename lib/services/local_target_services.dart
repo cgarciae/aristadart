@@ -282,7 +282,7 @@ Future publishLocalTarget (@app.Attr() MongoDb dbConn, String id) async
 
 @app.Route('/private/user/localTargets', methods: const [app.GET])
 @Encode()
-Future<LocalTargetSendListResp> userLocalTargets (@app.Attr() MongoDb dbConn) async
+Future<LocalImageTargetSendListResp> userLocalTargets (@app.Attr() MongoDb dbConn) async
 {
     try
     {  
@@ -294,12 +294,12 @@ Future<LocalTargetSendListResp> userLocalTargets (@app.Attr() MongoDb dbConn) as
                 .eq('owner', userId)
         );
 
-        return new LocalTargetSendListResp()
+        return new LocalImageTargetSendListResp()
             ..objs = objs;
     }
     catch (e, stacktrace)
     {
-        return new LocalTargetSendListResp()
+        return new LocalImageTargetSendListResp()
             ..error = e.toString() + stacktrace.toString();
     }
 }
@@ -307,7 +307,7 @@ Future<LocalTargetSendListResp> userLocalTargets (@app.Attr() MongoDb dbConn) as
 @app.Route ('/private/localTarget/pending', methods: const [app.GET], allowMultipartRequest: true)
 @Encode ()
 @Secure (ADMIN)
-Future<LocalTargetSendListResp> getLocalTargetPending (@app.Attr() MongoDb dbConn) async
+Future<LocalImageTargetSendListResp> getLocalTargetPending (@app.Attr() MongoDb dbConn) async
 {
     try
     {
@@ -319,12 +319,12 @@ Future<LocalTargetSendListResp> getLocalTargetPending (@app.Attr() MongoDb dbCon
                 .eq ('updatePending', true)
         );
         
-        return new LocalTargetSendListResp()
+        return new LocalImageTargetSendListResp()
             ..objs = objs;
     }
     catch (e, stacktrace)
     {
-        return new LocalTargetSendListResp()
+        return new LocalImageTargetSendListResp()
             ..error = e.toString() + stacktrace.toString();
     }
 }

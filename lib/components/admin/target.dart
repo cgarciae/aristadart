@@ -8,95 +8,100 @@ part of arista_client;
 )
 class TargetVista{
     
-    List<LocalTargetAdminInfo> infoList = [ ];
+    List<LocalTargetAdminInfo> infoList = [];
     Router router;
     
-    //TODO: Modificar todo ObjetoUnitySend -> LocalImageTargetSend
+    TargetVista(this.router)
+    {
+        setModels();
+    }
     
-    TargetVista(this.router){
-        setModels();   
-    }
     setModels() async
+    {
+        LocalImageTargetSendListResp resp = await requestDecoded
+        (
+            LocalImageTargetSendListResp,
+            Method.GET,
+            'private/${Col.localTarget}/pending'
+        );
+        
+        if(resp.failed)
         {
-            ObjetoUnitySendListResp resp = await requestDecoded
-            (
-                ObjetoUnitySendListResp,
-                Method.GET,
-                'private/objetounity/pending'
-            );
-            
-            if(! resp.success)
-            {
-                return print(resp.error);
-            }
-            
-            infoList.clear();
-            
-            for( ObjetoUnitySend obj in resp.objs )
-            {
-                ModelAdminInfo info = new ModelAdminInfo();
-                info.model = obj;
-                
-                if (! notNullOrEmpty(obj.owner))
-                {
-                    print("Owner undefined");
-                    continue;
-                }
-                
-                UserResp userResp = await requestDecoded
-                (
-                    UserResp,
-                    Method.GET,
-                    'user/${obj.owner}'
-                );
-                
-                if(! userResp.success)
-                {
-                    print(userResp.error);
-                    continue;
-                }
-                
-                info.user = userResp.user;
-                infoList.add(info);
-            }
-            
+            return print(resp.error);
         }
         
-        uploadModel(ModelAdminInfo info, String system, dom.MouseEvent event) async
+        infoList.clear();
+        
+        for (LocalImageTargetSend obj in resp.objs)
         {
-            print ("Uploading to $system");
+            LocalTargetAdminInfo info = new LocalTargetAdminInfo();
+            info.target = obj;
             
-            dom.FormElement form = getFormElement (event);
+            if (nullOrEmpty (obj.owner))
+            {
+                print("Owner undefined");
+                continue;
+            }
             
-            ObjetoUnitySendResp resp = await formRequestDecoded
-            (   
-                ObjetoUnitySendResp,
-                Method.PUT,
-                'private/objetounity/${info.model.id}/modelfile/${system}',
-                form
+            UserResp userResp = await requestDecoded
+            (
+                UserResp,
+                Method.GET,
+                'user/${obj.owner}'
             );
             
-            if(! resp.success)
-                return print (resp.error);
+            if (userResp.failed)
+            {
+                print(userResp.error);
+                continue;
+            }
             
-            
-            info.model = resp.obj;
-            info.success = resp.success;
+            info.user = userResp.user;
+            infoList.add (info);
         }
         
-        publish (ModelAdminInfo info) async
-        {
-            
-            Resp resp = await requestDecoded
-            (
-                Resp,
-                Method.GET,
-                'private/objetounity/${info.model.id}/publish'
-            );
-            
-            if (resp.success)
-                setModels();
-            else
-                print (resp.error);
-        }
     }
+    
+    uploadModel (LocalTargetAdminInfo info, String extension, dom.MouseEvent event) async
+    {
+        print ("Uploading to $extension");
+        
+        dom.FormElement form = getFormElement (event);
+        
+        LocalImageTargetSendResp resp = await formRequestDecoded
+        (   
+            LocalImageTargetSendResp,
+            Method.PUT,
+            'private/${Col.localTarget}/${info.target.id}/targetfile/${extension}',
+            form
+        );
+        
+        if(resp.failed)
+            return print (resp.error);
+        
+        
+        info.target = resp.obj;
+    }
+    
+    publish (LocalTargetAdminInfo info) async
+    {
+        
+        Resp resp = await requestDecoded
+        (
+            Resp,
+            Method.GET,
+            'private/${Col.localTarget}/${info.target.id}/publish'
+        );
+        
+        if (resp.success)
+            setModels();
+        else
+            print (resp.error);
+    }
+}
+
+class LocalTargetAdminInfo
+{
+    LocalImageTargetSend target;
+    User user;
+}

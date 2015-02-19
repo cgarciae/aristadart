@@ -52,7 +52,8 @@ getUser(@app.Attr() MongoDb dbConn, String id) async
     );
     
     if (user == null)
-        return new Resp.failed("User not found");
+        return new Resp()
+            ..error = "User not found";
     
         
     return new UserResp()

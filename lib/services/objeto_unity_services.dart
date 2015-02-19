@@ -344,10 +344,8 @@ Future publishObjetoUnity (@app.Attr() MongoDb dbConn, String id) async
     objResp = resp as ObjetoUnitySendResp;
     
     if (! objResp.obj.updatedAll)
-        return new Resp.failed
-        (
-            "No se han actualizado todos los modelos del Objetos Unity"
-        );
+        return new Resp ()
+            ..error = "No se han actualizado todos los modelos del Objetos Unity";
     
     ObjetoUnitySend obj;
     

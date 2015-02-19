@@ -121,4 +121,8 @@ class ModelVista{
 class ModelAdminInfo{
     ObjetoUnitySend model;
     User user;
+<<<<<<< HEAD
+    bool success = false; 
+=======
+>>>>>>> upstream/4
 }

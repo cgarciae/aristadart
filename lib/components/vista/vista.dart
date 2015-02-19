@@ -12,8 +12,6 @@ class VistaVista
     VistaExportable vista = new VistaExportable();
     String eventoID;
     
-    LocalImageTargetSend localImageTarget;
-    
     List<TipoDeVista> tiposDeVista = const 
     [
         const TipoDeVista (
@@ -127,7 +125,7 @@ class VistaVista
                 if (! targetResp.success)
                     return print (targetResp.error);
                 
-                localImageTarget = targetResp.obj;
+                vista.localTarget = targetResp.obj;
             }
             
             if (notNullOrEmpty (vista.objetoUnityId))
@@ -205,10 +203,10 @@ class VistaVista
                 
                 if (targetResp.success)
                 {
-                    localImageTarget = targetResp.obj;
-                    vista.localTargetId = localImageTarget.id;
+                    vista.localTarget = targetResp.obj;
+                    vista.localTargetId = vista.localTarget.id;
                     
-                    print (localImageTarget);
+                    print (vista.localTarget);
                 }
                 else
                     print ('Failed to load new LocalTarget: ${targetResp.error}');
@@ -407,13 +405,13 @@ class VistaVista
     {
         dom.FormElement form = getFormElement (event);
         
-        if (localImageTarget != null)
+        if (vista.localTarget != null)
         {
             IdResp resp = await formRequestDecoded
             (
                 IdResp,
                 Method.PUT,
-                "private/${Col.localTarget}/${localImageTarget.id}/userfile",
+                "private/${Col.localTarget}/${vista.localTarget.id}/userfile",
                 form
             );
     
@@ -422,7 +420,7 @@ class VistaVista
                 print ("Upload Failed: ${resp.error}");
             }
             
-            localImageTarget.imageId = resp.id;
+            vista.localTarget.imageId = resp.id;
         }
         else
         {

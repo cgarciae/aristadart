@@ -72,6 +72,14 @@ class LoginVista extends ShadowRootAware
         }
     }
     
+    onPressEnter (dom.KeyboardEvent event)
+    {
+        if (event.keyCode == 13)
+        {
+            login();
+        }
+    }
+    
     nuevoUsuario()
     {
         nuevo = true;
