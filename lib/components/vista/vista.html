@@ -114,7 +114,7 @@
                     <li ng-repeat="elemento in vista.muebles"> 
                         <ul class="large-3 columns no-bullet panel">
                             
-                             <a class="button secondary right tiny" ng-click="EliminarElemento(elemento, vista.muebles)">x</a>
+                             <a class="button right tiny" ng-click="EliminarElemento(elemento, vista.muebles)">x</a>
                             
                             <li><label>Nombre:</label> <input type="text" ng-model="elemento.nombre"></li>
                             <li><label>Titulo:</label> <input type="text" ng-model="elemento.titulo"></li>
@@ -151,7 +151,7 @@
                     <li ng-repeat="elemento in vista.cuartos"> 
                         <ul class="large-3 columns no-bullet panel">
                             
-                            <a class="button secondary right tiny" ng-click="EliminarElemento(elemento, vista.muebles)">x</a>
+                            <a class="button right tiny" ng-click="EliminarElemento(elemento, vista.muebles)">x</a>
                             
                             <li><label>Nombre:</label> <input type="text" ng-model="elemento.nombre"></li>
                             <li><label>Titulo:</label> <input type="text" ng-model="elemento.titulo"></li>
@@ -196,7 +196,7 @@
                     <h3>Elementos Contacto </h3>
                     <div ng-repeat="contacto in vista.elementosContacto" >
                         <hr>
-                        <a class="button secondary right tiny" ng-click="EliminarElemento( contacto, vista.elementosContacto)">x</a>
+                        <a class="button right tiny" ng-click="EliminarElemento( contacto, vista.elementosContacto)">x</a>
                         <br>
                         <div ng-switch="contacto.type__">
                             <div ng-switch-when="LlamarContactoJS, Assembly-CSharp">
@@ -233,7 +233,7 @@
                     <h3>Elementos Información </h3>
                     <div ng-repeat="info in vista.elementosInfo" >
                     <hr>
-                    <a class="button secondary right tiny" ng-click="EliminarElemento( info, vista.elementosInfo)">x</a>
+                    <a class="button right large" ng-click="EliminarElemento( info, vista.elementosInfo)">x</a>
                     <br>
                         <div ng-switch="info.type__">
                             <div ng-switch-when="TituloInfoJS, Assembly-CSharp">
@@ -244,7 +244,7 @@
                                     <img alt="Imágen" ng-src="{{info.path}}">
                                     <br>
                                      Choose a file to upload: <input name="file" type="file"><br>
-                                     <button class="button tiny" ng-click="upload ($event, info.path, guardarUrlInfo, info )">Upload</button>
+                                     <button class="button large" ng-click="upload ($event, info.path, guardarUrlInfo, info )">Upload</button>
                                 </form>
                                 <label>Url Imágen:</label> <input type="text" ng-model="info.path">                                                
                             </div>
