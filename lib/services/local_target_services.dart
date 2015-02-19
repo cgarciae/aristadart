@@ -251,10 +251,10 @@ Future publishLocalTarget (@app.Attr() MongoDb dbConn, String id) async
     {
         LocalImageTargetSendResp objResp = await getLocalTarget(dbConn, id);
         
-        if (! objResp.success)
+        if (objResp.failed)
             return objResp;
         
-        if (! objResp.obj.updatedAll)
+        if (! objResp.obj.updated)
             return new Resp ()
                ..error = "No se han actualizado todos los archivos del Local Target";
         
