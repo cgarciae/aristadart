@@ -55,6 +55,7 @@ class Resp
     @Field() bool get failed => ! success;
     
     @Field() String error;
+    @Field() int errCode;
 }
 
 class VistasResp extends Resp
@@ -160,6 +161,11 @@ abstract class Col
     static final String recoTarget = 'recoTarget';
     static final String objetoUnity = 'objetoUnity';
     static final String localTarget = 'localTarget';
+}
+
+abstract class ErrCode
+{
+    static final int NOTFOUND = 1;
 }
 
 bool notNullOrEmpty (String s) => ! (s == null || s == '');

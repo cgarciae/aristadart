@@ -9,5 +9,5 @@ class ElementoConstruccion
     @ReferenceId() String imageId;
     @Field() String texto = "";
 
-    @Field() String get urlImagen =>  notNullOrEmpty(imageId) ? localHost + 'private/file/$imageId' : '';
+    @Field() String get urlImagen =>  notNullOrEmpty(imageId) ? localHost + 'public/file/$imageId' : '';
 }

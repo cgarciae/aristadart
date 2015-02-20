@@ -145,6 +145,12 @@ exportEvento(@app.Attr() MongoDb dbConn, String id) async
         EventoExportable, 
         where.id (StringToId (id))
     );
+    
+    
+    if (evento == null)
+        return new EventoExportableResp()
+            ..error = "Evento no found"
+            ..errCode = ErrCode.NOTFOUND;
 
     print ("EE 1");
     await BuildEvento(dbConn, evento);

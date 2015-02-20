@@ -20,7 +20,7 @@ class LocalImageTargetSend extends LocalImageTarget
     @Range(min: 0)
     @Field () int version = 0;
     
-    @Field () bool get active => updated;
+    @Field () bool get active => activeDat && activeXml;
     @Field() bool get updated => updatedDat && updatedXml;
     
     @ReferenceId() String datId;
