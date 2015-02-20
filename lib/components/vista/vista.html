@@ -2,7 +2,7 @@
 <fieldset class="large-4 columns" ng-if="vista.type__ != null && vista.type__ != ''">
     <div class= "row">
         <div>
-            <h3>Edición Vista {{vista.type__}}</h3>
+            <h3>Edición Vista {{tituloVista}}</h3>
             <br>
         </div>
         <div class="large-8 small-centered columns">
@@ -99,11 +99,7 @@
             <fieldset>
                 <legend>{{vista.muebles.length}} Muebles</legend>
                 <br>
-                <div class="round-button">
-                    <div class="round-button-circle">
-                        <a ng-click='NuevoMueble ()' class="round-button">+</a>
-                    </div>
-                </div>
+                <a ng-click='NuevoMueble ()' class="add-I"></a>
                 <ul class="no-bullet">
                     <li ng-repeat="elemento in vista.muebles"> 
                         <ul class="large-3 columns no-bullet panel">
@@ -141,11 +137,12 @@
        <div class="large-12 columns">
             <fieldset>
                 <legend> Cuartos</legend> <p>{{vista.cuartos.length}} Cuartos</p>
+                <a ng-click='NuevoCuarto()' class="add-I"></a>
                 <ul class="no-bullet">
                     <li ng-repeat="elemento in vista.cuartos"> 
                         <ul class="large-3 columns no-bullet panel">
                             
-                            <a class="button right tiny" ng-click="EliminarElemento(elemento, vista.muebles)">x</a>
+                            <a class="button right tiny" ng-click="EliminarElemento(elemento, vista.cuartos)">x</a>
                             
                             <li><label>Nombre:</label> <input type="text" ng-model="elemento.nombre"></li>
                             <li><label>Titulo:</label> <input type="text" ng-model="elemento.titulo"></li>
@@ -173,24 +170,13 @@
                         </ul>
                     </li>   
                 </ul>
-                <hr>
-                <br>
-                <div class="round-button">
-                    <div class="round-button-circle">
-                        <a ng-click='NuevoCuarto()' class="round-button">+</a>
-                    </div>
-                </div>
            </fieldset>
        </div>
-       <hr>
-       <br>
     </div>
     <div ng-switch-when="InfoContactoJS, Assembly-CSharp">
-        <h2>Edición Vista Info + Contacto</h2>
-        <br>
-        <div class= "small-8 small-centered columns">
-            <div class="large-4 columns">
-                <div class="panel">
+        <div class= "small-12 small-centered columns">
+            <div class="small-2 columns">
+                <fieldset>
                     <h3>Elementos Contacto </h3>
                     <div ng-repeat="contacto in vista.elementosContacto" >
                         <hr>
@@ -221,14 +207,11 @@
                     </div>
                     <hr>
                     <br>
-                    <ul class="button-group radius brigth">
-                        <a class="brigth button small" ng-click="vista.NuevoElementoContacto ()">+ Contacto</a>  
-                    </ul> 
-                </div>
+                    <a class="add-I" ng-click="vista.NuevoElementoContacto ()"></a>
+                </fieldset>
             </div>
-            <div class="large-8 columns">
-                <div class="panel">
-                    <h3>Elementos Información </h3>
+            <div class="small-6 columns">
+                <fieldset>
                     <div ng-repeat="info in vista.elementosInfo" >
                     <hr>
                     <a class="button right large" ng-click="EliminarElemento( info, vista.elementosInfo)">x</a>
@@ -272,55 +255,43 @@
                     </div>
                     <hr>
                     <br>
-                    <ul class="button-group radius brigth">
-                        <a class="brigth button small" ng-click="vista.NuevoElementoInfo ()">+ Información</a>  
-                    </ul> 
-                </div>
+                    <a class="add-I" ng-click="vista.NuevoElementoInfo ()"></a></ul> 
+                </fieldset>
             </div>
         </div>
         <hr>
     </div>
     <div ng-switch-when="MultimediaJS, Assembly-CShar">
-        <h2>Edición Multimedia</h2>
+        <div class="large-8 columns">
+            <div class="small-8 small-centered columns">
+                <fieldset ng-repeat="textura in vista.textures" >
+                    <hr>
+                    <a class="button secondary right tiny" ng-click="EliminarElemento( textura, vista.textures)">x</a>
+                    <br>
+                    <ul class="no-bullet">
+                        <img alt="Textura" ng-src="{{textura.urlTextura}}">
                         <br>
-                        <div class="small-8 small-centered columns">
-                            <div class="panel">
-                                <h3> Texturas </h3>
-                                <div ng-repeat="textura in vista.textures" >
-                                    <hr>
-                                    <a class="button secondary right tiny" ng-click="EliminarElemento( textura, vista.textures)">x</a>
-                                    <br>
-                                    <ul class="no-bullet">
-                                        <img alt="Textura" ng-src="{{textura.urlTextura}}">
-                                        <br>
-                                        <form enctype="multipart/form-data" method="POST">
-                                             Choose a file to upload: <input name="file" type="file"><br>
-                                             <button class="button tiny" ng-click="upload ($event, textura.path, guardarUrlTextura, textura )">Upload</button>
-                                        </form>
-                                        <li><label>Imagen:</label> <input type="text" ng-model="textura.path"></li>
-                                        <li><label>Descripción:</label> <input type="text" ng-model="textura.texto"></li>
-                                    </ul>
-                                </div>
-                                 <hr>
-                                <br>
-                                <ul class="button-group radius brigth">
-                                    <a class="brigth button small" ng-click="vista.NuevaTextura ()">+ Textura</a>  
-                                </ul> 
-                            </div>
-                        </div>
-                        <hr>
+                        <form enctype="multipart/form-data" method="POST">
+                             Choose a file to upload: <input name="file" type="file"><br>
+                             <button class="button tiny" ng-click="upload ($event, textura.path, guardarUrlTextura, textura )">Upload</button>
+                        </form>
+                        <li><label>Imagen:</label> <input type="text" ng-model="textura.path"></li>
+                        <li><label>Descripción:</label> <input type="text" ng-model="textura.texto"></li>
+                    </ul>
+                </fieldset>
+                <a ng-click='vista.NuevaTextura ()' class="add-I"></a>
+            </div>
+        </div>
     </div>
     <div ng-switch-when="MapaConstruccionJS, Assembly-CSharp">
-        <h2>Edición Mapa Construción</h2>
-        <br>
         <div class="large-4 columns">
-            <div class="panel">
+            <fieldset>
                 <ul class="no-bullet">
                     <li><label>Centro:</label> <input type="text" ng-model="vista.center"></li>
                     <li><label>Zoom:</label> <input type="number" ng-model="vista.zoom"></li>
                     <li><label>Descripción:</label> <input type="text" ng-model="vista.texto"></li>
                 </ul>
-            </div>
+            </fieldset>
         </div>
         <hr>
     </div>
