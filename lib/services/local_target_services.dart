@@ -261,10 +261,14 @@ Future publishLocalTarget (@app.Attr() MongoDb dbConn, String id) async
         await dbConn.update
         (
             Col.localTarget,
-            where.id (StringToId (id)),
+            where
+                .id (StringToId (id)),
             modify
                 .set('updatePending', false)
                 .inc('version', 1)
+                .set('updatedXml', false)
+                .set('updatedDat', false)
+                
         );
         
         return new Resp();
