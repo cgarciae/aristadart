@@ -1,12 +1,13 @@
 <div class="large-10 small-centered columns">
    
-    <h1>Edición modelos 3D</h1>
+    <h1>Edición marcadores Locales</h1>
     <div class="row">
         <div ng-repeat="info in infoList">
          <fieldset>
          <div class="row medium-uncollapse large-collapse">
             <h3>
-                Nombre: {{info.model.name}}
+                {{info.model.name}}
+                Nombre modelo
             </h3>
             <br>
             <a  class="button radius secondary left tiny"
@@ -14,10 +15,10 @@
                 target="_blank" >
                 Download User Model
             </a> 
-            <fieldset class="right">
+            <div class="panel right">
                 <h4>Usuario: <h5>{{info.user.nombre}} {{info.user.apellido}}</h5></h4>
                 <h4>Correo: <h5>{{info.user.email}}</h5></h4>
-            </fieldset>  
+            </div>  
             <br>
             <br>            
             <p> Versión modelo: Nº{{info.model.version}}</p>
@@ -110,65 +111,7 @@
                             </button>
                         </a>
                     </div>
-                </li>
-                <li>
-                    <h4>
-                        Versión Android
-                        <img ng-if="info.model.updatedAndroid" 
-                            ng-src="/images/webapp/check.png">
-                    </h4>
-                    
-                    <div class="large-8 columns">
-                    
-                        <form class="panel" enctype="multipart/form-data">
-                        
-                             <input name="file" type="file"><br>
-                             
-                            <button class="button tiny radius" 
-                                ng-click="uploadModel (info, 'android', $event)">
-                                    Upload
-                            </button>
-                        </form>
-                        
-                        <a ng-if="info.model.modelIdAndroid != null"
-                            ng-href="{{'public/file/' + info.model.modelIdAndroid}}"
-                            target="_blank">
-                            <button class="button tiny radius">
-                                    Actual
-                            </button>
-                        </a>
-                    </div>
-                </li>
-                <li>
-                    <h4>
-                        Versión windows
-                        <img ng-if="info.model.updatedWindows" 
-                            ng-src="/images/webapp/check.png">
-                    </h4>
-                    <div class="large-8 columns">
-                    
-                        <form class="panel" enctype="multipart/form-data">
-                        
-                             <input name="file" type="file"><br>
-                             
-                            <button class="button tiny radius" 
-                                ng-click="uploadModel (info, 'windows', $event)">
-                                    Upload
-                            </button>
-                            
-                            
-                        </form>
-                        
-                        <a ng-if="info.model.modelIdWindows != null"
-                            ng-href="{{'public/file/' + info.model.modelIdWindows}}"
-                            target="_blank">
-                            <button class="button tiny radius">
-                                    Actual
-                            </button>
-                        </a>
-                    </div>
-                </li>
-                
+                </li>                
                 <button class="button small right radius" 
                     ng-if="info.model.updated"
                     ng-click="publish (info)">
@@ -180,6 +123,8 @@
        </div>
     </div>
 </div>
+
+
 
 
 

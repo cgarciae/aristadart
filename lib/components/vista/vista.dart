@@ -154,6 +154,9 @@ class VistaVista
             router.go('evento', {'eventoID' : eventoID});
         else
             print (resp.error);
+        
+        saveObjetoUnity();
+        saveLocaltarget();
     }
     
     saveAndStay () async

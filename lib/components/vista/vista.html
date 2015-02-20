@@ -1,37 +1,31 @@
-<fieldset>
-    <legend>EDICIÓN VISTA</legend>
-    <a class="button radius right" ng-click='saveAndLeave()'>Save</a>
-    
-    <br>
-    <hr>
-    <div class="large-2 columns" ng-if="vista.type__ != null && vista.type__ != ''">
-        <div class="panel">
-            <h3> Icono </h3>
+<div class="save right" ng-click='saveAndLeave()'></div>
+<fieldset class="large-4 columns" ng-if="vista.type__ != null && vista.type__ != ''">
+    <div class= "row">
+        <div>
+            <h3>Edición Vista {{vista.type__}}</h3>
+            <br>
+        </div>
+        <div class="large-8 small-centered columns">
+        <h4>Icono</h4>
             <ul class="no-bullet">
                 <li><img alt="Icono" ng-src="{{urlIcono}}" class="gray-b">
+                <br>
                 <br>
                 <li><label>Nombre:</label> <input type="text" ng-model="vista.icon.texto"></li>
             </ul>
         </div>
     </div>
-    <br>
-    <div class="row collapse">
-        <br>   
-    </div>
 </fieldset>
 <div ng-switch="vista.type__">
     <div ng-switch-when="ConstruccionRAJS, Assembly-CSharp">
-        <br>
-        <h2>Edición Vista Construcción RA</h2>
-        <br>
-        
         <div class="large-6 columns">
             <fieldset>
                 <legend> 
+                    <span  class = "active" ng-if="vista.objetoUnity == null"></span>
+                    <span  class = "no-active" ng-if="vista.objetoUnity != null"></span>
                     Modelo
-                    --<span ng-if="vista.objetoUnity != null">active {{vista.objetoUnity.active}}</span>
-                    --<span ng-if="vista.objetoUnity != null">pending {{vista.objetoUnity.updatePending}}</span>
-                    --<span ng-if="vista.objetoUnity != null">version {{vista.objetoUnity.version}}</span>
+                    <img class="pd" ng-if="vista.objetoUnity != null" ng-src="https://cdn1.iconfinder.com/data/icons/outline-imperial-seo/128/SEO_C_100_09.12.14-3_Artboard_45-256.png">
+                    <span ng-if="vista.objetoUnity != null">version {{vista.objetoUnity.version}}</span>
                 </legend>
                 Nombre <input type="text" ng-model="vista.objetoUnity.name">
                 <ul class="no-bullet">
@@ -70,7 +64,7 @@
                 </ul>
             </fieldset>
         </div>
-        <div class="row large-6 columns">
+        <div class="row large-6 columns ">
             <fieldset>
                 <legend>
                     Target
@@ -103,12 +97,18 @@
         </div>
         <div class="large-12 columns">
             <fieldset>
-                <legend> Muebles</legend> <p>{{vista.muebles.length}} Muebles</p>
+                <legend>{{vista.muebles.length}} Muebles</legend>
+                <br>
+                <div class="round-button">
+                    <div class="round-button-circle">
+                        <a ng-click='NuevoMueble ()' class="round-button">+</a>
+                    </div>
+                </div>
                 <ul class="no-bullet">
                     <li ng-repeat="elemento in vista.muebles"> 
                         <ul class="large-3 columns no-bullet panel">
                             
-                             <a class="button secondary right tiny" ng-click="EliminarElemento(elemento, vista.muebles)">x</a>
+                             <a class="button right tiny" ng-click="EliminarElemento(elemento, vista.muebles)">x</a>
                             
                             <li><label>Nombre:</label> <input type="text" ng-model="elemento.nombre"></li>
                             <li><label>Titulo:</label> <input type="text" ng-model="elemento.titulo"></li>
@@ -136,9 +136,6 @@
                         </ul>
                     </li>   
                 </ul>
-                <hr>
-                <br>
-                <a class="button small radius right" ng-click="NuevoMueble()">Nuevo Mueble</a>
             </fieldset>
        </div>
        <div class="large-12 columns">
@@ -148,7 +145,7 @@
                     <li ng-repeat="elemento in vista.cuartos"> 
                         <ul class="large-3 columns no-bullet panel">
                             
-                            <a class="button secondary right tiny" ng-click="EliminarElemento(elemento, vista.cuartos)">x</a>
+                            <a class="button right tiny" ng-click="EliminarElemento(elemento, vista.muebles)">x</a>
                             
                             <li><label>Nombre:</label> <input type="text" ng-model="elemento.nombre"></li>
                             <li><label>Titulo:</label> <input type="text" ng-model="elemento.titulo"></li>
@@ -178,7 +175,11 @@
                 </ul>
                 <hr>
                 <br>
-                <a class="button small radius right" ng-click="NuevoCuarto()">Nuevo Cuarto</a>
+                <div class="round-button">
+                    <div class="round-button-circle">
+                        <a ng-click='NuevoCuarto()' class="round-button">+</a>
+                    </div>
+                </div>
            </fieldset>
        </div>
        <hr>
@@ -193,7 +194,7 @@
                     <h3>Elementos Contacto </h3>
                     <div ng-repeat="contacto in vista.elementosContacto" >
                         <hr>
-                        <a class="button secondary right tiny" ng-click="EliminarElemento( contacto, vista.elementosContacto)">x</a>
+                        <a class="button right tiny" ng-click="EliminarElemento( contacto, vista.elementosContacto)">x</a>
                         <br>
                         <div ng-switch="contacto.type__">
                             <div ng-switch-when="LlamarContactoJS, Assembly-CSharp">
@@ -230,7 +231,7 @@
                     <h3>Elementos Información </h3>
                     <div ng-repeat="info in vista.elementosInfo" >
                     <hr>
-                    <a class="button secondary right tiny" ng-click="EliminarElemento( info, vista.elementosInfo)">x</a>
+                    <a class="button right large" ng-click="EliminarElemento( info, vista.elementosInfo)">x</a>
                     <br>
                         <div ng-switch="info.type__">
                             <div ng-switch-when="TituloInfoJS, Assembly-CSharp">
@@ -240,7 +241,7 @@
                                 <form enctype="multipart/form-data" method="POST">                                    
                                     <!--UPLOAD FILE-->                                    
                                     Choose a file to upload: <input name="file" type="file" accept="image/*"><br>
-                                    <button class="button tiny" ng-click="uploadElementosInfoImageFile ($event, info)">Upload</button>
+                                    <button class="button large" ng-click="uploadElementosInfoImageFile ($event, info)">Upload</button>
                                     
                                     <!--SCREENSHOT-->
                                     <div ng-switch="info.imageId != null && info.imageId !=''">  

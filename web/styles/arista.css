@@ -28,3 +28,74 @@
     height: auto;
     box-shadow: 10px 10px 5px #888888;
 }
+
+.active:before {
+    content: ' \25CF';
+    font-size: 20px;
+    color: green;
+}
+
+.no-active:before {
+    content: ' \25CF';
+    font-size: 20px;
+    color: red;
+}
+
+.pd{
+    width:40px;
+    height:40px;
+}
+
+.round-button {
+    width:60px;
+    float:right;
+}
+.round-button-circle {
+    width: 100%;
+    height:0;
+    padding-bottom: 100%;
+    border-radius: 50%;
+    border:none;
+    overflow:hidden;
+    
+    background: #59449C; 
+    box-shadow: 5px 5px 3px rgba(0,0,0,.07); 
+}
+.round-button-circle:hover {
+    background:#7E5FDB;
+}
+.round-button a {
+    display:block;
+    float:left;
+    width:100%;
+    padding-top:50%;
+    padding-bottom:50%;
+    line-height:1em;
+    margin-top:-0.5em;
+    
+    text-align:center;
+    color:#FFFFFF;
+    font-family:monospace;
+    font-size:3em;
+    font-weight:bold;
+    text-decoration:none;
+}
+.round-button a:hover{
+    color:#FFFFFF !important;
+}
+
+.save {
+    display: block;
+    width:60px;
+    height:60px;
+    -moz-border-radius: 50px;
+    -webkit-border-radius: 50px;
+    background:#59449C;
+    background-image: url("/images/icons/save.png") !important;
+    background-position:50% 50% !important;
+    background-repeat:no-repeat !important;   
+    box-shadow: 5px 5px 3px rgba(0,0,0,.07);  
+}
+.save:hover{
+    background:#7E5FDB;
+}
