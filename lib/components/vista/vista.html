@@ -2,9 +2,10 @@
 <fieldset class="large-4 columns" ng-if="vista.type__ != null && vista.type__ != ''">
     <div class= "row">
         <div>
-            <h3>Edición Vista {{tituloVista}}</h3>
-            <br>
+            <h3>Edición Vista</h3>
+            <h3>{{tituloVista}}</h3>
         </div>
+        <br>
         <div class="large-8 small-centered columns">
         <h4>Icono</h4>
             <ul class="no-bullet">
@@ -95,14 +96,15 @@
                 </ul>
             </fieldset>
         </div>
+        <hr>
         <div class="large-12 columns">
-            <fieldset>
-                <legend>{{vista.muebles.length}} Muebles</legend>
+                <h2>{{vista.muebles.length}} Muebles</h2>
                 <br>
                 <a ng-click='NuevoMueble ()' class="add-I"></a>
                 <ul class="no-bullet">
                     <li ng-repeat="elemento in vista.muebles"> 
-                        <ul class="large-3 columns no-bullet panel">
+                        <ul class="large-3 columns no-bullet">
+                        <fieldset>
                             
                              <a class="button right tiny" ng-click="EliminarElemento(elemento, vista.muebles)">x</a>
                             
@@ -129,18 +131,19 @@
                                 </form>
                             </li>
                             <li><label>Texto:</label> <textarea type="text" ng-model="elemento.texto"></textarea></li>
+                        </fieldset>
                         </ul>
                     </li>   
                 </ul>
-            </fieldset>
        </div>
+       <hr>
        <div class="large-12 columns">
-            <fieldset>
-                <legend> Cuartos</legend> <p>{{vista.cuartos.length}} Cuartos</p>
+                <h2>{{vista.cuartos.length}} Cuartos</h2>
                 <a ng-click='NuevoCuarto()' class="add-I"></a>
                 <ul class="no-bullet">
                     <li ng-repeat="elemento in vista.cuartos"> 
-                        <ul class="large-3 columns no-bullet panel">
+                        <ul class="large-3 columns no-bullet">
+                        <fieldset>
                             
                             <a class="button right tiny" ng-click="EliminarElemento(elemento, vista.cuartos)">x</a>
                             
@@ -167,15 +170,15 @@
                                 </form>
                             </li>
                             <li><label>Texto:</label> <textarea type="text" ng-model="elemento.texto"></textarea></li>
+                        </fieldset>
                         </ul>
                     </li>   
                 </ul>
-           </fieldset>
        </div>
     </div>
     <div ng-switch-when="InfoContactoJS, Assembly-CSharp">
         <div class= "small-12 small-centered columns">
-            <div class="small-2 columns">
+            <div class="small-3 columns">
                 <fieldset>
                     <h3>Elementos Contacto </h3>
                     <div ng-repeat="contacto in vista.elementosContacto" >
@@ -210,10 +213,8 @@
                     <a class="add-I" ng-click="vista.NuevoElementoContacto ()"></a>
                 </fieldset>
             </div>
-            <div class="small-6 columns">
-                <fieldset>
-                    <div ng-repeat="info in vista.elementosInfo" >
-                    <hr>
+                <div class="small-5 columns">
+                    <fieldset ng-repeat="info in vista.elementosInfo" >
                     <a class="button right large" ng-click="EliminarElemento( info, vista.elementosInfo)">x</a>
                     <br>
                         <div ng-switch="info.type__">
@@ -252,21 +253,17 @@
                                 </ul>
                             </div>
                         </div>
-                    </div>
-                    <hr>
+                    </fieldset>
                     <br>
-                    <a class="add-I" ng-click="vista.NuevoElementoInfo ()"></a></ul> 
-                </fieldset>
+                    <a class="add-I" ng-click="vista.NuevoElementoInfo ()"></a>
             </div>
         </div>
-        <hr>
     </div>
     <div ng-switch-when="MultimediaJS, Assembly-CShar">
         <div class="large-8 columns">
-            <div class="small-8 small-centered columns">
+            <div class="small-10 small-centered columns">
                 <fieldset ng-repeat="textura in vista.textures" >
-                    <hr>
-                    <a class="button secondary right tiny" ng-click="EliminarElemento( textura, vista.textures)">x</a>
+                    <a class="button right" ng-click="EliminarElemento( textura, vista.textures)">X</a>
                     <br>
                     <ul class="no-bullet">
                         <img alt="Textura" ng-src="{{textura.urlTextura}}">

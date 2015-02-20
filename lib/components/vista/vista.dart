@@ -17,7 +17,7 @@ class VistaVista
     [
         const TipoDeVista (
                 'ConstruccionRAJS, Assembly-CSharp', 
-                'Construccion RA', 
+                'Construcción RA', 
                 'Experimenta tu inmueble en Realidad Aumentada'),
                 
         const TipoDeVista (
