@@ -1162,13 +1162,13 @@ button, .buton {
   padding-bottom: 1.0625rem;
   padding-left: 2rem;
   font-size: 1rem;
-  background-color: #8fc5d2;
-  border-color: #F0ED54;
+  background-color: #59449C;
+  border-color: #7E5FDB;
   color: #FFFFFF;
   transition: background-color 300ms ease-out;
   }
   button:hover, button:focus, .button:hover, .button:focus {
-    background-color: #F0ED54 !important; }
+    background-color: #7E5FDB !important; }
   button:hover, button:focus, .button:hover, .button:focus {
     color: #FFFFFF !important; }
   button.secondary, .button.secondary {
@@ -1615,12 +1615,22 @@ fieldset {
   height: auto;
   box-shadow: 5px 5px 3px rgba(0,0,0,.07);
   }
-  fieldset legend {
+  fieldset legend
+  {
     font-weight: bold;
     background: #FFFFFF;
     padding: 0 0.1875rem;
     margin: 0;
-    margin-left: -0.1875rem; }
+    margin-left: -0.1875rem;
+  }
+  .legend1
+  {
+    font-weight: bold;
+    background: none;
+    padding: 0 1rem;
+    margin: 0;
+    margin-right: -1rem;
+  }
 
 /* Error Handling */
 [data-abide] .error small.error, [data-abide] .error span.error, [data-abide] span.error, [data-abide] small.error {
