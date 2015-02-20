@@ -32,28 +32,7 @@
 </head>
 
 <body style="background-color:#E7E9ED">
-<!--<body style="background-color:#e6e4e3">-->
-   <!-- <nav style= "background-color:#517dbe" class="tab-bar">
-        <div class="left-small">
-            <a class="item menu-icon" ng-click="go2home()">
-                <span>
-                </span>
-            </a>
-        </div>
-      <div class="middle tab-bar-section">!Bienvenidos a ARISTA Client </div>
-      <div  class = "right tab-bar-section">
-        <a  href="#" ng-click="logout()"
-               class="button radius right tiny"
-               ng-if="isLoggedIn">
-                    Logout
-        </a>
-        {{isLoggedIn}}
-      </div>
-    </nav>
-    
-    <br>
-    -->
-      <header class="app-bar promote-layer">
+  <header class="app-bar promote-layer">
     <div class="app-bar-container">
       <button class="menu"><img src="images/hamburger.svg" alt="Menu"></button>
       <h1 class="logo">Arista Web Client</h1>
@@ -84,14 +63,13 @@
         <br>
         <ng-view></ng-view>
     </div>
+     
     
-       
-    
-      <a data-options="align:left" data-dropdown="dropInfo" aria-controls="drop1" aria-expanded="true"></a>
+      <a data-options="align:left" data-dropdown="dropInfo" aria-controls="drop1"
+        aria-expanded="true" ng-hide="true" class="ng-hide"></a>
         <ul id="dropInfo" class="f-dropdown" data-dropdown-content aria-hidden="false" tabindex="-1">
-          <li><a href="#">This is a link</a></li>
+          <li></li>
         </ul>
-    
    
     <script src="/js/vendor/fastclick.js"></script>
     <script src="js/vendor/jquery.js"></script>

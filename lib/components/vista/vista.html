@@ -1,18 +1,23 @@
 <div class="save right" ng-click='saveAndLeave()'></div>
-<fieldset class="large-2 columns" ng-if="vista.type__ != null && vista.type__ != ''">
-    <legend>Icono</legend>
-        <ul class="no-bullet">
-            <li><img alt="Icono" ng-src="{{urlIcono}}" class="gray-b">
+<fieldset class="large-4 columns" ng-if="vista.type__ != null && vista.type__ != ''">
+    <div class= "row">
+        <div>
+            <h3>Edición Vista Construcción RA</h3>
             <br>
-            <li><label>Nombre:</label> <input type="text" ng-model="vista.icon.texto"></li>
-        </ul>
+        </div>
+        <div class="large-8 small-centered columns">
+        <h4>Icono</h4>
+            <ul class="no-bullet">
+                <li><img alt="Icono" ng-src="{{urlIcono}}" class="gray-b">
+                <br>
+                <br>
+                <li><label>Nombre:</label> <input type="text" ng-model="vista.icon.texto"></li>
+            </ul>
+        </div>
+    </div>
 </fieldset>
-<br>
 <div ng-switch="vista.type__">
     <div ng-switch-when="ConstruccionRAJS, Assembly-CSharp">
-        <hr>
-        <h2>Edición Vista Construcción RA</h2>
-        <br>
         <div class="large-6 columns">
             <fieldset>
                 <legend> 

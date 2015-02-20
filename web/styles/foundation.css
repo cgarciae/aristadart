@@ -1162,13 +1162,13 @@ button, .buton {
   padding-bottom: 1.0625rem;
   padding-left: 2rem;
   font-size: 1rem;
-  background-color: #51A9F7;
-  border-color: #4586EF;
+  background-color: #59449C;
+  border-color: #7E5FDB;
   color: #FFFFFF;
   transition: background-color 300ms ease-out;
   }
   button:hover, button:focus, .button:hover, .button:focus {
-    background-color: #4586EF !important; }
+    background-color: #7E5FDB !important; }
   button:hover, button:focus, .button:hover, .button:focus {
     color: #FFFFFF !important; }
   button.secondary, .button.secondary {

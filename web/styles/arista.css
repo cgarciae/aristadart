@@ -58,11 +58,11 @@
     border:none;
     overflow:hidden;
     
-    background: #4586EF; 
+    background: #59449C; 
     box-shadow: 5px 5px 3px rgba(0,0,0,.07); 
 }
 .round-button-circle:hover {
-    background:#FFFFFF;
+    background:#7E5FDB;
 }
 .round-button a {
     display:block;
@@ -80,7 +80,7 @@
     font-weight:bold;
     text-decoration:none;
 }
-.round-button a :hover{
+.round-button a:hover{
     color:#FFFFFF !important;
 }
 
@@ -90,12 +90,12 @@
     height:60px;
     -moz-border-radius: 50px;
     -webkit-border-radius: 50px;
-    background:#4586EF;
+    background:#59449C;
     background-image: url("/images/icons/save.png") !important;
     background-position:50% 50% !important;
     background-repeat:no-repeat !important;   
     box-shadow: 5px 5px 3px rgba(0,0,0,.07);  
 }
 .save:hover{
-    background:#51A9F7;
+    background:#7E5FDB;
 }

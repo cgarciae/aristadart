@@ -57,8 +57,14 @@
          ng-click="ver (vista)">
          <fieldset class="boxes">
             <legend>
-                {{vista.icon.texto}}
-                <a class="button right" ng-click="eliminar (vista, $event)">X</a>
+                <div class="row">
+                    <div class="small-8 columns">{{vista.icon.texto}}</div>
+                    
+                    <div class="small-2 columns">
+                        <a class="button right" 
+                            ng-click="eliminar (vista, $event)">X</a>
+                    </div>
+                </div>
             </legend>
             <img alt="{{iconoURL(vista)}}" ng-src="{{iconoURL (vista)}}" class="gray-b">
          </fieldset>
