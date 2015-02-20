@@ -47,7 +47,7 @@ Future<IdResp> newFile(@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form)
     catch (e, stacktrace)
     {
         return new IdResp()
-            ..error = e.toString() + stacktrace.toString();
+            ..error = "SERVER ERROR: " + e.toString() + stacktrace.toString();
     }
 }
 

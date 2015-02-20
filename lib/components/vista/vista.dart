@@ -465,6 +465,41 @@ class VistaVista
         }
                     
     }
+    
+    /*Función para subir los archivos de Elementos Info en las vistas*/
+    uploadElementosInfoImageFile (dom.MouseEvent event, ElementoInfo elementoInfo) async
+        {
+            dom.FormElement form = getFormElement (event);
+            IdResp idResp;
+            
+            if (notNullOrEmpty (elementoInfo.imageId))
+            {
+              idResp = await formRequestDecoded
+                (
+                    IdResp,
+                    Method.PUT,
+                    "private/file/${elementoInfo.imageId}",
+                    form
+                );
+            }
+            else
+            {
+              idResp = await formRequestDecoded
+                (
+                    IdResp,
+                    Method.POST,
+                    "private/file",
+                    form
+                );                
+            }
+            
+            if (idResp.failed)
+            {
+                print ("Upload Failed: ${idResp.error}");
+                return;
+            }
+            elementoInfo.imageId = idResp.id;          
+        }
 }
 
 
