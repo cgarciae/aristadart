@@ -8,6 +8,7 @@ class ObjetoUnity
 
 class ObjetoUnitySend extends ObjetoUnity
 {
+    @Field() String nameGameObject;
     @ReferenceId() String owner;
     @ReferenceId() String userFileId;
     
