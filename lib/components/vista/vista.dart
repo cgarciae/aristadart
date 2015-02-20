@@ -11,12 +11,13 @@ class VistaVista
     Router router;
     VistaExportable vista = new VistaExportable();
     String eventoID;
+    String tituloVista='';
     
     List<TipoDeVista> tiposDeVista = const 
     [
         const TipoDeVista (
                 'ConstruccionRAJS, Assembly-CSharp', 
-                'Construccion RA', 
+                'Construcción RA', 
                 'Experimenta tu inmueble en Realidad Aumentada'),
                 
         const TipoDeVista (
@@ -112,6 +113,12 @@ class VistaVista
             vista = resp.vista;
             icono = vista.icon.urlTextura.split (r'/').last;
             urlIcono = 'images/webapp/${icono}.png';
+            tituloVista =
+                    tiposDeVista
+                    .where((tipo)=> tipo.type__ == vista.type__)
+                    .map(getField(#nombre))
+                    .first; 
+            
             
             if (notNullOrEmpty (vista.localTargetId))
             {
@@ -211,6 +218,7 @@ class VistaVista
         vista.type__ = tipo.type__;
         setIcono();
         print ("TYPE: ${vista.type__}");
+        tituloVista = tipo.descripcion;
         switch(vista.type__){
             case 'ConstruccionRAJS, Assembly-CSharp':
                 vista
