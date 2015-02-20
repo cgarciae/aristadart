@@ -266,6 +266,9 @@ Future publishLocalTarget (@app.Attr() MongoDb dbConn, String id) async
             modify
                 .set('updatePending', false)
                 .inc('version', 1)
+                .set('updatedXml', false)
+                .set('updatedDat', false)
+                
         );
         
         return new Resp();
