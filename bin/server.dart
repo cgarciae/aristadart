@@ -1,7 +1,7 @@
 
 import 'package:aristadart/arista.dart';
 
-import '../lib/arista_server.dart';
+import 'arista_server.dart';
 
 import 'dart:io';
 import 'package:redstone/server.dart' as app;
@@ -9,8 +9,8 @@ import 'package:redstone_mapper/plugin.dart';
 import 'package:redstone_mapper_mongo/manager.dart';
 import 'package:shelf/shelf.dart' as shelf;
 import 'package:shelf_static/shelf_static.dart';
-import '../lib/authorization.dart';
-
+import 'authorization.dart';
+import 'dart:async';
 
 main() async
 {

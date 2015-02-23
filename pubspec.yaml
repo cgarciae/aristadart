@@ -2,8 +2,6 @@ name: aristadart
 description: A sample web application
 dependencies:
   angular: any
-  async_await:
-    git: https://github.com/dart-lang/async_await.git
   browser: any
   di: any
   fp: any
@@ -17,7 +15,6 @@ dependencies:
   script_inliner: '>=1.0.0 <2.0.0'
   shelf_static: any
 transformers:
-- async_await
 - redstone_mapper
 - angular:
     html_files:

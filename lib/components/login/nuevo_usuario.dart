@@ -27,22 +27,24 @@ class NuevoUsuarioVista
         return user.nombre != '' && user.apellido != '' && user.email != '' && passwordStatus == 'OK';
     }
     
-    registrar() async
+    registrar()
     {
         if (registrable)
         {
-            UserAdminResp resp = await jsonRequestDecoded
+            return jsonRequestDecoded
             (
                 UserAdminResp,
                 Method.POST, 
                 'user', 
                 user
-            );
+            )
+            .then((UserAdminResp resp){
             
             if (resp.success)
             {
                 loginUser(router, resp);
             }
+            });
         }
         else
         {

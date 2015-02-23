@@ -72,7 +72,7 @@ class VistaVista
         print("constructor vistaVista");
     }
     
-    initVista (RouteProvider routeProvider) async
+    initVista (RouteProvider routeProvider)
     {
         var id = routeProvider.parameters['vistaID'];
         eventoID = routeProvider.parameters['eventoID'];
@@ -81,7 +81,7 @@ class VistaVista
         {
             print ('NUEVA VISTA');
             //Crear nuevo evento
-            IdResp resp = await newFromCollection (Col.vista);
+            return newFromCollection (Col.vista).then((IdResp resp){
             
             if (resp.success)
             {
@@ -91,17 +91,19 @@ class VistaVista
             {
                 print (resp.error);
             }
+            });
         }
         else
         {
             print ('CARGAR VISTA');
             //Cargar vista
-            VistaExportableResp resp = await getFromCollection
+            return getFromCollection
             (
                 VistaExportableResp, 
                 'vista', 
                 id
-            );
+            )
+            .then((VistaExportableResp resp){
             
             if (! resp.success)
                 return print (resp.error);
@@ -115,40 +117,45 @@ class VistaVista
             
             if (notNullOrEmpty (vista.localTargetId))
             {
-                LocalImageTargetSendResp targetResp = await getFromCollection
+                getFromCollection
                 (
                     LocalImageTargetSendResp,
                     Col.localTarget,
                     vista.localTargetId
-                );
+                )
+                .then((LocalImageTargetSendResp targetResp){
                 
                 if (! targetResp.success)
                     return print (targetResp.error);
                 
                 vista.localTarget = targetResp.obj;
+                });
             }
             
             if (notNullOrEmpty (vista.objetoUnityId))
             {
-                ObjetoUnitySendResp objResp = await getFromCollection
+                getFromCollection
                 (
                     ObjetoUnitySendResp,
                     'objetounity',
                     vista.objetoUnityId
-                );
+                )
+                .then((ObjetoUnitySendResp objResp){
                 
                 if (! objResp.success)
                     return print (objResp.error);
                 
                 vista.objetoUnity = objResp.obj;
+                });
             }
+            });
         }
     }
     
-    saveAndLeave () async
+    saveAndLeave ()
     {
         print ('Local Target Id: ${vista.localTargetId}');
-        Resp resp = await saveInCollection (Col.vista, vista);
+        return saveInCollection (Col.vista, vista).then((Resp resp){
 
         if (resp.success)
             router.go('evento', {'eventoID' : eventoID});
@@ -157,13 +164,14 @@ class VistaVista
         
         saveObjetoUnity();
         saveLocaltarget();
+        });
     }
     
-    saveAndStay () async
+    saveAndStay ()
     {
         print (encodeJson(vista));
         
-        Resp resp = await saveInCollection (Col.vista, vista);
+        return saveInCollection (Col.vista, vista).then((Resp resp){
         
 
         if (! resp.success)
@@ -171,42 +179,48 @@ class VistaVista
         
         saveObjetoUnity();
         saveLocaltarget();
+        });
     }
     
-    saveObjetoUnity() async
+    saveObjetoUnity()
     {
         if (vista.objetoUnity == null)
-            return;
+            return null;
                     
-        Resp resp = await jsonRequestDecoded
+        return jsonRequestDecoded
         (
             Resp,
             Method.PUT,
             'private/objetounity',
             vista.objetoUnity
-        );
+        )
+        .then((Resp resp){
         
         if (resp.failed)
             print (resp.error);
+        });
     }
     
-    saveLocaltarget () async
+    saveLocaltarget ()
     {
         if (vista.localTarget == null)
             return;
         
-        Resp resp = await saveInCollection
+        saveInCollection
         (
             Col.localTarget,
             vista.localTarget
-        );
+        )
+        .then((Resp resp){
         
         if (resp.failed)
             print (resp.error);
+        
+        });
     }
     
     
-    seleccionarTipoVista (TipoDeVista tipo) async
+    seleccionarTipoVista (TipoDeVista tipo)
     {
         vista.type__ = tipo.type__;
         setIcono();
@@ -217,11 +231,12 @@ class VistaVista
                     ..muebles = []
                     ..cuartos = [];
                 
-                ObjetoUnitySendResp objResp = await newFromCollection
+                newFromCollection
                 (
                     'objetounity',
                     ObjetoUnitySendResp
-                );
+                )
+                .then((ObjetoUnitySendResp objResp){
                 
                 if (objResp.success)
                 {
@@ -232,11 +247,12 @@ class VistaVista
                     print ('Failed to load new ObjetoUnity: ${objResp.error}');
                 
                 
-                LocalImageTargetSendResp targetResp = await newFromCollection
+                return newFromCollection
                 (
                     Col.localTarget,
                     LocalImageTargetSendResp
-                );
+                )
+                .then((LocalImageTargetSendResp targetResp){
                 
                 if (targetResp.success)
                 {
@@ -248,6 +264,8 @@ class VistaVista
                 else
                     print ('Failed to load new LocalTarget: ${targetResp.error}');
                 
+                });
+                });
                 break;
             case 'InfoContactoJS, Assembly-CSharp':
                 vista
@@ -372,57 +390,76 @@ class VistaVista
         }));
     }
     
-    uploadElementoConstruccion (dom.MouseEvent event, ElementoConstruccion elemento) async
+    uploadElementoConstruccion (dom.MouseEvent event, ElementoConstruccion elemento)
     {
         dom.FormElement form = getFormElement (event);
         
         IdResp idResp;
-  
+        
+        new Future((){
+        
         if (notNullOrEmpty (elemento.imageId))
         {
-            idResp = await formRequestDecoded
+            formRequestDecoded
             (
                 IdResp, 
                 Method.PUT,
                 'private/file/${elemento.imageId}',
                 form
-            );
+            )
+            .then((IdResp _idResp){
+                                    
+            idResp = _idResp;  
+            
+            });
         }
         else
         {
-            idResp = await formRequestDecoded
+            formRequestDecoded
             (
                 IdResp, 
                 Method.POST,
                 'private/file',
                 form
-            );
+            )
+            .then((IdResp _idResp){
+                        
+            idResp = _idResp;  
+            
+            });
         }
+        
+        }).then((_){
         
         if (! idResp.success)
         {
             print (idResp.error);
-            return;
+            return null;
         }
         
         elemento.imageId = idResp.id;
         
-        await saveAndStay();
+        return saveAndStay();
+        
+        });
     }
     
-    uploadObjetoUnityUserFile (dom.MouseEvent event) async
+    uploadObjetoUnityUserFile (dom.MouseEvent event)
     {
         dom.FormElement form = getFormElement (event);
         
+        return new Future ((){
+        
         if (notNullOrEmpty (vista.objetoUnityId))
         {
-            IdResp resp = await formRequestDecoded
+            return formRequestDecoded
             (
                 IdResp,
                 Method.PUT,
                 "private/objetounity/${vista.objetoUnityId}/userfile",
                 form
-            );
+            )
+            .then((IdResp resp){
             
             if (! resp.success)
             {
@@ -430,27 +467,33 @@ class VistaVista
             }
             
             vista.objetoUnity.userFileId = resp.id;
+            
+            });
         }
         else
         {
             print ("Upload Failed: Null or Empty vista.objetoUnityId}");
         }
         
+        });
     }
     
-    uploadLocalTargetImageFile (dom.MouseEvent event) async
+    uploadLocalTargetImageFile (dom.MouseEvent event)
     {
         dom.FormElement form = getFormElement (event);
         
+        return new Future ((){
+        
         if (vista.localTarget != null)
         {
-            IdResp resp = await formRequestDecoded
+            return formRequestDecoded
             (
                 IdResp,
                 Method.PUT,
                 "private/${Col.localTarget}/${vista.localTarget.id}/userfile",
                 form
-            );
+            )
+            .then((IdResp resp){
     
             if (! resp.success)
             {
@@ -458,12 +501,15 @@ class VistaVista
             }
             
             vista.localTarget.imageId = resp.id;
+            
+            });
         }
         else
         {
             print ("Upload Failed: Null or Empty vista.localTargetId}");
         }
-                    
+          
+        });
     }
 }
 

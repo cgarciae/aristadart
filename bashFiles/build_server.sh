@@ -1,3 +1,3 @@
 #!/bin/bash          
 cd "/aristadart"
-docker build -t cgarciae/aristadart:0.0.1 .
+docker build -t cgarciae/aristadart:0.0.2 .

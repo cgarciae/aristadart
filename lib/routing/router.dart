@@ -1,48 +1,48 @@
 part of arista_client;
 
-Future<bool> get serverUserLoggedIn async
+Future<bool> get serverUserLoggedIn
 {
-    Resp resp = await requestDecoded
+    return requestDecoded
     (
         Resp,
         Method.GET,
         'user/loggedin'
-    );
-    
+    )
+    .then((Resp resp){
 
     storage['logged'] = resp.success.toString();
     
-    
     return resp.success;
+    
+    });
 }
 
-Future<bool> get serverUserAdmin async
+Future<bool> get serverUserAdmin
 {
-    BoolResp resp = await requestDecoded
+    return requestDecoded
     (
         BoolResp,
         Method.GET,
         'private/user/isadmin'
-    );
+    )
+    .then ((BoolResp resp){
     
     print ("Is admin? ${resp.value}");
-    
     var isAdmin = (resp.success && resp.value);
-    
     storage['admin'] = isAdmin.toString();
     
     return isAdmin;
+    
+    });
 }
 
 void recipeBookRouteInitializer(Router router, RouteViewFactory view) 
 {
     
-    
     authenticate2 (RoutePreEnterEvent event)
     {
-        event.allowEnter (() async
-        {
-            bool logged = await serverUserLoggedIn;
+        event.allowEnter (
+            serverUserLoggedIn.then((bool logged){
             
             if (! logged)
                 router.go
@@ -52,14 +52,13 @@ void recipeBookRouteInitializer(Router router, RouteViewFactory view)
                 );
             
             return logged;
-        }());          
+        }));          
     }
     
     authenticateAdmin2 (RoutePreEnterEvent event)
     {
-        event.allowEnter (() async
-        {
-            bool logged = await serverUserLoggedIn;
+        event.allowEnter (
+            serverUserLoggedIn.then((bool logged){
             
             if (! logged)
             {
@@ -71,7 +70,7 @@ void recipeBookRouteInitializer(Router router, RouteViewFactory view)
                 return false;
             }
             
-            bool admin = await serverUserAdmin;
+            return serverUserAdmin.then((bool admin){
             
             print ("Auth admin $admin");
             
@@ -86,7 +85,9 @@ void recipeBookRouteInitializer(Router router, RouteViewFactory view)
             }
             
             return true;
-        }());          
+            });
+        })
+        );
     }
     
     view.configure(
@@ -98,17 +99,17 @@ void recipeBookRouteInitializer(Router router, RouteViewFactory view)
             enter : view ('view/login_view.html'),
             preEnter: (RoutePreEnterEvent event)
             {
-                event.allowEnter (() async
-                {
-                    print ("Loggin in");
-                    
-                    bool logged = await serverUserLoggedIn;
+                print ("Loggin in");
+                event.allowEnter (
+                    serverUserLoggedIn.then((bool logged){
                     
                     if (logged)
                         router.go('home', {}, forceReload: true);
                     
                     return ! logged;
-                }());          
+                    
+                    })
+                );          
             },
             mount: 
             {
@@ -226,33 +227,38 @@ void recipeBookRouteInitializer(Router router, RouteViewFactory view)
 } 
 
 
-checkLogin () async
+checkLogin ()
 {
-    IdResp resp = await requestDecoded
+    return requestDecoded
     (
          IdResp,
          Method.GET,
          "user/loggedin"
-     );
+     )
+     .then((IdResp resp){
     
     if (resp.success)
         storage['id'] = resp.id;
     else
         storage.remove('id');
+    
+    });
 }
 
-checkAdmin () async
+checkAdmin ()
 {
-    IdResp resp = await requestDecoded
+    return requestDecoded
     (
          IdResp,
          Method.GET,
          "private/user/isadmin"
-     );
+     )
+     .then((IdResp resp){
     
     if (resp.success)
         storage['admin'] = true.toString();
     else
         storage.remove('admin');
+    });
 }
 

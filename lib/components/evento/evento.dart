@@ -1,5 +1,7 @@
 part of arista_client;  
 
+
+
 @Component
 (
     selector : "evento",
@@ -32,7 +34,11 @@ class EventoVista
     
     cargarVistas (String eventID)
     {
-        return requestDecoded(VistasResp, Method.GET,"private/evento/$eventID/vistas")
+        return requestDecoded(
+            VistasResp, 
+            Method.GET,
+            "private/evento/$eventID/vistas"
+        )
         .then(doIfSuccess((VistasResp resp)
         {
             vistas = resp.vistas;
@@ -48,7 +54,7 @@ class EventoVista
         }));
     }
     
-    nuevaVista () async
+    nuevaVista ()
     {
         print (Method.POST);
         /*
@@ -56,7 +62,7 @@ class EventoVista
             => addVistaId (resp.id))
         );
          */
-        IdResp idResp = await newFromCollection ('vista');
+        newFromCollection ('vista').then((IdResp idResp){
         
         if(idResp.failed){
             return print(idResp.error);
@@ -64,24 +70,31 @@ class EventoVista
         
         //addVista
         var eventoID = evento.id;
-        Resp resp = await pushIDtoList('evento', eventoID, 'viewIds', idResp.id);
-        if(resp.failed){
+        return pushIDtoList('evento', eventoID, 'viewIds', idResp.id).then((Resp resp){
+        
+        if(resp.failed)
+        {
             return print(resp.error);
         }
+        
         var vista = new Vista()
             ..id = idResp.id
             ..icon.texto = "Nueva Vista";
         
         //saveVista
-        Resp resp2 = await saveInCollection('vista', vista);
+        return saveInCollection('vista', vista).then((Resp resp2){
         
-        if(resp2.failed){
-            return print(resp2.error);
+        if(resp2.failed)
+        {
+            return print (resp2.error);
         } 
                       
         vistas.add (vista);
         evento.viewIds.add (vista.id);
         
+        });
+        });
+        });
     }
     
     Future<Resp> addVistaId  (String vistaID)
@@ -228,4 +241,5 @@ class EventoVista
         }
     }
 }
+
 

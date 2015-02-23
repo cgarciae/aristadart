@@ -8,6 +8,7 @@ class ObjetoUnity
 
 class ObjetoUnitySend extends ObjetoUnity
 {
+    @Field() String get href => id != null ? "${localHost}public/objetounity/${id}" : null;
     @Field() String nameGameObject;
     @ReferenceId() String owner;
     @ReferenceId() String userFileId;
@@ -35,4 +36,42 @@ class ObjetoUnitySend extends ObjetoUnity
     @ReferenceId() String modelIdMAC;
     @Field() bool get activeMAC => notNullOrEmpty(modelIdMAC);
     @Field() bool updatedMAC = false;
+    
 }
+
+abstract class Ref
+{
+    @Id() String id;
+    @Field() String get href;
+}
+
+class ObjetoUnityRef extends Ref
+{
+    @Field() String get href => id != null ? "${localHost}public/objetounity/${id}" : null;
+}
+
+class UserRef extends Ref
+{
+    @Field() String get href => id != null ? "${localHost}public/user/${id}" : "${localHost}images/missing.png";
+}
+
+class User2
+{
+    String nombre;
+}
+
+class UserServer extends UserRef with User2
+{   
+    ObjetoUnityRef obj;
+}
+
+class UserClient extends UserServer
+{
+    ObjetoUnityClient obj;
+}
+
+class ObjetoUnityClient extends ObjetoUnityRef
+{
+    
+}
+

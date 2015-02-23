@@ -50,17 +50,18 @@ class LoginVista extends ShadowRootAware
 //        });
 //    }
     
-    login () async
+    login ()
     {
         print (encodeJson(user));
         
-        UserAdminResp resp = await jsonRequestDecoded 
+        return jsonRequestDecoded 
         (
             UserAdminResp,
             Method.POST, 
             'user/login',
             user
-        );
+        )
+        .then((UserAdminResp resp){
         
         if (resp.success)
         {
@@ -70,6 +71,7 @@ class LoginVista extends ShadowRootAware
         {
             print (resp.error);
         }
+        });
     }
     
     onPressEnter (dom.KeyboardEvent event)

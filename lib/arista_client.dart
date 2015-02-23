@@ -223,9 +223,9 @@ class MainController
         i = this;
     }
     
-    logout () async
+    logout ()
     {
-        Resp resp = await requestDecoded(Resp, Method.GET,'user/logout');
+        return requestDecoded(Resp, Method.GET,'user/logout').then((Resp resp){
         
         if (resp.success)
         {
@@ -235,6 +235,7 @@ class MainController
         {
             print("Logout Failed");
         }
+        });
     }
             
     bool get isLoggedIn => loggedIn;
