@@ -23,20 +23,29 @@ class ObjetoUnitySend extends ObjetoUnity
     
     @ReferenceId() String modelIdAndroid;
     @Field() bool get activeAndroid => notNullOrEmpty(modelIdAndroid);
-    @Field() bool updatedAndroid = false;
+    @Field() bool updatedAndroid;
     
     @ReferenceId() String modelIdIOS;
     @Field() bool get activeIOS => notNullOrEmpty(modelIdIOS);
-    @Field() bool updatedIOS = false;
+    @Field() bool updatedIOS;
     
     @ReferenceId() String modelIdWindows;
     @Field() bool get activeWindows => notNullOrEmpty(modelIdWindows);
-    @Field() bool updatedWindows = false;
+    @Field() bool updatedWindows;
     
     @ReferenceId() String modelIdMAC;
     @Field() bool get activeMAC => notNullOrEmpty(modelIdMAC);
     @Field() bool updatedMAC = false;
     
+    init(){
+      this.name = 'Nuevo Modelo';
+      this.version = 0;
+      this.updatePending = false;
+      this.updatedAndroid = false;
+      this.updatedIOS = false;
+      this.updatedWindows = false;
+      this.updatedMAC= false;
+    }
 }
 
 abstract class Ref
@@ -74,4 +83,3 @@ class ObjetoUnityClient extends ObjetoUnityRef
 {
     
 }
-

@@ -50,7 +50,14 @@
                 </div>
                 
                 <div>
-                  <label>Nombre:</label><input type="text" ng-model="info.model.nameGameObject"></div>
+                  <form enctype="multipart/form-data" method="POST">
+                    <label>Nombre:</label><input type="text" ng-model="info.model.nameGameObject">
+                    <button class="button tiny radius" 
+                      ng-click="guardarModel (info)">
+                          Guardar
+                    </button>                    
+                   </form>
+                </div>
                 
             </div>
             <br>
