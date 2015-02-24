@@ -111,35 +111,12 @@
     display:block;
     text-align:center;
 }
-.logo{
-    position: relative;
-    left: 50%;
-    top:50%;
-    height:100%;
-    background-image: url("/images/icons/logo.png");
-    background-size: 15% auto;
-    background-repeat: no-repeat;
-    clear:both;
-    display:block;
-}
 
 .logout{
 }
 .logout:HOVER {
     background-color: #E4EDFB;
     color: #08306F;
-}
-.top-bar1
-{
-    position:relative;
-    height:40%;
-    width:100%;
-    background:#000;
-    float:left;
-    clear:both;
-    display:block;
-    color:#ffffff;
-    text-align:center;
 }
 #logo-container img {
    width: 15%;

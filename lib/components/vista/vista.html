@@ -1,5 +1,5 @@
-<div class="save right" ng-click='saveAndLeave()'></div>
 <fieldset class="large-4 columns" ng-if="vista.type__ != null && vista.type__ != ''">
+    <div class="save right" ng-click='saveAndLeave()'></div>
     <div class= "row">
         <div>
             <h3>Edición Vista</h3>
@@ -291,15 +291,18 @@
         </div>
     </div>
     <div ng-switch-when="MapaConstruccionJS, Assembly-CSharp">
-        <div class="large-4 columns">
-            <fieldset>
-                <ul class="no-bullet">
-                    <li><label>Centro:</label> <input type="text" ng-model="vista.center"></li>
-                    <li><label>Zoom:</label> <input type="number" ng-model="vista.zoom"></li>
-                    <li><label>Descripción:</label> <input type="text" ng-model="vista.texto"></li>
-                </ul>
-            </fieldset>
+        <div class= "small-12 small-centered columns">
+            <div class="large-4 columns">
+                <fieldset>
+                    <ul class="no-bullet">
+                        <li><label>Centro:</label> <input type="text" ng-model="vista.center"></li>
+                        <li><label>Zoom:</label> <input type="number" ng-model="vista.zoom"></li>
+                        <li><label>Descripción:</label> <input type="text" ng-model="vista.texto"></li>
+                    </ul>
+                </fieldset>
+            </div>
         </div>
+        
     </div>
     <div ng-switch-default>
         <br>
