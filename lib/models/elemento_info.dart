@@ -11,8 +11,8 @@ class ElementoInfo
     //Debido a esto, hay que cambiar en Angular como se muestran las imagenes de ElementoInfo en la vista InfoContacto
     
     //ImagenInfoJS
-    @Field() String path;
-    @Field() String get  url =>  path != null && path != '' ? localHost + path : '';
+    @ReferenceId() String imageId;
+    @Field() String get  url =>  imageId != null && imageId != '' ? localHost + imageId : '';
     
     
     //InfoTextoJS
