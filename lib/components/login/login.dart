@@ -1,4 +1,4 @@
-part of arista_client;
+part of aristadart.client;
 
 @Component
 (
@@ -21,46 +21,19 @@ class LoginVista extends ShadowRootAware
     
     
       onShadowRoot(dom.ShadowRoot root){}
-//    {
-//        dom.InputElement uploadInput = dom.querySelector('#upload');
-//                
-//        uploadInput.onChange.listen((dom.Event e) 
-//        {
-//            // read file content as dataURL
-//            final files = uploadInput.files;
-//            
-//            if (files.length == 1) 
-//            {
-//                final file = files[0];
-//                final reader = new dom.FileReader();
-//                
-//                reader.readAsDataUrl (file);
-//                
-//                reader.onLoad.listen((_) 
-//                {
-//                    print (reader.result);
-//                    print (reader.result.runtimeType);
-//                    
-//                    dataRequestDecoded('upload2', reader.result, Resp).then((Resp resp)
-//                    {
-//                        print ('Success ${resp.success}');
-//                    });
-//                });
-//            }
-//        });
-//    }
     
-    login () async
+    login ()
     {
         print (encodeJson(user));
-        
-        UserAdminResp resp = await jsonRequestDecoded 
+        print (user.password);
+        return jsonRequestDecoded 
         (
             UserAdminResp,
             Method.POST, 
             'user/login',
             user
-        );
+        )
+        .then((UserAdminResp resp){
         
         if (resp.success)
         {
@@ -70,6 +43,7 @@ class LoginVista extends ShadowRootAware
         {
             print (resp.error);
         }
+        });
     }
     
     onPressEnter (dom.KeyboardEvent event)

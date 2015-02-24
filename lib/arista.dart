@@ -1,4 +1,5 @@
-library arista;
+library aristadart.general;
+
 
 import 'package:redstone_mapper/mapper.dart';
 import 'package:redstone_mapper_mongo/metadata.dart';
@@ -8,6 +9,7 @@ import 'dart:async';
 import 'package:fp/fp.dart' as F;
 
 part 'models/evento.dart';
+part 'models/vuforia_target.dart';
 part 'models/texture_gui.dart';
 part 'models/experiencia.dart';
 part 'models/elemento_contacto.dart';
@@ -21,7 +23,13 @@ part 'models/user.dart';
 part 'models/panel_info.dart';
 part 'models/validation_rules/truth.dart';
 
-String get localHost => "http://localhost:9090/";
+
+var _localHost = "localhost:9090";
+var _digitalOcean = "104.131.109.228:80";
+
+String get partialHost => _localHost;
+
+String get localHost => "http://${partialHost}/";
 
 class ListInt
 {
@@ -132,12 +140,12 @@ class RecoTargetResp extends Resp
 {
     @Field() CloudImageTarget recoTarget;
 }
-
+/*
 class MapResp extends Resp
 {
     @Field() Map map;
 }
-
+*/
 List flatten (List<List> list) => list.expand(F.identity).toList();
 
 abstract class ContType

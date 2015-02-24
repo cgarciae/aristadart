@@ -1,4 +1,4 @@
-part of arista_client;
+part of aristadart.client;
 
 @Component
 (
@@ -16,14 +16,15 @@ class TargetVista{
         setModels();
     }
     
-    setModels() async
+    setModels()
     {
-        LocalImageTargetSendListResp resp = await requestDecoded
+        requestDecoded
         (
             LocalImageTargetSendListResp,
             Method.GET,
             'private/${Col.localTarget}/pending'
-        );
+        )
+        .then((LocalImageTargetSendListResp resp){
         
         if(resp.failed)
         {
@@ -43,60 +44,68 @@ class TargetVista{
                 continue;
             }
             
-            UserResp userResp = await requestDecoded
+            requestDecoded
             (
                 UserResp,
                 Method.GET,
                 'user/${obj.owner}'
-            );
+            ).then((UserResp userResp){
             
             if (userResp.failed)
             {
                 print(userResp.error);
-                continue;
+                return;
             }
             
             info.user = userResp.user;
             infoList.add (info);
+            
+            });
         }
-        
+        });
     }
     
-    uploadModel (LocalTargetAdminInfo info, String extension, dom.MouseEvent event) async
+    uploadModel (LocalTargetAdminInfo info, String extension, dom.MouseEvent event)
     {
         print ("Uploading to $extension");
         
         dom.FormElement form = getFormElement (event);
         
-        LocalImageTargetSendResp resp = await formRequestDecoded
+        formRequestDecoded
         (   
             LocalImageTargetSendResp,
             Method.PUT,
             'private/${Col.localTarget}/${info.target.id}/targetfile/${extension}',
             form
-        );
+        )
+        .then((LocalImageTargetSendResp resp){
         
         if(resp.failed)
             return print (resp.error);
         
         
         info.target = resp.obj;
+        
+        });
     }
     
-    publish (LocalTargetAdminInfo info) async
+    publish (LocalTargetAdminInfo info)
     {
         
-        Resp resp = await requestDecoded
+        requestDecoded
         (
             Resp,
             Method.GET,
             'private/${Col.localTarget}/${info.target.id}/publish'
-        );
+        )
+        .then((Resp resp){
         
         if (resp.success)
             setModels();
         else
             print (resp.error);
+        
+        });
     }
 }
 

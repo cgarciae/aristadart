@@ -1,4 +1,4 @@
-part of arista_client;
+part of aristadart.client;
 
 
 @Component
@@ -71,15 +71,16 @@ class HomeVista
     {
         event.stopImmediatePropagation();
         
-        () async
-        {
-            print ("ELIMINAR");
-            
-            Resp resp = await deleteFromCollection ('evento', e.id);
-    
-            if (resp.success)
-                eventos.remove (e);
-        }();
+        
+        print ("ELIMINAR");
+        
+        deleteFromCollection ('evento', e.id).then((Resp resp){
+
+        if (resp.success)
+            eventos.remove (e);
+        
+        });
+
     }
     
     go2Admin(){

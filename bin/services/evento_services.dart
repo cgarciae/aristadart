@@ -1,4 +1,4 @@
-part of arista_server;
+part of aristadart.server;
 
 
 
@@ -207,6 +207,7 @@ Future<Resp> validEvento (EventoExportable evento) async
     
     
     List<VistaExportable> list = [];
+    List<Future> futureList = [];
     for (VistaExportable vista in evento.vistas)
     {
         Resp resp = await validVista (vista);

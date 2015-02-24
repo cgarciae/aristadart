@@ -1,4 +1,4 @@
-part of arista;
+part of aristadart.general;
 
 class User
 {
@@ -30,9 +30,9 @@ class UserAdmin extends User with Admin
     
 }
 
-class UserSecure extends User with Password
+class UserSecure extends User
 {
-    
+    @Field() String password;
 }
 
 class UserMoney extends User with Money

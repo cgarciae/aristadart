@@ -1,4 +1,4 @@
-library arista_server;
+library aristadart.server;
 
 import 'dart:io';
 import 'dart:convert' as conv;  

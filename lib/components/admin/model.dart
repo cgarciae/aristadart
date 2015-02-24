@@ -1,4 +1,4 @@
-part of arista_client;
+part of aristadart.client;
 
 @Component
 (
@@ -16,14 +16,15 @@ class ModelVista{
         setModels();
     }
     
-    setModels() async
+    setModels()
     {
-        ObjetoUnitySendListResp resp = await requestDecoded
+        requestDecoded
         (
             ObjetoUnitySendListResp,
             Method.GET,
             'private/objetounity/pending'
-        );
+        )
+        .then((ObjetoUnitySendListResp resp){
         
         if(! resp.success)
         {
@@ -32,7 +33,7 @@ class ModelVista{
         
         infoList.clear();
         
-        for( ObjetoUnitySend obj in resp.objs )
+        for (ObjetoUnitySend obj in resp.objs)
         {
             ModelAdminInfo info = new ModelAdminInfo();
             info.model = obj;
@@ -43,78 +44,89 @@ class ModelVista{
                 continue;
             }
             
-            UserResp userResp = await requestDecoded
+            requestDecoded
             (
                 UserResp,
                 Method.GET,
                 'user/${obj.owner}'
-            );
+            )
+            .then((UserResp userResp){
             
             if(! userResp.success)
             {
                 print(userResp.error);
-                continue;
+                return;
             }
+            
             
             info.user = userResp.user;
             infoList.add(info);
+        });
         }
-        
+        });
     }
     
-    uploadScreenshot (dom.MouseEvent event, ObjetoUnitySend obj) async
+    uploadScreenshot (dom.MouseEvent event, ObjetoUnitySend obj)
     {
         dom.FormElement form = getFormElement(event);
         
-        IdResp idResp = await formRequestDecoded
+        formRequestDecoded
         (
             IdResp,
             Method.POST,
             'private/objetounity/${obj.id}/screenshot',
             form
-        );
-        
+        )
+        .then((IdResp idResp){
+            
         if (! idResp.success)
             return print (idResp.error);
         
         obj.screenshotId = idResp.id;
+        
+        });
     }
     
-    uploadModel(ModelAdminInfo info, String system, dom.MouseEvent event) async
+    uploadModel(ModelAdminInfo info, String system, dom.MouseEvent event)
     {
         print ("Uploading to $system");
         
         dom.FormElement form = getFormElement (event);
         
-        ObjetoUnitySendResp resp = await formRequestDecoded
+        formRequestDecoded
         (   
             ObjetoUnitySendResp,
             Method.PUT,
             'private/objetounity/${info.model.id}/modelfile/${system}',
             form
-        );
+        )
+        .then((ObjetoUnitySendResp resp){
         
         if(! resp.success)
             return print (resp.error);
         
-        
         info.model = resp.obj;
+        
+        });
     }
     
-    publish (ModelAdminInfo info) async
+    publish (ModelAdminInfo info)
     {
         
-        Resp resp = await requestDecoded
+        requestDecoded
         (
             Resp,
             Method.GET,
             'private/objetounity/${info.model.id}/publish'
-        );
+        )
+        .then((Resp resp){
         
         if (resp.success)
             setModels();
         else
             print (resp.error);
+        
+        });
     }
     
     //Función para guardar el campo NameGameObject del modelo
@@ -135,7 +147,8 @@ class ModelVista{
     }
 }
 
-class ModelAdminInfo{
+class ModelAdminInfo
+{
     ObjetoUnitySend model;
     User user;
 }
