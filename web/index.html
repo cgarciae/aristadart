@@ -31,13 +31,28 @@
     <link href='http://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
 </head>
 
-<body style="background-color:#E7E9ED">
-  <header class="header">
-    <div class="logo"></div>
-  </header>
+<body>
 
-<div class="off-canvas-wrap" data-offcanvas>
-  <div class="inner-wrap">
+   <!--   <div class="top-bar1">
+        <div class="rectangle-content">
+            <div class="table">
+                <div class="table-cell header">
+                    <h1>My header</h1>
+                </div>
+            </div>
+        </div>
+    </div>  -->
+
+    <header class="header">
+        <br>
+        <div id="logo-container">
+            <a href="#">
+                <img src="/images/icons/logo.png" alt="ARISTA DEV" />
+            </a>
+        </div>
+    </header>
+    <div class="off-canvas-wrap" data-offcanvas>
+    <div class="inner-wrap">
     <nav class="tab-bar">
       <section class="left-small">
         <a class="left-off-canvas-toggle menu-icon" ><span></span></a>
@@ -50,12 +65,12 @@
         </span>
       </section>
       
-
+    
       <section class="middle tab-bar-section">
         <h1 class="title">WEB CLIENT</h1>
       </section>
     </nav>
-
+    
     <aside class="left-off-canvas-menu">
       <ul class="off-canvas-list">
         <li><label>Vistas</label></li>
@@ -83,15 +98,17 @@
       <div class="large-8 small-centered columns" 
             style="background-color:none;"
             class="sombra">
-            <br>
-            <ng-view></ng-view>
-        </div>
-    </section>
+                <br>
+                <ng-view></ng-view>
+            </div>
+        </section>
+    
+      <a class="exit-off-canvas"></a>
+    
+      </div>
+    </div>
 
-  <a class="exit-off-canvas"></a>
-
-  </div>
-</div>
+    
     
      
     <!-- codigo integración Foundation NO TOCAR-->
