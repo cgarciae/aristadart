@@ -29,5 +29,7 @@ transformers:
 - script_inliner
 - sass:
     style: compressed
-    copy-sources: true 
+    copy-sources: true
+- $dart2js:
+    $exclude: bin
     

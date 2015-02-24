@@ -26,7 +26,7 @@ main() async
     
     app.setShelfHandler (createStaticHandler
     (
-        "../web", 
+        "web", 
         defaultDocument: "index.html",
         serveFilesOutsidePath: true
     ));

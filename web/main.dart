@@ -2,12 +2,9 @@ import 'package:angular/angular.dart';
 import 'package:angular/routing/module.dart';
 import 'package:angular/application_factory.dart';
 import 'package:logging/logging.dart';
-import 'package:redstone_mapper/mapper.dart';
 import 'package:redstone_mapper/mapper_factory.dart';
 import 'package:aristadart/arista_client.dart';
-import 'package:aristadart/arista.dart';
-import 'dart:html' as dom;
-import 'dart:async';
+
 
 @MirrorsUsed(targets: const[
   'angular',
@@ -40,11 +37,6 @@ class MyAppModule extends Module
     }
 }
 
-class ListInt
-{
-    @Field() List<int> list;
-}
-
 void main()
 {
     
@@ -57,5 +49,4 @@ void main()
         .addModule(new MyAppModule())
         .rootContextType (MainController)
         .run();
-
 }
