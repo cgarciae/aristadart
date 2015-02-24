@@ -100,3 +100,26 @@
 .save:hover{
     background:#7E5FDB;
 }
+
+.header{
+    position:relative;
+    width:100%;
+    height:12%;
+    background:#4586ef;
+    color:#ffffff;
+    clear:both;
+    display:block;
+    text-align:center;
+}
+
+.logout{
+}
+.logout:HOVER {
+    background-color: #E4EDFB;
+    color: #08306F;
+}
+
+#logo-container img {
+   width: 15%;
+   height: auto;
+}
