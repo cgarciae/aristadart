@@ -16,10 +16,8 @@ newObjetoUnity (@app.Attr() MongoDb dbConn) async
     try
     {
         var obj = new ObjetoUnitySend()
-            ..id = new ObjectId().toHexString()
-            ..name = 'Nuevo Modelo'
-            ..version = 0
-            ..updatePending = false
+            ..init()
+            ..id = new ObjectId().toHexString()            
             ..owner = (session["id"] as ObjectId).toHexString();
         
         await dbConn.insert (Col.objetoUnity, obj);
@@ -413,6 +411,31 @@ Future getObjetoUnityPending (@app.Attr() MongoDb dbConn) async
     catch (e, stacktrace)
     {
         return new ObjetoUnitySendListResp()
+            ..error = e.toString() + stacktrace.toString();
+    }
+}
+
+@app.Route('/private/objetounitysend/:id/guardarObjUnitySend', methods: const [app.PUT])
+@Encode()
+@Secure(ADMIN)
+putObjetoUnitySend (@app.Attr() MongoDb dbConn, @Decode() ObjetoUnitySend obj) async
+{
+    print (encodeJson(obj));
+    try 
+    {
+        await dbConn.update
+        (
+            Col.objetoUnity,
+            where.id (StringToId(obj.id)),
+            obj,
+            override: false
+        );
+        
+        return new Resp();
+    }
+    catch (e, stacktrace)
+    {
+        return new Resp()
             ..error = e.toString() + stacktrace.toString();
     }
 }
