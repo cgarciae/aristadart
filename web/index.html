@@ -32,17 +32,6 @@
 </head>
 
 <body>
-
-   <!--   <div class="top-bar1">
-        <div class="rectangle-content">
-            <div class="table">
-                <div class="table-cell header">
-                    <h1>My header</h1>
-                </div>
-            </div>
-        </div>
-    </div>  -->
-
     <header class="header">
         <br>
         <div id="logo-container">
@@ -51,6 +40,8 @@
             </a>
         </div>
     </header>
+    
+    <div id=”content”>
     <div class="off-canvas-wrap" data-offcanvas>
     <div class="inner-wrap">
     <nav class="tab-bar">
@@ -96,21 +87,12 @@
     </aside>
     <section class="main-section">
       <div class="large-8 small-centered columns" 
-            style="background-color:none;"
+            style="background-color:none; min-height: 100px;"
             class="sombra">
                 <br>
                 <ng-view></ng-view>
       </div>
-      <footer class="row">
-        <div class="large-12 columns"><hr/>
-            <div class="row">
- 
-              <div class="large-6 columns">
-                  <p>© ARISTA DEV Copyright no one at all. Go to town.</p>
-              </div>
-            </div>
-        </div>
-      </footer>
+      
     </section>
     
       <a class="exit-off-canvas"></a>
@@ -138,6 +120,7 @@
       <li></li>
     </ul>
     <!-- FIn codigo integración Foundation NO TOCAR-->
+
    
     <script src="/js/vendor/fastclick.js"></script>
     <script src="js/vendor/jquery.js"></script>
