@@ -32,4 +32,3 @@ transformers:
     copy-sources: true
 - $dart2js:
     $exclude: bin
-    

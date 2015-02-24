@@ -2,7 +2,7 @@
 docker stop webDart
 docker rm webDart
 
-docker run -d -p 8090:8080 -it --name webDart --link db:db cgarciae/aristadart:0.0.1
+docker run -d -p 8090:8080 -it --name webDart --link db:db cgarciae/aristadart:0.0.2
 
 ## SERVER BUILD ##
 cd "/c/Users/Cristian Garcia/Documents/Dart/redstonetest/restonetest/"
@@ -13,7 +13,7 @@ docker build -t cgarciae/aristadart:0.0.1 .
 docker stop db
 docker rm db
 
-docker run -d -it --name db --volumes-from data cgarciae/mongo:0.0.1
+docker run -d -it --name db --volumes-from data cgarciae/mongo:0.0.2
 
 ## MONGO BUILD ##
 cd "/c/Users/Cristian Garcia/Documents/Dart/redstonetest/restonetest/dockerFiles/mongo"
@@ -24,7 +24,7 @@ docker build -t cgarciae/mongo:0.0.1 .
 docker stop data
 docker rm data
 
-docker run -it --name data cgarciae/data:0.0.1
+docker run -it --name data cgarciae/data:0.0.2
 
 ## DATA BUILD ##
 cd "/c/Users/Cristian Garcia/Documents/Dart/redstonetest/restonetest/dockerFiles/data"

@@ -1,4 +1,4 @@
-part of arista_server;
+part of aristadart.server;
 
 @app.Route("/public/file/:fileID", methods: const [app.GET])
 getFile(@app.Attr() MongoDb dbConn, String fileID) async

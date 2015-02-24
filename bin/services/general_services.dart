@@ -1,4 +1,4 @@
-part of arista_server;
+part of aristadart.server;
 
 @app.Route("/private/pull/:collection/:obj_id/:fieldName/:reference_id")
 @Encode()

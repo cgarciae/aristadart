@@ -1,8 +1,10 @@
-library arista_client;
+library aristadart.client;
+
+import 'package:aristadart/arista.dart';
 
 import 'dart:async';
 import 'dart:convert';
-import 'package:aristadart/arista.dart';
+
 import 'package:redstone_mapper/mapper.dart';
 import 'package:angular/angular.dart';
 import 'dart:html' as dom;
@@ -18,6 +20,8 @@ part 'routing/router.dart';
 part 'components/admin/admin.dart';
 part 'components/admin/model.dart';
 part 'components/admin/target.dart';
+
+
 
 dom.Storage get storage => dom.window.localStorage;
 
@@ -82,7 +86,7 @@ Future<dom.HttpRequest> makeRequest (String method, String path, {dynamic data, 
 Future<String> requestString (String method, String path, {dynamic data, Map headers})
 {
     return makeRequest (method, path, data: data, headers: headers) 
-    .then (getField (#responseText));
+    .then ((dom.HttpRequest r) => r.responseText);
 }
 
 Future<dynamic> requestDecoded (Type type, String method, String path, {dynamic data, Map headers})

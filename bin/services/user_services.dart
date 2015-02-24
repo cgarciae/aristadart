@@ -1,4 +1,4 @@
-part of arista_server;
+part of aristadart.server;
 
 
 
@@ -7,6 +7,8 @@ part of arista_server;
 @Encode()
 postUser(@app.Attr() MongoDb dbConn, @Decode() UserComplete user) async
 {   
+    print (encode(user));
+    
     UserComplete foundUser = await dbConn.findOne 
     (
         Col.user,
