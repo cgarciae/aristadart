@@ -32,61 +32,70 @@
 </head>
 
 <body style="background-color:#E7E9ED">
-  <header class="app-bar promote-layer">
-    <div class="app-bar-container">
-      <button class="menu"><img src="images/hamburger.svg" alt="Menu"></button>
-      <h1 class="logo">Arista Web Client</h1>
-      <section class="app-bar-actions">
-      <!-- Put App Bar Buttons Here -->
-      <!--<button><i class="icon icon-star"></i></button> -->
-      <button ng-if="isLoggedIn">
-        <i href="#" ng-click="logout()">
-            Logout
-        </i>
-        </button>
-      </section>
-    </div>
+  <header class="header">
+    <div class="logo"></div>
   </header>
 
-  <nav class="navdrawer-container promote-layer">
-    <h4>Navigation</h4>
-    <ul>
-      <li><a href="/">Home</a></li>
-      <li><a href="http://aristadev.zz.vc/#interduce">Que es Arista?</a></li>
-      <li><a href="http://aristadev.zz.vc/#about">Más información</a></li>
-    </ul>
-  </nav>
-
-    <div class="large-8 small-centered columns" 
-        style="background-color:none;"
-        class="sombra">
-        <br>
-        <ng-view></ng-view>
-    </div>
-     
-    <!-- codigo integración Foundation NO TOCAR-->
-    <div class="off-canvas-wrap" data-offcanvas>
+<div class="off-canvas-wrap" data-offcanvas>
   <div class="inner-wrap">
+    <nav class="tab-bar">
+      <section class="left-small">
+        <a class="left-off-canvas-toggle menu-icon" ><span></span></a>
+      </section>
+      <section class="right-small" class="logout">
+        <span ng-if="isLoggedIn" class="logout">
+            <i href="#" ng-click="logout()">
+                Logout
+            </i>
+        </span>
+      </section>
+      
 
-    <a class="left-off-canvas-toggle" href="#" >Menu</a>
+      <section class="middle tab-bar-section">
+        <h1 class="title">WEB CLIENT</h1>
+      </section>
+    </nav>
 
-    <!-- Off Canvas Menu -->
     <aside class="left-off-canvas-menu">
-        <!-- whatever you want goes here -->
-        <ul>
-          <li><a href="#">Item 1</a></li>
-        ...
-        </ul>
+      <ul class="off-canvas-list">
+        <li><label>Vistas</label></li>
+        <li class="has-submenu"><a href="#">The DUMMY TEST</a>
+            <ul class="left-submenu">
+                <li class="back"><a href="#">Back</a></li>
+                <li><label>Level 1</label></li>
+                <li><a href="#">Link 1</a></li>
+                <li class="has-submenu"><a href="#">Link 2 w/ submenu</a>
+                    <ul class="left-submenu">
+                        <li class="back"><a href="#">Back</a></li>
+                        <li><label>Level 2</label></li>
+                        <li><a href="#">...</a></li>
+                    </ul>
+                </li>
+                <li><a href="#">...</a></li>
+            </ul>
+        </li>
+        <li><a href="/">Home</a></li>
+        <li><a href="http://aristadev.zz.vc/#interduce">Que es Arista?</a></li>
+        <li><a href="http://aristadev.zz.vc/#about">Más información</a></li>
+      </ul>
     </aside>
+    <section class="main-section">
+      <div class="large-8 small-centered columns" 
+            style="background-color:none;"
+            class="sombra">
+            <br>
+            <ng-view></ng-view>
+        </div>
+    </section>
 
-    <!-- main content goes here -->
-    <p>Set in the year 0 F.E. ("Foundation Era"), The Psychohistorians opens on Trantor, the capital of the 12,000-year-old Galactic Empire. Though the empire appears stable and powerful, it is slowly decaying in ways that parallel the decline of the Western Roman Empire. Hari Seldon, a mathematician and psychologist, has developed psychohistory, a new field of science and psychology that equates all possibilities in large societies to mathematics, allowing for the prediction of future events.</p>
-
-  <!-- close the off-canvas menu -->
   <a class="exit-off-canvas"></a>
 
   </div>
 </div>
+    
+     
+    <!-- codigo integración Foundation NO TOCAR-->
+    
     <a ng-if="false" href="#" data-reveal-id="myModal"></a>
 
     <div ng-if="false" id="myModal" class="reveal-modal" data-reveal>
