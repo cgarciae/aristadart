@@ -1,4 +1,4 @@
-part of arista;
+part of aristadart.general;
 
 class ObjetoUnity
 {

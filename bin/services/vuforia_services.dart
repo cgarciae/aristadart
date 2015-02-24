@@ -1,4 +1,4 @@
-part of arista_server;
+part of aristadart.server;
 
 Future<Map> uploadImageToVuforia (String method, String path, List<int> imageData, String metadata) async
 {
@@ -145,19 +145,17 @@ Future<Resp> getVuforiaTarget(@app.Attr() MongoDb dbConn, String eventoID) async
         where.id (StringToId (evento.cloudRecoTargetId))
     );
     
-    QueryMap map = await makeVuforiaRequest(Method.GET, "/targets/${reco.targetId}", "", "")
+    VuforiaTarget vuforiaTarget = await makeVuforiaRequest(Method.GET, "/targets/${reco.targetId}", "", "")
         .send()
         .then (streamResponseToJSON)
-        .then (MapToQueryMap);
+        .then ((Map m) => decode(m, VuforiaTarget));
 
     //TODO: Crear clase VuforiaTargetResp
     
-    if (map.result_code == "Success") 
-        return new MapResp()
-            ..map = map;
+    if (vuforiaTarget.result_code != "Success") 
+        vuforiaTarget.error = vuforiaTarget.result_code;
     
-    return new MapResp ()
-        ..error = map.result_code;
+    return vuforiaTarget;
 }
 
 @app.Route("/public/cloudreco/:recoID", methods: const [app.GET])

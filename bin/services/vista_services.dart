@@ -1,4 +1,4 @@
-part of arista_server;
+part of aristadart.server;
 
 
 

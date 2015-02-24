@@ -14,25 +14,31 @@ import 'dart:async';
 
 main() async
 {
-  
-    var DOip = "104.131.109.228:8095";
-    var db = "db";
-    var localIP = "192.168.59.103:8095";
+    var _DOip = "104.131.109.228:8095";
+    var _db = "db";
+    var _localIP = "192.168.59.103:8095";
+
+    var partialDBHost = _localIP;
     
-    var dbManager = new MongoDbManager("mongodb://${localIP}/test", poolSize: 3);
+    var dbManager = new MongoDbManager("mongodb://${partialDBHost}/test", poolSize: 3);
     
     app.addPlugin(getMapperPlugin(dbManager));
     app.addPlugin(AuthorizationPlugin);
     
     app.setShelfHandler (createStaticHandler
     (
-        "web", 
+        "../build/web", 
         defaultDocument: "index.html",
         serveFilesOutsidePath: true
     ));
      
     app.setupConsoleLog();
-    app.start(port: 9090);
+    app.start(port: int.parse(partialHost.split(r':').last));
+}
+
+setDefaultAdmin ()
+{
+    
 }
 
 

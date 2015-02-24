@@ -1,4 +1,4 @@
-part of arista_client;
+part of aristadart.client;
 
 @Component
 (
@@ -521,38 +521,55 @@ class VistaVista
     }
     
     /*Función para subir los archivos de Elementos Info en las vistas*/
-    uploadElementosInfoImageFile (dom.MouseEvent event, ElementoInfo elementoInfo) async
+    uploadElementosInfoImageFile (dom.MouseEvent event, ElementoInfo elementoInfo) 
         {
             dom.FormElement form = getFormElement (event);
             IdResp idResp;
             
+            new Future ((){
+            
             if (notNullOrEmpty (elementoInfo.imageId))
             {
-              idResp = await formRequestDecoded
+                return formRequestDecoded
                 (
                     IdResp,
                     Method.PUT,
                     "private/file/${elementoInfo.imageId}",
                     form
-                );
+                )
+                .then((IdResp _idResp){
+                
+                idResp = _idResp;
+                    
+                });
             }
             else
             {
-              idResp = await formRequestDecoded
+                return formRequestDecoded
                 (
                     IdResp,
                     Method.POST,
                     "private/file",
                     form
-                );                
+                )
+                .then((IdResp _idResp){
+                                
+                idResp = _idResp;
+                    
+                });
             }
+            })
+            .then((_){
             
             if (idResp.failed)
             {
                 print ("Upload Failed: ${idResp.error}");
                 return;
             }
-            elementoInfo.imageId = idResp.id;          
+            elementoInfo.imageId = idResp.id;
+            
+            });
+            
         }
 }
 

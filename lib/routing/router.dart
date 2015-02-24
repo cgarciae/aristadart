@@ -1,4 +1,4 @@
-part of arista_client;
+part of aristadart.client;
 
 Future<bool> get serverUserLoggedIn
 {
