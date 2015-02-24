@@ -116,6 +116,23 @@ class ModelVista{
         else
             print (resp.error);
     }
+    
+    //Función para guardar el campo NameGameObject del modelo
+    guardarModel (ModelAdminInfo info) async
+    {        
+        Resp resp = await jsonRequestDecoded
+        (
+            Resp,
+            Method.PUT,
+            'private/objetounitysend/${info.model.id}/guardarObjUnitySend',
+            info.model
+        );
+        
+        if (resp.success)
+            setModels();
+        else
+            print (resp.error);
+    }
 }
 
 class ModelAdminInfo{
