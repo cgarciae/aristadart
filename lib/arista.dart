@@ -23,13 +23,18 @@ part 'models/user.dart';
 part 'models/panel_info.dart';
 part 'models/validation_rules/truth.dart';
 
-
+//TODO: hacer por casos
 var _localHost = "localhost:9090";
 var _digitalOcean = "104.131.109.228:80";
 
 String get partialHost => _localHost;
-
 String get localHost => "http://${partialHost}/";
+
+var _DOip = "104.131.109.228:8095";
+var _db = "dbtest";
+var _localIP = "192.168.59.103:8095";
+
+var partialDBHost = _localIP;
 
 class ListInt
 {

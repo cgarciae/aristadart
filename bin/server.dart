@@ -14,11 +14,6 @@ import 'dart:async';
 
 main() async
 {
-    var _DOip = "104.131.109.228:8095";
-    var _db = "dbtest";
-    var _localIP = "192.168.59.103:8095";
-
-    var partialDBHost = _localIP;
     
     var dbManager = new MongoDbManager("mongodb://${partialDBHost}/test", poolSize: 3);
     
