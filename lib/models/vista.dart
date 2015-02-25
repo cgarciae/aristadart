@@ -52,3 +52,10 @@ class VistaExportable extends Vista
     @Field() ObjetoUnitySend objetoUnity;
     @Field() LocalImageTargetSend localTarget;
 }
+
+class TA
+{
+    @Id() String id;
+    @Field () String nombre;
+    @Field () TA ref;
+}

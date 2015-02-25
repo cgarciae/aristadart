@@ -15,7 +15,7 @@ import 'dart:async';
 main() async
 {
     var _DOip = "104.131.109.228:8095";
-    var _db = "db";
+    var _db = "dbtest";
     var _localIP = "192.168.59.103:8095";
 
     var partialDBHost = _localIP;
@@ -27,7 +27,7 @@ main() async
     
     app.setShelfHandler (createStaticHandler
     (
-        "../build/web", 
+        "../web", 
         defaultDocument: "index.html",
         serveFilesOutsidePath: true
     ));
@@ -40,6 +40,7 @@ setDefaultAdmin ()
 {
     
 }
+
 
 
 @app.Interceptor(r'/.*')
