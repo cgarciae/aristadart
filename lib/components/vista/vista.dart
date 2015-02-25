@@ -118,7 +118,7 @@ class VistaVista
             tituloVista =
                     tiposDeVista
                     .where((tipo)=> tipo.type__ == vista.type__)
-                    .map(getField(#nombre))
+                    .map((TipoDeVista t) => t.nombre)
                     .first; 
             
             

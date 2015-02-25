@@ -1,19 +1,16 @@
 ## SERVER RUN##
-docker stop webDart
-docker rm webDart
-
-docker run -d -p 8090:8080 -it --name webDart --link db:db cgarciae/aristadart:0.0.2
+docker stop webDart && docker rm webDart
+docker run -d -p 9090:9090 -it --name webDart --link db:db cgarciae/aristadart:0.0.3
 
 ## SERVER BUILD ##
-cd "/c/Users/Cristian Garcia/Documents/Dart/redstonetest/restonetest/"
+    cd "/c/Users/Cristian Garcia/Documents/Dart/redstonetest/restonetest/"
 docker build -t cgarciae/aristadart:0.0.1 .
 
 
 ## MONGO RUN##
-docker stop db
-docker rm db
+docker stop db && docker rm db
 
-docker run -d -it --name db --volumes-from data cgarciae/mongo:0.0.2
+docker run -d -it --name db --volumes-from data cgarciae/mongo:0.0.1
 
 ## MONGO BUILD ##
 cd "/c/Users/Cristian Garcia/Documents/Dart/redstonetest/restonetest/dockerFiles/mongo"
@@ -21,13 +18,12 @@ docker build -t cgarciae/mongo:0.0.1 .
 
 
 ## DATA ##
-docker stop data
-docker rm data
+docker stop data && docker rm data
 
-docker run -it --name data cgarciae/data:0.0.2
+docker run -it --name data cgarciae/data:0.0.1
 
 ## DATA BUILD ##
-cd "/c/Users/Cristian Garcia/Documents/Dart/redstonetest/restonetest/dockerFiles/data"
+cd "/c/Users/Cristian Garcia/Documents/Github/aristadart/dockerFiles/data"
 docker build -t cgarciae/data:0.0.1 .
 
 ## MONGO TEST ##
