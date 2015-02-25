@@ -4724,7 +4724,7 @@ dialog {
   position: absolute;
   overflow-x: hidden;
   overflow-y: auto;
-  background: #3362AF;
+  background: #B8D1F8;
   z-index: 1001;
   box-sizing: content-box;
   transition: transform 500ms ease 0s;
@@ -4951,7 +4951,7 @@ ul.off-canvas-list {
     -webkit-backface-visibility: hidden; }
   .left-submenu .back > a {
     padding: 0.3rem 0.9375rem;
-    color: #2C79F2;
+    color: #093C8C;
     text-transform: uppercase;
     font-weight: bold;
     background: #F3F8FE;
