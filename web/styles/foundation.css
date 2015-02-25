@@ -4724,7 +4724,7 @@ dialog {
   position: absolute;
   overflow-x: hidden;
   overflow-y: auto;
-  background: #3362AF;
+  background: #B8D1F8;
   z-index: 1001;
   box-sizing: content-box;
   transition: transform 500ms ease 0s;
@@ -4771,11 +4771,11 @@ ul.off-canvas-list {
   ul.off-canvas-list li label {
     display: block;
     padding: 0.3rem 0.9375rem;
-    color: #9EC0F6;
+    color: #2C79F2;
     text-transform: uppercase;
     font-size: 0.75rem;
     font-weight: bold;
-    background: #2C79F2;
+    background: #9EC0F6;
     border-top: 1px solid #9EC0F6;
     border-bottom: none;
     margin: 0; }
@@ -4931,7 +4931,7 @@ ul.off-canvas-list {
   margin: 0;
   overflow-x: hidden;
   overflow-y: auto;
-  background: #2C79F2;
+  background: #9EC0F6;
   z-index: 1002;
   box-sizing: content-box;
   -webkit-overflow-scrolling: touch;
@@ -4951,7 +4951,7 @@ ul.off-canvas-list {
     -webkit-backface-visibility: hidden; }
   .left-submenu .back > a {
     padding: 0.3rem 0.9375rem;
-    color: #2C79F2;
+    color: #093C8C;
     text-transform: uppercase;
     font-weight: bold;
     background: #F3F8FE;
