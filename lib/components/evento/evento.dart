@@ -24,7 +24,7 @@ class EventoVista
         var eventoID = routeProvider.parameters['eventoID'];
 
         //Cargar evento
-        requestDecoded(Evento, Method.GET, "private/evento/$eventoID").then((EventoExportable e)
+        requestDecoded(EventoExportable, Method.GET, "private/evento/$eventoID").then((EventoExportable e)
         {
             evento = e;
             
@@ -37,7 +37,7 @@ class EventoVista
     cargarVistas (String eventID)
     {
         return requestDecoded(
-            VistasResp, 
+            VistasExportableResp, 
             Method.GET,
             "private/evento/$eventID/vistas"
         )

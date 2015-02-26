@@ -34,7 +34,7 @@ newObjetoUnity (@app.Attr() MongoDb dbConn) async
 
 @app.Route('/private/objetounity', methods: const [app.PUT])
 @Encode()
-putObjetoUnity (@app.Attr() MongoDb dbConn, @Decode() ObjetoUnity obj) async
+putObjetoUnity (@app.Attr() MongoDb dbConn, @Decode() ObjetoUnitySend obj) async
 {
     print (encodeJson(obj));
     try 
