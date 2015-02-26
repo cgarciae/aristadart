@@ -156,7 +156,7 @@ exportEvento(@app.Attr() MongoDb dbConn, String id) async
     await BuildEvento(dbConn, evento);
     
     print ("EE 2");
-    Resp resp = await validEvento (evento);
+    Resp resp = evento.valid();
     
     if (resp.success)
     {
@@ -189,39 +189,4 @@ Future<EventoExportable> BuildEvento(MongoDb dbConn, EventoExportable evento) as
     await Future.wait (futures);
     
     return evento;
-}
-
-Future<Resp> validEvento (EventoExportable evento) async
-{
-    if (evento.id == null || evento.id == "")
-        return new Resp()
-            ..error = "Id de Evento Invalida";
-    
-    if (evento.active == null || ! evento.active)
-        return new Resp()
-            ..error = "Evento inactivo";
-    
-    if (evento.cloudRecoTargetId == null || evento.cloudRecoTargetId == "")
-        return new Resp()
-            ..error = "Target ID Invalida";
-    
-    
-    List<VistaExportable> list = [];
-    List<Future> futureList = [];
-    for (VistaExportable vista in evento.vistas)
-    {
-        Resp resp = await validVista (vista);
-        if (resp.success)
-            list.add (vista);
-        else
-            print (resp.error);
-    }
-    
-    evento.vistas = list;
-    
-    if (evento.vistas.length == 0)
-        return new Resp()
-            ..error = "Ninguna vista valida disponible";
-    
-    return new Resp();
 }
