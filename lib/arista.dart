@@ -104,6 +104,11 @@ class Resp
     
     @Field() String error;
     @Field() int errCode;
+    
+    Resp ()
+    {
+        error = null;
+    }
 }
 
 class VistasResp extends Resp

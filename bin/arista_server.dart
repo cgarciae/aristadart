@@ -108,3 +108,29 @@ Function ifNotNull (String failMessage, dynamic f (dynamic))
         return f (obj);
     };
 }
+
+ModifierBuilder getRefModifierBuilder (Ref obj)
+{
+    return getModifierBuilder
+    (
+        obj..error = null
+    );
+}
+
+ModifierBuilder getModifierBuilder (Object obj)
+{
+    Map<String, dynamic> map = encode(obj);
+    
+    print (map);
+    
+    ModifierBuilder mod = modify;
+    
+    for (String key in map.keys)
+    {
+        mod.set(key, map[key]);
+    }
+    
+    print (mod);
+    
+    return mod;
+}
