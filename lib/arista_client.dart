@@ -12,6 +12,7 @@ import 'package:redstone/query_map.dart';
 import 'package:fp/fp.dart';
 
 part 'components/evento/evento.dart';
+part 'components/widgets/loader/loader.dart';
 part 'components/vista/vista.dart';
 part 'components/login/login.dart';
 part 'components/login/nuevo_usuario.dart';

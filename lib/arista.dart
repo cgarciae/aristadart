@@ -23,22 +23,57 @@ part 'models/user.dart';
 part 'models/panel_info.dart';
 part 'models/validation_rules/truth.dart';
 
-//TODO: hacer por casos
-var _localHost = "localhost:9090";
-var _digitalOcean = "104.131.109.228:80";
+const int tipoBuild = TipoBuild.desarrollo;
 
-String get partialHost => _localHost;
+int get port => 9090;
+
+String get staticFolder {
+    switch (tipoBuild)
+    {
+        case TipoBuild.desarrollo:
+            return "../web";
+        case TipoBuild.jsTesting:
+            return "../build/web";
+        case TipoBuild.dockerTesting:
+        case TipoBuild.deploy:
+            return "build/web";
+    }
+}
+
+String get partialHost {
+    switch (tipoBuild)
+    {
+        case TipoBuild.desarrollo:
+        case TipoBuild.jsTesting:
+        case TipoBuild.dockerTesting:
+            return "localhost:9090";
+        case TipoBuild.deploy:
+            return "104.131.109.228";
+    }
+}
+
+
+
 String get localHost => "http://${partialHost}/";
 
-var _DOip = "104.131.109.228:8095";
-var _db = "dbtest";
-var _localIP = "192.168.59.103:8095";
+String get partialDBHost {
+    switch (tipoBuild)
+    {
+        case TipoBuild.desarrollo:
+        case TipoBuild.jsTesting:
+            return "192.168.59.103:8095";
+        case TipoBuild.dockerTesting:
+        case TipoBuild.deploy:
+            return "db";
+    }
+}
 
-var partialDBHost = _localIP;
-
-class ListInt
+class TipoBuild
 {
-    @Field() List<int> list;
+    static const int desarrollo =  0;
+    static const int jsTesting =  1;
+    static const int dockerTesting =  2;
+    static const int deploy =  3;
 }
 
 Function decodeTo (Type type)
@@ -74,6 +109,11 @@ class Resp
 class VistasResp extends Resp
 {
     @Field() List<Vista> vistas = [];
+}
+
+class VistasExportableResp extends Resp
+{
+    @Field() List<VistaExportable> vistas = [];
 }
 
 class VistaResp extends Resp
