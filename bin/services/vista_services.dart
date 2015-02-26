@@ -126,7 +126,7 @@ Future<VistaExportable> buildVista (MongoDb dbConn, VistaExportable vista) async
     return vista;
 }
 
-Future<Resp> validVista (VistaExportable vista) async
+Resp validVista (VistaExportable vista)
 {
     if (vista.type__ == null || vista.type__ == "")
         return new Resp()

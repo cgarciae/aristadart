@@ -7,9 +7,11 @@ import 'dart:io';
 import 'package:redstone/server.dart' as app;
 import 'package:redstone_mapper/plugin.dart';
 import 'package:redstone_mapper_mongo/manager.dart';
+import 'package:mongo_dart/mongo_dart.dart';
 import 'package:shelf/shelf.dart' as shelf;
 import 'package:shelf_static/shelf_static.dart';
 import 'authorization.dart';
+import 'utils.dart';
 import 'dart:async';
 
 main() async
@@ -22,20 +24,69 @@ main() async
     
     app.setShelfHandler (createStaticHandler
     (
-        "../build/web", 
+        staticFolder, 
         defaultDocument: "index.html",
         serveFilesOutsidePath: true
     ));
      
     app.setupConsoleLog();
-    app.start(port: int.parse(partialHost.split(r':').last));
-}
-
-setDefaultAdmin ()
-{
+    await app.start(port: port);
     
+    MongoDb dbConn = await dbManager.getConnection();
+    
+    UserComplete user = await dbConn.findOne
+    (
+        Col.user,
+        UserComplete,
+        where
+            .eq('admin', true)
+    );
+    
+    if (user == null)
+    {
+        print ("Creando nuevo admin");
+        if (tipoBuild == TipoBuild.deploy)
+        {
+            var newUser = new UserComplete()
+                ..nombre = "Arista"
+                ..apellido = "Dev"
+                ..password = encryptPassword ("TransformandoElMundo!")
+                ..email = "info@aristadev.com"
+                ..money = 1000000000
+                ..admin = true;
+            
+            await dbConn.insert
+            (
+                Col.user,
+                newUser
+            );
+        }
+        else
+        {
+            var newUser = new UserComplete()
+                ..nombre = "Arista"
+                ..apellido = "Dev"
+                ..password = encryptPassword("a")
+                ..email = "a"
+                ..money = 1000000000
+                ..admin = true;
+            
+            await dbConn.insert
+            (
+                Col.user,
+                newUser
+            );
+        }
+    }
+    else
+    {
+        print ("Admin found:");
+        print (user.email);
+    }
+    
+    //List users = await dbConn.collection (Col.user).find().toList();
+    //users.forEach (print);
 }
-
 
 
 @app.Interceptor(r'/.*')

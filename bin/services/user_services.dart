@@ -12,8 +12,9 @@ postUser(@app.Attr() MongoDb dbConn, @Decode() UserComplete user) async
     UserComplete foundUser = await dbConn.findOne 
     (
         Col.user,
-        UserComplete, 
-        {"email": user.email}
+        UserComplete,
+        where
+            .eq("email", user.email)
     );
     
     if (foundUser != null)
@@ -67,18 +68,28 @@ getUser(@app.Attr() MongoDb dbConn, String id) async
 login(@app.Attr() MongoDb dbConn, @Decode() UserSecure user) async
 {   
     
-    print (encodeJson(user));
+    print (user.email);
+    print (user.password);
     
     if (user.email == null || user.password == null)
     {
+        print ("aca");
         return new IdResp()
-            ..error = "WRONG_USER_OR_PASSWORD";
+            ..error = "WRONG_USER_OR_PASSWORD2";
     }
     
     user.password = encryptPassword(user.password);
     
+    print (user.password);
     
-    UserAdmin foundUser = await dbConn.findOne ('user', UserAdmin, {"email": user.email, "password": user.password});
+    UserAdmin foundUser = await dbConn.findOne 
+    (
+        Col.user,
+        UserAdmin,
+        where
+            .eq("email", user.email)
+            .eq("password", user.password)
+    );
     
     //User doesnt exist
     if (foundUser == null)
@@ -181,6 +192,7 @@ listUsers(@app.Attr() MongoDb dbConn) {
 }
 
 @app.Route ('/setadmin/:userid')
+@Secure(ADMIN)
 @Encode()
 setAdmin (@app.Attr() MongoDb dbConn, String userid) async
 {

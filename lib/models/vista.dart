@@ -51,6 +51,35 @@ class VistaExportable extends Vista
     //ConstruccionRA
     @Field() ObjetoUnitySend objetoUnity;
     @Field() LocalImageTargetSend localTarget;
+    
+    Resp valid ()
+    {
+        if (type__ == null || type__ == "")
+            return new Resp()
+                ..error = "type__ undefined.";
+        
+        switch (type__)
+        {
+            case 'ConstruccionRAJS, Assembly-CSharp':
+                
+                if (objetoUnity == null)
+                    return new Resp()
+                        ..error = "modeloId undefined.";
+                if (objetoUnity.active == null || objetoUnity.active == false)
+                    return new Resp()
+                        ..error = "El objetoUnity no esta activo.";
+                if (localTarget == null)
+                    return new Resp()
+                        ..error = "localTarget undefined.";            
+                if (localTarget.active == null || localTarget.active == false)
+                     return new Resp()
+                        ..error = "El localTarget no esta activo.";            
+                
+                break;
+        }
+        
+        return new Resp();
+    }
 }
 
 class TA

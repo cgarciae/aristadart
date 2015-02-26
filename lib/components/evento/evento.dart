@@ -10,9 +10,11 @@ part of aristadart.client;
 )
 class EventoVista
 {
-    Evento evento = new Evento ();
+    EventoExportable evento = new EventoExportable();
     
-    List<Vista> vistas = [];
+    List<VistaExportable> get vistas => evento.vistas;
+    set vistas (List<VistaExportable> vs) => evento.vistas = vs;
+    
     String targetImageUrl = "";
     
     Router router;
@@ -22,7 +24,7 @@ class EventoVista
         var eventoID = routeProvider.parameters['eventoID'];
 
         //Cargar evento
-        requestDecoded(Evento, Method.GET, "private/evento/$eventoID").then((Evento e)
+        requestDecoded(Evento, Method.GET, "private/evento/$eventoID").then((EventoExportable e)
         {
             evento = e;
             
@@ -39,7 +41,7 @@ class EventoVista
             Method.GET,
             "private/evento/$eventID/vistas"
         )
-        .then(doIfSuccess((VistasResp resp)
+        .then(doIfSuccess((VistasExportableResp resp)
         {
             vistas = resp.vistas;
         }));
