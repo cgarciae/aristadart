@@ -148,6 +148,29 @@ class ModelVista{
         
         
     }
+    
+    saveNameGameObject(ObjetoUnitySend obj)
+    {
+        print (obj);
+        
+        var newObj = new ObjetoUnitySend()
+            ..id = obj.id
+            ..nameGameObject = obj.nameGameObject;
+        
+        jsonRequestDecoded
+        (
+            Resp,
+            Method.PUT,
+            'private/objetounity',
+            newObj
+        )
+        .then ((Resp resp){
+        
+        if (resp.failed)
+            print (resp.error);
+        
+        });
+    }
 }
 
 class ModelAdminInfo
