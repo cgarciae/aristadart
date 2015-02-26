@@ -22,8 +22,8 @@
         <div class="large-6 columns">
             <fieldset>
                 <legend> 
-                    <span  class = "active" ng-if="vista.objetoUnity == null"></span>
-                    <span  class = "no-active" ng-if="vista.objetoUnity != null"></span>
+                    <span  class = "object-active" ng-if="vista.objetoUnity == null"></span>
+                    <span  class = "object-no-active" ng-if="vista.objetoUnity != null"></span>
                     Modelo
                     <img class="pd" ng-if="vista.objetoUnity != null" ng-src="https://cdn1.iconfinder.com/data/icons/outline-imperial-seo/128/SEO_C_100_09.12.14-3_Artboard_45-256.png">
                     <span ng-if="vista.objetoUnity != null">version {{vista.objetoUnity.version}}</span>
