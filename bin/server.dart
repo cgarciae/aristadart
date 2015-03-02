@@ -10,7 +10,6 @@ import 'package:redstone_mapper_mongo/manager.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 import 'package:shelf/shelf.dart' as shelf;
 import 'package:shelf_static/shelf_static.dart';
-import 'authorization.dart';
 import 'utils.dart';
 import 'dart:async';
 
@@ -21,6 +20,7 @@ main() async
     
     app.addPlugin(getMapperPlugin(dbManager));
     app.addPlugin(AuthorizationPlugin);
+    app.addPlugin(AuthenticationPlugin);
     
     app.setShelfHandler (createStaticHandler
     (
@@ -111,6 +111,7 @@ handleResponseHeader()
 @app.Interceptor (r'/private/.+')
 authenticationFilter () 
 {
+    print (app.request.headers);
     if (session["id"] == null)
     {
         app.chain.interrupt 

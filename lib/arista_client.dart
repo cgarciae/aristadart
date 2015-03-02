@@ -38,113 +38,95 @@ class ReqParam
 
 String reduceParams (List<ReqParam> params) =>  params.fold('?', (String acum, ReqParam elem) => (acum == '?' ? acum : acum + '&') + elem.formula);
 
-Future<dom.HttpRequest> makeRequest (String method, String path, {dynamic data, Map headers})
+Future<dom.HttpRequest> makeRequest (String method, String path, 
+                                    {dynamic data, Map headers, void onProgress (dom.ProgressEvent p)})
 {
-    if (data == null)
-    {
-        if (headers == null)
-        {
-            return dom.HttpRequest.request
-            (
-                path,
-                method: method
-            );
-        }
-        else
-        {
-            return dom.HttpRequest.request
-            (
-                path,
-                method: method,
-                requestHeaders: headers
-            );
-        }
-    }
-    else
-    {
-        if (headers == null)
-        {
-            return dom.HttpRequest.request
-            (
-                path,
-                method: method,
-                sendData: data
-            );
-        }
-        else
-        {
-            return dom.HttpRequest.request
-            (
-                path,
-                method: method,
-                requestHeaders: headers,
-                sendData: data
-            );
-        }
-    } 
+    return dom.HttpRequest.request
+    (
+        path,
+        method: method,
+        requestHeaders: headers,
+        sendData: data,
+        onProgress: onProgress
+    );
 }
 
-Future<String> requestString (String method, String path, {dynamic data, Map headers})
+Future<String> requestString (String method, String path, 
+                            {dynamic data, Map headers, void onProgress (dom.ProgressEvent p)})
 {
-    return makeRequest (method, path, data: data, headers: headers) 
+    return makeRequest (method, path, data: data, headers: headers, onProgress: onProgress) 
     .then ((dom.HttpRequest r) => r.responseText);
 }
 
-Future<dynamic> requestDecoded (Type type, String method, String path, {dynamic data, Map headers})
+Future<dynamic> requestDecoded (Type type, String method, String path, 
+                            {dynamic data, Map headers, void onProgress (dom.ProgressEvent p)})
 {
-    return requestString (method, path, data: data, headers: headers)   
+    return requestString (method, path, data: data, headers: headers, onProgress: onProgress)   
     .then (decodeTo (type));
 }
 
-Future<QueryMap> requestQueryMap (String method, String path, {dynamic data, Map headers})
+Future<QueryMap> requestQueryMap (String method, String path, 
+                                {dynamic data, Map headers, void onProgress (dom.ProgressEvent p)})
 {
-    return requestString (method, path, data: data, headers: headers)
+    return requestString (method, path, data: data, headers: headers, onProgress: onProgress)
     .then (JSON.decode)
     .then (MapToQueryMap);
 }
 
-Future<dynamic> formRequestDecoded (Type type, String method, String path, dom.FormElement form, {Map headers})
+Future<dynamic> formRequestDecoded (Type type, String method, String path, dom.FormElement form, {Map headers, void onProgress (dom.ProgressEvent p)})
 {
-    return requestDecoded(type, method, path, data: new dom.FormData(form), headers: headers);
+    return requestDecoded(type, method, path, data: new dom.FormData(form), headers: headers, onProgress: onProgress);
 }
 
-Future<QueryMap> formRequestQueryMap (Type type, String method, String path, dom.FormElement form, {Map headers})
+Future<QueryMap> formRequestQueryMap (Type type, String method, String path, dom.FormElement form, 
+                                    {Map headers, void onProgress (dom.ProgressEvent p)})
 {
-    return requestQueryMap(method, path, data: new dom.FormData(form), headers: headers);
+    return requestQueryMap(method, path, data: new dom.FormData(form), headers: headers, onProgress: onProgress);
 }
 
-Map addJSONContentType (Map headers)
+Map addToHeaders (Map headers, Map additions)
 {
-    var contentType = {'Content-Type' : ContType.applicationJson};
+    //var contentType = {Header.contentType : ContType.applicationJson};
         
     if (headers != null)
-        headers.addAll (contentType);
+        headers.addAll (additions);
     else
-        headers = contentType;
+        headers = additions;
     
     return headers;
 }
 
-Future<dynamic> jsonRequestDecoded (Type type, String method, String path, Object obj, {Map headers})
+Future<dynamic> jsonRequestDecoded (Type type, String method, String path, Object obj, 
+                                    {Map headers, void onProgress (dom.ProgressEvent p)})
 {   
     return requestDecoded
     (
         type, 
         method, 
         path, 
-        data: encodeJson(obj), 
-        headers: addJSONContentType(headers)
+        data: encodeJson(obj),
+        onProgress: onProgress,
+        headers: addToHeaders
+        (
+            headers,
+            {Header.contentType : ContType.applicationJson}
+        )
     );
 }
 
-Future<QueryMap> jsonRequestQueryMap (Type type, String method, String path, Object obj, {Map headers})
+Future<QueryMap> jsonRequestQueryMap (Type type, String method, String path, Object obj, {Map headers, void onProgress (dom.ProgressEvent p)})
 {
     return requestQueryMap
     (
         method, 
         path, 
-        data: encodeJson(obj), 
-        headers: addJSONContentType(headers)
+        data: encodeJson(obj),
+        onProgress: onProgress,
+        headers: addToHeaders
+        (
+            headers,
+            {Header.contentType : ContType.applicationJson}
+        )
     );
 }
 
