@@ -1,14 +1,13 @@
 part of aristadart.general;
 
-class ObjetoUnity
+class ObjetoUnity extends Ref
 {
-    @Id() String id;
     @Field() String name;
+    @Field() String get href => id != null ? "${localHost}public/objetounity/${id}" : null;
 }
 
 class ObjetoUnitySend extends ObjetoUnity
 {
-    @Field() String get href => id != null ? "${localHost}public/objetounity/${id}" : null;
     @Field() String nameGameObject;
     @ReferenceId() String owner;
     @ReferenceId() String userFileId;
@@ -48,7 +47,7 @@ class ObjetoUnitySend extends ObjetoUnity
     }
 }
 
-abstract class Ref
+abstract class Ref extends Resp
 {
     @Id() String id;
     @Field() String get href;

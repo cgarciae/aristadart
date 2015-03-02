@@ -1,5 +1,9 @@
 part of aristadart.server;
 
+@app.Route ('/testPrivate')
+@Private()
+testPrivate () => "funciona";
+
 @app.Route("/test")
 @Encode()
 gridFSTest(@app.Attr() MongoDb dbConn)

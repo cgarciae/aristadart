@@ -32,11 +32,11 @@ newObjetoUnity (@app.Attr() MongoDb dbConn) async
     }
 }
 
+@deprecated
 @app.Route('/private/objetounity', methods: const [app.PUT])
 @Encode()
-putObjetoUnity (@app.Attr() MongoDb dbConn, @Decode() ObjetoUnitySend obj) async
+putObjetoUnity (@app.Attr() MongoDb dbConn, @Decode() ObjetoUnity obj) async
 {
-    print (encodeJson(obj));
     try 
     {
         await dbConn.update
@@ -48,6 +48,36 @@ putObjetoUnity (@app.Attr() MongoDb dbConn, @Decode() ObjetoUnitySend obj) async
         );
         
         return new Resp();
+    }
+    catch (e, stacktrace)
+    {
+        return new Resp()
+            ..error = e.toString() + stacktrace.toString();
+    }
+}
+
+
+@app.Route('/private/objetounity/:id', methods: const [app.PUT])
+@Encode()
+putObjetoUnity2 (@app.Attr() MongoDb dbConn, @Decode() ObjetoUnitySend obj, String id) async
+{
+    try 
+    {
+        print (id);
+        
+        await dbConn.update
+        (
+            Col.objetoUnity,
+            where.id (StringToId(id)),
+            getRefModifierBuilder(obj)
+        );
+        
+        return dbConn.findOne
+        (
+            Col.objetoUnity,
+            ObjetoUnitySend,
+            where.id (StringToId(id))
+        );
     }
     catch (e, stacktrace)
     {

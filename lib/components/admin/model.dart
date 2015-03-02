@@ -153,21 +153,17 @@ class ModelVista{
     {
         print (obj);
         
-        var newObj = new ObjetoUnitySend()
-            ..id = obj.id
-            ..nameGameObject = obj.nameGameObject;
-        
         jsonRequestDecoded
         (
-            Resp,
+            ObjetoUnitySend,
             Method.PUT,
-            'private/objetounity',
-            newObj
+            'private/objetounity/${obj.id}',
+            new ObjetoUnitySend()
+                ..nameGameObject = obj.nameGameObject
         )
-        .then ((Resp resp){
+        .then ((ObjetoUnitySend resp){
         
-        if (resp.failed)
-            print (resp.error);
+        print (encodeJson(resp));
         
         });
     }

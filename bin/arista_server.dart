@@ -15,7 +15,6 @@ import 'package:shelf/shelf.dart' as shelf;
 import 'package:redstone_mapper/plugin.dart';
 import 'package:redstone/server.dart';
 import 'utils.dart';
-import 'authorization.dart';
 import 'package:fp/fp.dart' as F;
 
 part 'services/user_services.dart';
@@ -27,11 +26,14 @@ part 'services/objeto_unity_services.dart';
 part 'services/local_target_services.dart';
 part 'services/test_services.dart';
 part 'services/vuforia_services.dart';
+part 'authorization.dart';
 
 ObjectId StringToId (String id) => new ObjectId.fromHexString(id);
 
 HttpSession get session => app.request.session;
 ObjectId get userId => session['id'];
+
+MongoDb get dbConn => app.request.attributes.dbConn;
 
 const String ADMIN = "ADMIN";
 
@@ -107,4 +109,30 @@ Function ifNotNull (String failMessage, dynamic f (dynamic))
         
         return f (obj);
     };
+}
+
+ModifierBuilder getRefModifierBuilder (Ref obj)
+{
+    return getModifierBuilder
+    (
+        obj..error = null
+    );
+}
+
+ModifierBuilder getModifierBuilder (Object obj)
+{
+    Map<String, dynamic> map = encode(obj);
+    
+    print (map);
+    
+    ModifierBuilder mod = modify;
+    
+    for (String key in map.keys)
+    {
+        mod.set(key, map[key]);
+    }
+    
+    print (mod);
+    
+    return mod;
 }
