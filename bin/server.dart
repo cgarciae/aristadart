@@ -30,10 +30,7 @@ main() async
     ));
      
     app.setupConsoleLog();
-    await app.start(port: port);
-    
-    getModifierBuilder(new ObjetoUnitySend()
-        ..nameGameObject = "hola");   
+    await app.start(port: port); 
     
     MongoDb dbConn = await dbManager.getConnection();
     

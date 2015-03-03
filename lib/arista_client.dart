@@ -10,6 +10,7 @@ import 'dart:html' as dom;
 
 part 'components/evento/evento.dart';
 part 'components/widgets/loader/loader.dart';
+part 'components/widgets/acordeon/acordeon.dart';
 part 'components/vista/vista.dart';
 part 'components/login/login.dart';
 part 'components/login/nuevo_usuario.dart';
