@@ -22,6 +22,10 @@ part 'components/admin/admin.dart';
 part 'components/admin/model.dart';
 part 'components/admin/target.dart';
 part 'components/widgets/acordeon/acordeon.dart';
+<<<<<<< HEAD
+
+=======
+>>>>>>> upstream/master
 
 
 dom.Storage get storage => dom.window.localStorage;

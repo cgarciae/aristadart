@@ -4,6 +4,7 @@
     <div class="row">
         <div ng-repeat="info in infoList">
          <fieldset>
+         Id {{info.model.id}}
          <div class="row medium-uncollapse large-collapse">
             <h3>
                 Nombre: {{info.model.name}}
@@ -22,6 +23,7 @@
             <br>            
             <p> Versión modelo: Nº{{info.model.version}}</p>
             <br>
+            
             <div class="panel small-6 columns">
                 <h3>Imágen preview</h3>
                 <br>
@@ -51,7 +53,10 @@
                 
                 <div>
                   <form enctype="multipart/form-data" method="POST">
-                    <label>Nombre:</label><input type="text" ng-model="info.model.nameGameObject">
+                    <label>Nombre:</label>
+                    <input type="text"
+                        ng-model="info.model.nameGameObject"
+                        ng-blur="saveNameGameObject(info.model)">
                     <button class="button tiny radius" 
                       ng-click="guardarModel (info)">
                           Guardar

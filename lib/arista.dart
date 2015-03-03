@@ -104,6 +104,11 @@ class Resp
     
     @Field() String error;
     @Field() int errCode;
+    
+    Resp ()
+    {
+        error = null;
+    }
 }
 
 class VistasResp extends Resp
@@ -193,9 +198,16 @@ class MapResp extends Resp
 */
 List flatten (List<List> list) => list.expand(F.identity).toList();
 
+abstract class Header
+{
+    static const String contentType = 'Content-Type';
+    static const String authorization = 'Authorization';
+}
+
 abstract class ContType
 {
-    static String applicationJson = "application/json";
+    static const String applicationJson = "application/json";
+    static const String multipart = "multipart";
 }
 
 abstract class Method
