@@ -1,15 +1,15 @@
 part of aristadart.general;
 
-class Vista
+class VistaTotal
 {
     //Info general
     @Id() String id;
     @Field() String type__;
-    @Field() TextureGUI icon = new TextureGUI();
+    @Field() TextureGUI icon;
 
     //ConstruccionRA
-    @ReferenceId() String objetoUnityId;
-    @ReferenceId() String localTargetId;
+    @Field() ObjetoUnity objetoUnity;
+    @Field() LocalImageTarget localTarget;
     @Field() List<ElementoConstruccion> cuartos;
     @Field() List<ElementoConstruccion> muebles;
     
@@ -25,61 +25,102 @@ class Vista
     @Field() int zoom;
     @Field() String texto;
     
-    void NuevoElementoContacto (){
-        if(elementosContacto == null)
-            elementosContacto =[];
-        
-        elementosContacto.add(new ElementoContacto());
-    }
-    
-    void NuevoElementoInfo (){
-        if(elementosInfo == null)
-            elementosInfo =[];
-        
-        elementosInfo.add(new ElementoInfo());
-    }
-    
-    void NuevaTextura (){
-        if(textures == null)
-                            textures =[];
-        textures.add(new TextureGUI());
-    }
-}
-
-class VistaExportable extends Vista
-{
-    //ConstruccionRA
-    @Field() ObjetoUnitySend objetoUnity;
-    @Field() LocalImageTargetSend localTarget;
-    
-    Resp valid ()
+    Vista get vista
     {
-        if (type__ == null || type__ == "")
-            return new Resp()
-                ..error = "type__ undefined.";
+        Vista v;
         
         switch (type__)
         {
-            case 'ConstruccionRAJS, Assembly-CSharp':
+            case "ConstruccionRAJS, Assembly-CSharp":
+                v = new ConstruccionRA()
+                    ..id = id
+                    ..icon = icon
+                    
+                    ..objetoUnity = objetoUnity
+                    ..localTarget = localTarget;
+                break;
+            default:
+                v = new EmptyVista();
+                break;
                 
-                if (objetoUnity == null)
-                    return new Resp()
-                        ..error = "modeloId undefined.";
-                if (objetoUnity.active == null || objetoUnity.active == false)
-                    return new Resp()
-                        ..error = "El objetoUnity no esta activo.";
-                if (localTarget == null)
-                    return new Resp()
-                        ..error = "localTarget undefined.";            
-                if (localTarget.active == null || localTarget.active == false)
-                     return new Resp()
-                        ..error = "El localTarget no esta activo.";            
-                
+        }
+        
+        return v;
+    }
+}
+
+abstract class Vista extends Ref
+{
+    //@Field() String type__;
+    @Field() TextureGUI icon;
+    @Field() String get href => localHost + 'vista/$id';
+    
+    factory Vista ([String type__])
+    {
+        Vista v;
+        switch (type__)
+        {
+            case VistaType.construccionRA:
+                v = new ConstruccionRA();
+                break;
+            default:
+                v = new EmptyVista();
                 break;
         }
         
+        return v;
+            
+    }
+    
+    
+    Resp valid();
+}
+
+class EmptyVista extends Ref implements Vista
+{
+    @Field() TextureGUI icon;
+    @Field() String get href => localHost + 'vista/$id';
+    
+    Resp valid () => new Resp()..error = "NoneVista type";
+}
+
+class ConstruccionRA extends EmptyVista
+{
+    @Field() ObjetoUnity objetoUnity;
+    @Field() LocalImageTarget localTarget;
+    @Field() List<ElementoConstruccion> cuartos;
+    @Field() List<ElementoConstruccion> muebles;
+    
+    Resp valid ()
+    {
+        Resp resp = super.valid();
+        
+        if (resp.failed)
+            return resp;
+        
+        if (objetoUnity == null)
+            return new Resp()
+                ..error = "modeloId undefined.";
+        
+        if (objetoUnity.active == null || objetoUnity.active == false)
+            return new Resp()
+                ..error = "El objetoUnity no esta activo.";
+        
+        if (localTarget == null)
+            return new Resp()
+                ..error = "localTarget undefined.";   
+        
+        if (localTarget.active == null || localTarget.active == false)
+             return new Resp()
+                ..error = "El localTarget no esta activo.";
+        
         return new Resp();
     }
+}
+
+abstract class VistaType
+{
+    static const String construccionRA = "ConstruccionRAJS, Assembly-CSharp";
 }
 
 class TA

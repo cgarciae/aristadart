@@ -112,14 +112,14 @@ class DbObj extends Resp
     @Id() String id;
 }
 
-abstract class Ref extends DbObj
-{
-    @Field() String get href;
-}
-
-class PlainRef extends Ref
+class Ref extends DbObj
 {
     @Field() String href;
+}
+
+class ListEventoResp extends Resp
+{
+    @Field() List<Evento> eventos;
 }
 
 class VistasResp extends Resp

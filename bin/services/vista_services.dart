@@ -1,5 +1,90 @@
 part of aristadart.server;
 
+@app.Group('/vista')
+class VistaServices
+{
+    @app.DefaultRoute(methods: const [app.POST])
+    @Private()
+    @Encode()
+    Future<Vista> New (@app.QueryParam("type") String type) async
+    {
+        try
+        {
+            Vista vista = new Vista ()
+                ..id = newId();
+            
+            await db.insert
+            (
+                Col.vista,
+                vista
+            );
+            
+            return vista;
+        }
+        catch (e, s)
+        {
+            return new Vista ()
+                ..error = "$e $s";
+        }
+    }
+    
+    @app.Route('/:id', methods: const [app.GET])
+    @Private()
+    @Encode()
+    Future<Vista> Get (String id) async
+    {
+        try
+        {
+            VistaTotal vistaTotal = await db.findOne
+            (
+                Col.vista,
+                VistaTotal,
+                where.id (StringToId (id))
+            );
+            
+            if (vistaTotal == null)
+                return new Vista()
+                    ..error = "Vista not found";
+            
+            return vistaTotal.vista;
+        }
+        catch (e, s)
+        {
+            return new Vista ()
+                ..error = "$e $s";
+        }
+    }
+    
+    @app.Route('/:id', methods: const [app.PUT])
+    @Private()
+    @Encode()
+    Future<Vista> Update (String id, @Decode() VistaTotal vistaTotal) async
+    {
+        try
+        {
+            Vista vista = vistaTotal.vista;
+            
+            await db.update
+            (
+                Col.vista,
+                where.id (StringToId (id)),
+                getModifierBuilder(vista)
+            );
+            
+            if (vistaTotal == null)
+                return new Vista()
+                    ..error = "Vista not found";
+            
+            return vistaTotal.vista;
+        }
+        catch (e, s)
+        {
+            return new Vista ()
+                ..error = "$e $s";
+        }
+    }
+}
+
 
 @app.Route("/private/evento/:id/vistas")
 @Encode()

@@ -30,7 +30,7 @@ Future<Map> streamResponseToJSON (http.StreamedResponse resp)
         .then (bytesToJSON);
 }
 
-@app.Route("/private/vuforiaimage/:eventoID", methods: const [app.POST], allowMultipartRequest: true)
+@app.Route("/private/vuforiaImage/:eventoID", methods: const [app.POST], allowMultipartRequest: true)
 @Encode()
 newImageVuforia(@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, String eventoID) async
 {
@@ -72,7 +72,7 @@ newImageVuforia(@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, String
     }
 }
 
-@app.Route("/private/vuforiaimage/:eventoID", methods: const [app.PUT], allowMultipartRequest: true)
+@app.Route("/private/vuforiaImage/:eventoID", methods: const [app.PUT], allowMultipartRequest: true)
 @Encode()
 updateImageVuforia(@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, String eventoID) async
 {
@@ -158,7 +158,7 @@ Future<Resp> getVuforiaTarget(@app.Attr() MongoDb dbConn, String eventoID) async
     return vuforiaTarget;
 }
 
-@app.Route("/public/cloudreco/:recoID", methods: const [app.GET])
+@app.Route("/public/cloudTarget/:recoID", methods: const [app.GET])
 @Encode()
 Future<RecoTargetResp> getCloudRecoTarget(@app.Attr() MongoDb dbConn, String recoID) async
 {

@@ -32,9 +32,9 @@ ObjectId StringToId (String id) => new ObjectId.fromHexString(id);
 String newId () => new ObjectId().toHexString();
 
 HttpSession get session => app.request.session;
-ObjectId get userId => session['id'];
 
 MongoDb get db => app.request.attributes.dbConn;
+String get userId => app.request.headers.authorization;
 
 const String ADMIN = "ADMIN";
 

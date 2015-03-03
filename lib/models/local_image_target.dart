@@ -1,18 +1,14 @@
 part of aristadart.general;
 
-class LocalImageTarget
+class LocalImageTarget extends Ref
 {
-    @Id () String id;
     @Field() String name;
-}
 
-class LocalImageTargetSend extends LocalImageTarget
-{
     @NotEmpty()
-    @ReferenceId() String owner;
+    @Field() User owner;
     
     @NotEmpty()
-    @ReferenceId() String imageId;
+    @Field() FileDb imageId;
     
     @NotEmpty()
     @Field() bool updatePending;
@@ -23,11 +19,11 @@ class LocalImageTargetSend extends LocalImageTarget
     @Field () bool get active => activeDat && activeXml;
     @Field() bool get updated => updatedDat && updatedXml;
     
-    @ReferenceId() String datId;
-    @Field() bool get activeDat => notNullOrEmpty(datId);
+    @Field() FileDb datFile;
+    @Field() bool get activeDat => datFile != null && notNullOrEmpty(datFile.id);
     @Field() bool updatedDat = false;
     
-    @ReferenceId() String xmlId;
-    @Field() bool get activeXml => notNullOrEmpty(xmlId);
+    @Field() FileDb xmlFile;
+    @Field() bool get activeXml => xmlFile != null && notNullOrEmpty(xmlFile.id);
     @Field() bool updatedXml = false;
 }

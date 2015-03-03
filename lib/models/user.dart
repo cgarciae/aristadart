@@ -1,13 +1,20 @@
 part of aristadart.general;
 
-class User
+class UserDb extends Ref
 {
-    @Id() String id;
+    @Field() String get href => id != null ? localHost + 'user/$id' : null;
+    
     @Field() String nombre;
     @Field() String apellido;
     @Field() String email;
     
-    @ReferenceId() List<String> eventos = [];
+    //TODO: buscar eventos por medio de eventos.owner
+    //@Field() List<Ref> eventos;
+}
+
+class User extends UserDb
+{
+    
 }
 
 class UserAdmin extends User

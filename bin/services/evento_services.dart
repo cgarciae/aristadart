@@ -4,12 +4,128 @@ part of aristadart.server;
 class EventoServices
 {
     @app.DefaultRoute (methods: const[app.POST])
+    @Private()
     @Encode()
-    Future<EventoDb> New ()
+    Future<Evento> New () async
     {
-        EventoDb evento = new EventoDb()
-            ..id = newId()
-            ..active = false;
+        try
+        {
+            Evento evento = new Evento()
+                ..id = newId()
+                ..active = true
+                ..owner = (new User()
+                    ..id = userId);
+            
+            
+            await db.insert 
+            (   
+                Col.evento, 
+                evento
+            );
+            
+            return evento;
+        }
+        catch (e, s)
+        {
+            return new Evento()
+                ..error = "$e $s";
+        } 
+    }
+    
+    @app.Route ('/:id', methods: const[app.PUT])
+    @Private()
+    @Encode()
+    Future<Evento> Update (String id, @Decode() Evento delta) async
+    {
+        try
+        {
+            await db.update 
+            (   
+                Col.evento,
+                where.id (StringToId (id)),
+                getModifierBuilder (delta)
+            );
+            
+            return Get (id);
+        }
+        catch (e, s)
+        {
+            return new Evento()
+                ..error = "$e $s";
+        }
+    }
+    
+    @app.Route ('/:id', methods: const[app.PUT])
+    @Encode()
+    Future<Evento> Get (String id) async
+    {
+        try
+        {
+            Evento evento = await db.findOne
+            (
+                Col.evento,
+                Evento,
+                where.id(StringToId(id))
+            );
+            
+            if (evento == null)
+                return new Evento()
+                    ..error = "Evento no encontrado";
+            
+            return evento;
+        }
+        catch (e, s)
+        {
+            return new Evento()
+                ..error = "$e $s";
+        }
+    }
+    
+    @app.Route ('/:id', methods: const[app.DELETE])
+    @Private()
+    @Encode()
+    Future<DbObj> Delete (String id) async
+    {
+        try
+        {
+            await db.remove
+            (
+                Col.evento,
+                where.id(StringToId(id))
+            );
+            
+            return new DbObj()
+                ..id = id;
+        }
+        catch (e, s)
+        {
+            return new DbObj()
+                ..error = "$e $s";
+        }
+    }
+    
+    @app.Route ('/all', methods: const[app.GET])
+    @Private()
+    @Encode()
+    Future<ListEventoResp> All () async
+    {
+        try
+        {
+            List<Evento> eventos = await db.find
+            (
+                Col.evento,
+                Evento,
+                where.eq("owner._id", StringToId(userId))
+            );
+            
+            return new ListEventoResp()
+                ..eventos = eventos;
+        }
+        catch (e, s)
+        {
+            return new ListEventoResp()
+                ..error = "$e $s";
+        }
     }
 }
 

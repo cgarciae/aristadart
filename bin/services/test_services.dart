@@ -4,6 +4,9 @@ part of aristadart.server;
 @Private()
 testPrivate () => "funciona";
 
+@app.Route ('/testQuery')
+testQuery (@app.QueryParam('algo') String algo) => algo;
+
 @app.Route("/test")
 @Encode()
 gridFSTest(@app.Attr() MongoDb dbConn)

@@ -1,9 +1,10 @@
 part of aristadart.general;
 
-class CloudImageTargetDb extends Ref
+class CloudTarget2 extends Ref
 {
-    @ReferenceId() String imageId;
-    @Field() String targetId;
+    @Field() String get href => localHost + 'cloudTarget/$id';
+    @Field() FileDb image;
+    @Field() DbObj target;
 }
 
 class CloudImageTarget
