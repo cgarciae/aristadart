@@ -303,19 +303,17 @@
     </div>
     <div ng-switch-default>
         <br>
-        <a class="button radius" data-dropdown="selectTipo"
-           aria-controls="selectTipo" data-options="align:right">
-            Escoge el Tipo de Vista &raquo;
-        </a>
-        <ul id="selectTipo" class="f-dropdown">
+        <h3>Escoge el tipo de vista que más necesites</h3>
+        <ul class="no-bullet">
           <li ng-repeat="tipo in tiposDeVista"
              ng-click="seleccionarTipoVista (tipo)"
-             {{tipo.nombre}}
-             class="panel boxes">
+             {{tipo.nombre}} class="boxes">
+             <fieldset>
                 <b>{{tipo.nombre}}</b>
                 <br>   
                 <i>{{tipo.descripcion}}</i>
                 <br>
+             </fieldset>
            </li>
         </ul>
     </div>
