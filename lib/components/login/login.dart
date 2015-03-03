@@ -13,6 +13,8 @@ class LoginVista extends ShadowRootAware
     Router router;
     
     bool nuevo = false;
+    bool checked =false;
+    String accion ='';
     
     LoginVista (this.router)
     {

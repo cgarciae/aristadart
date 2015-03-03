@@ -27,6 +27,7 @@ transformers:
     - lib/components/admin/model.html
     - lib/components/admin/target.html
     - lib/components/widgets/loader/loader.html
+    - lib/components/widgets/acordeon/acordeon.html
 - script_inliner
 - sass:
     style: compressed
