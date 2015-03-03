@@ -37,7 +37,9 @@ class VistaTotal
                     ..icon = icon
                     
                     ..objetoUnity = objetoUnity
-                    ..localTarget = localTarget;
+                    ..localTarget = localTarget
+                    ..cuartos = cuartos
+                    ..muebles = muebles;
                 break;
             default:
                 v = new EmptyVista();
@@ -51,11 +53,10 @@ class VistaTotal
 
 abstract class Vista extends Ref
 {
-    //@Field() String type__;
+    @Field() String get type__;
     @Field() TextureGUI icon;
-    @Field() String get href => localHost + 'vista/$id';
     
-    factory Vista ([String type__])
+    static Vista Factory ([String type__])
     {
         Vista v;
         switch (type__)
@@ -69,16 +70,15 @@ abstract class Vista extends Ref
         }
         
         return v;
-            
     }
     
     
     Resp valid();
 }
 
-class EmptyVista extends Ref implements Vista
+class EmptyVista extends Vista
 {
-    @Field() TextureGUI icon;
+    @Field() String get type__ => null;
     @Field() String get href => localHost + 'vista/$id';
     
     Resp valid () => new Resp()..error = "NoneVista type";
@@ -86,6 +86,8 @@ class EmptyVista extends Ref implements Vista
 
 class ConstruccionRA extends EmptyVista
 {
+    @Field() String get type__ => VistaType.construccionRA;
+    
     @Field() ObjetoUnity objetoUnity;
     @Field() LocalImageTarget localTarget;
     @Field() List<ElementoConstruccion> cuartos;

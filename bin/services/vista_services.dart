@@ -10,8 +10,9 @@ class VistaServices
     {
         try
         {
-            Vista vista = new Vista ()
+            Vista vista = Vista.Factory (type)
                 ..id = newId();
+            
             
             await db.insert
             (
@@ -19,17 +20,17 @@ class VistaServices
                 vista
             );
             
+            
             return vista;
         }
         catch (e, s)
         {
-            return new Vista ()
+            return new EmptyVista()
                 ..error = "$e $s";
         }
     }
     
     @app.Route('/:id', methods: const [app.GET])
-    @Private()
     @Encode()
     Future<Vista> Get (String id) async
     {
@@ -43,14 +44,15 @@ class VistaServices
             );
             
             if (vistaTotal == null)
-                return new Vista()
+                return new EmptyVista()
                     ..error = "Vista not found";
+            
             
             return vistaTotal.vista;
         }
         catch (e, s)
         {
-            return new Vista ()
+            return new EmptyVista ()
                 ..error = "$e $s";
         }
     }
@@ -58,11 +60,10 @@ class VistaServices
     @app.Route('/:id', methods: const [app.PUT])
     @Private()
     @Encode()
-    Future<Vista> Update (String id, @Decode() VistaTotal vistaTotal) async
+    Future<Vista> Update (String id, @Decode() VistaTotal vista) async
     {
         try
         {
-            Vista vista = vistaTotal.vista;
             
             await db.update
             (
@@ -71,11 +72,7 @@ class VistaServices
                 getModifierBuilder(vista)
             );
             
-            if (vistaTotal == null)
-                return new Vista()
-                    ..error = "Vista not found";
-            
-            return vistaTotal.vista;
+            return Get (id);
         }
         catch (e, s)
         {
@@ -121,20 +118,20 @@ Future<IdResp> newVista(@app.Attr() MongoDb dbConn) async
         ..id = vista.id;
 }
 
-@app.Route("/vista",methods: const[app.POST])
-@Private()
-@Encode()
-Future<IdResp> newVista2() async
-{
-        
-    var vista = new Vista()
-        ..id = new ObjectId().toHexString();
-
-    await db.insert (Col.vista, vista);
-    
-    return new IdResp()
-        ..id = vista.id;
-}
+//@app.Route("/vista",methods: const[app.POST])
+//@Private()
+//@Encode()
+//Future<IdResp> newVista2() async
+//{
+//        
+//    var vista = new Vista()
+//        ..id = new ObjectId().toHexString();
+//
+//    await db.insert (Col.vista, vista);
+//    
+//    return new IdResp()
+//        ..id = vista.id;
+//}
 
 @app.Route("/private/vista", methods: const[app.PUT])
 @Encode()
