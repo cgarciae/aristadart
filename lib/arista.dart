@@ -122,6 +122,11 @@ class ListEventoResp extends Resp
     @Field() List<Evento> eventos;
 }
 
+class ListVistaResp extends Resp
+{
+    @Field() List<Vista> vistas;
+}
+
 class VistasResp extends Resp
 {
     @Field() List<Vista> vistas = [];

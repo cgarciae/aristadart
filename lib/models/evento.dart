@@ -13,8 +13,8 @@ class Evento extends Ref
     
     @Field() String get url => localHost + "export/evento/$id";
     
-    @Field() List<Vista2> vistas;
-    @Field() CloudTarget2 cloudRecoTargetId;
+    @Field() List<Vista> vistas;
+    @Field() CloudTarget cloudTarget;
     
     Resp valid ()
     {
@@ -26,12 +26,12 @@ class Evento extends Ref
             return new Resp()
                 ..error = "Evento inactivo";
         
-        if (cloudRecoTargetId == null || cloudRecoTargetId.id == null)
+        if (cloudTarget == null || cloudTarget.id == null)
             return new Resp()
                 ..error = "Target ID Invalida";
         
         
-        vistas = vistas.where((Vista2 vista){
+        vistas = vistas.where((Vista vista){
             
             Resp resp = vista.valid();
             

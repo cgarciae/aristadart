@@ -6,12 +6,17 @@ class VistaServices
     @app.DefaultRoute(methods: const [app.POST])
     @Private()
     @Encode()
-    Future<Vista> New (@app.QueryParam("type") String type) async
+    Future<Vista> New (@app.QueryParam("type") String type, @app.QueryParam("eventoId") String eventoId) async
     {
         try
         {
             Vista vista = Vista.Factory (type)
-                ..id = newId();
+                ..id = newId()
+                ..eventos = 
+                [
+                    new Evento ()
+                        ..id = eventoId
+                ];
             
             
             await db.insert
@@ -25,7 +30,7 @@ class VistaServices
         }
         catch (e, s)
         {
-            return new EmptyVista()
+            return new Vista()
                 ..error = "$e $s";
         }
     }
@@ -44,7 +49,7 @@ class VistaServices
             );
             
             if (vistaTotal == null)
-                return new EmptyVista()
+                return new Vista()
                     ..error = "Vista not found";
             
             
@@ -52,7 +57,7 @@ class VistaServices
         }
         catch (e, s)
         {
-            return new EmptyVista ()
+            return new Vista ()
                 ..error = "$e $s";
         }
     }
@@ -80,6 +85,10 @@ class VistaServices
                 ..error = "$e $s";
         }
     }
+    
+    @app.Route('/all', methods: const [app.GET])
+    Future All () => db.collection (Col.vista).find().toList();
+    
 }
 
 

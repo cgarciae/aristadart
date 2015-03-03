@@ -55,7 +55,7 @@ class EventoServices
         }
     }
     
-    @app.Route ('/:id', methods: const[app.PUT])
+    @app.Route ('/:id', methods: const[app.GET])
     @Encode()
     Future<Evento> Get (String id) async
     {
@@ -124,6 +124,51 @@ class EventoServices
         catch (e, s)
         {
             return new ListEventoResp()
+                ..error = "$e $s";
+        }
+    }
+    
+    @app.Route ('/:id/vistas', methods: const[app.GET])
+    @Private()
+    @Encode()
+    Future<ListVistaResp> Vistas (String id) async
+    {
+        try
+        {
+            List<VistaTotal> vistasTotal = await db.find
+            (
+                Col.vista,
+                VistaTotal,
+                {
+                    "eventos" :
+                    {
+                        r'$elemMatch' :
+                        {
+                            r'_id' : StringToId (id)
+                        }
+                    }
+                }
+            );
+            
+            print (encodeJson(vistasTotal));
+            
+            List<Vista> vistas = vistasTotal.map((VistaTotal v){
+                
+                Vista vista = v.vista;
+                
+                print (vista.runtimeType);
+                print (encodeJson(vista.eventos));
+                
+                return vista;
+                
+            }).toList();
+            
+            return new ListVistaResp()
+                ..vistas = vistas;
+        }
+        catch (e, s)
+        {
+            return new ListVistaResp()
                 ..error = "$e $s";
         }
     }

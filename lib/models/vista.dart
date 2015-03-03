@@ -4,6 +4,7 @@ class VistaTotal
 {
     //Info general
     @Id() String id;
+    @Field() List<Evento> eventos;
     @Field() String type__;
     @Field() TextureGUI icon;
 
@@ -35,6 +36,7 @@ class VistaTotal
                 v = new ConstruccionRA()
                     ..id = id
                     ..icon = icon
+                    ..eventos = eventos
                     
                     ..objetoUnity = objetoUnity
                     ..localTarget = localTarget
@@ -51,9 +53,11 @@ class VistaTotal
     }
 }
 
-abstract class Vista extends Ref
+class Vista extends Ref
 {
-    @Field() String get type__;
+    @Field() List<Evento> eventos;
+    @Field() String get type__ => null;
+    @Field() String get href => localHost + 'vista/$id';
     @Field() TextureGUI icon;
     
     static Vista Factory ([String type__])
@@ -65,7 +69,7 @@ abstract class Vista extends Ref
                 v = new ConstruccionRA();
                 break;
             default:
-                v = new EmptyVista();
+                v = new Vista();
                 break;
         }
         
@@ -73,19 +77,12 @@ abstract class Vista extends Ref
     }
     
     
-    Resp valid();
+    Resp valid () => new Resp()..error = "Vista sin type__";
 }
 
-class EmptyVista extends Vista
+class ConstruccionRA extends Vista
 {
-    @Field() String get type__ => null;
     @Field() String get href => localHost + 'vista/$id';
-    
-    Resp valid () => new Resp()..error = "NoneVista type";
-}
-
-class ConstruccionRA extends EmptyVista
-{
     @Field() String get type__ => VistaType.construccionRA;
     
     @Field() ObjetoUnity objetoUnity;
