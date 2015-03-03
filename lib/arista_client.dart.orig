@@ -3,14 +3,16 @@ library aristadart.client;
 import 'package:aristadart/arista.dart';
 
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:redstone_mapper/mapper.dart';
 import 'package:angular/angular.dart';
 import 'dart:html' as dom;
+import 'package:redstone/query_map.dart';
+import 'package:fp/fp.dart';
 
 part 'components/evento/evento.dart';
 part 'components/widgets/loader/loader.dart';
-part 'components/widgets/acordeon/acordeon.dart';
 part 'components/vista/vista.dart';
 part 'components/login/login.dart';
 part 'components/login/nuevo_usuario.dart';
@@ -19,29 +21,33 @@ part 'routing/router.dart';
 part 'components/admin/admin.dart';
 part 'components/admin/model.dart';
 part 'components/admin/target.dart';
+part 'components/widgets/acordeon/acordeon.dart';
+<<<<<<< HEAD
+
+=======
+>>>>>>> upstream/master
+
 
 dom.Storage get storage => dom.window.localStorage;
 
-String appendRequestParams (String path, Map<String,String> params)
+class ReqParam
 {
-    path += '?';
-    for (String key in params.keys)
-    {
-        path += '${key}=${params[key]}&';
-    }
+    String field;
+    String value;
     
-    return path;
+    ReqParam (this.field, this.value);
+    
+    String get formula => field + '=' + value;
 }
+
+String reduceParams (List<ReqParam> params) =>  params.fold('?', (String acum, ReqParam elem) => (acum == '?' ? acum : acum + '&') + elem.formula);
 
 Future<dom.HttpRequest> makeRequest (String method, String path, 
                                     {dynamic data, Map headers, void onProgress (dom.ProgressEvent p), 
-                                    String userId, Map<String,String> params})
+                                    String userId})
 {
     if (userId != null)
         addToHeaders(headers, {Header.authorization : userId});
-    
-    if (params != null)
-        path = appendRequestParams(path, params);
     
     return dom.HttpRequest.request
     (
@@ -54,40 +60,34 @@ Future<dom.HttpRequest> makeRequest (String method, String path,
 }
 
 Future<String> requestString (String method, String path, {dynamic data, Map headers, 
-                                void onProgress (dom.ProgressEvent p), String userId, Map<String,String> params})
+                                void onProgress (dom.ProgressEvent p), String userId})
 {
     return makeRequest
     (
         method, path, data: data, headers: headers,
-        onProgress: onProgress, userId: userId,
-        params: params
+        onProgress: onProgress, userId: userId
     ) 
     .then ((dom.HttpRequest r) => r.responseText);
 }
 
-Future<dynamic> requestDecoded (Type type, String method, String path, {dynamic data, 
-                                Map headers, void onProgress (dom.ProgressEvent p), 
-                                String userId, Map<String,String> params})
+Future<dynamic> requestDecoded (Type type, String method, String path, {dynamic data, Map headers,
+                                void onProgress (dom.ProgressEvent p), String userId})
 {
     return requestString 
     (
         method, path, data: data, headers: headers, 
-        onProgress: onProgress, userId: userId,
-        params: params
+        onProgress: onProgress, userId: userId
     )   
     .then (decodeTo (type));
 }
 
 Future<dynamic> formRequestDecoded (Type type, String method, String path, dom.FormElement form, {Map headers, 
-                                    void onProgress (dom.ProgressEvent p), String userId,
-                                    Map<String,String> params})
+                                    void onProgress (dom.ProgressEvent p), String userId})
 {
     return requestDecoded
     (
-        type, method, path, headers: headers,
-        onProgress: onProgress, userId: userId,
-        params: params, 
-        data: new dom.FormData (form)
+        type, method, path, data: new dom.FormData (form), 
+        headers: headers, onProgress: onProgress, userId: userId
     );
 }
 
@@ -97,13 +97,15 @@ Future<dynamic> formRequestDecoded (Type type, String method, String path, dom.F
  * [method] especifica el verbo http como `GET`, `PUT` o `POST`.
  */
 Future<dynamic> jsonRequestDecoded (Type type, String method, String path, Object obj, 
-                                    {Map headers, void onProgress (dom.ProgressEvent p), 
-                                    String userId, Map<String,String> params})
+                                    {Map headers, void onProgress (dom.ProgressEvent p), String userId})
 {   
     return requestDecoded
     (
-        type, method, path, data: encodeJson(obj),
-        onProgress: onProgress, params: params,
+        type, 
+        method, 
+        path, 
+        data: encodeJson(obj),
+        onProgress: onProgress,
         headers: addToHeaders
         (
             headers,
@@ -126,7 +128,7 @@ Map addToHeaders (Map headers, Map additions)
 }
 
 Future<Resp> saveInCollection (String collection, Object obj){
-    return jsonRequestDecoded (Resp, Method.PUT, "private/$collection", obj);
+    return jsonRequestDecoded(Resp, Method.PUT, "private/$collection", obj);
 }
 
 Future<Resp> deleteFromCollection(String collection, String id){
