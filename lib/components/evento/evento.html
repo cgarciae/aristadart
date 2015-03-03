@@ -55,7 +55,7 @@
     <ul class="small-block-grid-2 medium-block-grid-3 large-block-grid-4">
         <li ng-repeat="vista in vistas"
          ng-click="ver (vista)">
-         <fieldset class="boxes">
+         <fieldset class="boxes" style="height: 280px">
             <legend>
                 <div class="row">
                     <div class="small-8 columns">{{vista.icon.texto}}</div>
@@ -69,8 +69,22 @@
             <img alt="{{iconoURL(vista)}}" ng-src="{{iconoURL (vista)}}" class="gray-b">
          </fieldset>
         </li>
+        <li ng-click='nuevaVista()'>
+            <fieldset class="boxes" style="height: 280px">
+                <legend>
+                    <div class="row">
+                        <div class="small-8 columns">Crea una nueva Vista</div>
+                        
+                        <div class="small-2 columns">
+                            <a class="button right" 
+                                ng-click="eliminar (vista, $event)"></a>
+                        </div>
+                    </div>
+                </legend>
+                <img alt="+" ng-src="images/icons/add.png" class="gray-b" style="height: 185px">
+            </fieldset>
+        </li>
     </ul>
-    <a ng-click='nuevaVista()' class="add"></a>
 </div>
 </div>
 
