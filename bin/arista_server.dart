@@ -29,11 +29,12 @@ part 'services/vuforia_services.dart';
 part 'authorization.dart';
 
 ObjectId StringToId (String id) => new ObjectId.fromHexString(id);
+String newId () => new ObjectId().toHexString();
 
 HttpSession get session => app.request.session;
 ObjectId get userId => session['id'];
 
-MongoDb get dbConn => app.request.attributes.dbConn;
+MongoDb get db => app.request.attributes.dbConn;
 
 const String ADMIN = "ADMIN";
 
@@ -111,28 +112,58 @@ Function ifNotNull (String failMessage, dynamic f (dynamic))
     };
 }
 
-ModifierBuilder getRefModifierBuilder (Ref obj)
+ModifierBuilder getRefModifierBuilder (Ref obj, [MongoDb dbConn])
 {
     return getModifierBuilder
     (
-        obj..error = null
+        obj..error = null,
+        dbConn
     );
 }
 
-ModifierBuilder getModifierBuilder (Object obj)
+ModifierBuilder getModifierBuilder (Object obj, [MongoDb dbConn])
 {
-    Map<String, dynamic> map = encode(obj);
+    dbConn = dbConn == null ? db : dbConn;
+    Map<String, dynamic> map = dbConn.encode(obj);
+    
+    map = cleanMap (map);
     
     print (map);
     
-    ModifierBuilder mod = modify;
-    
-    for (String key in map.keys)
-    {
-        mod.set(key, map[key]);
-    }
+    Map mod = {r'$set' : map};
     
     print (mod);
     
-    return mod;
+    return new ModifierBuilder()
+        ..map = mod;
+}
+
+dynamic cleanMap (dynamic json)
+{
+    if (json is List)
+    {
+        return json.map (cleanMap).toList();
+    }
+    else if (json is Map)
+    {
+        var map = {};
+        for (String key in json.keys)
+        {
+            var value = json[key];
+            
+            if (value == null)
+                continue;
+            
+            if (value is List || value is Map)
+                map[key] = cleanMap (value);
+            
+            else
+                map[key] = value;
+        }
+        return map;
+    }
+    else
+    {
+        return json;
+    }
 }

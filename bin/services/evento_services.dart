@@ -1,6 +1,22 @@
 part of aristadart.server;
 
+@app.Group ('/evento')
+class EventoServices
+{
+    @app.DefaultRoute (methods: const[app.POST])
+    @Encode()
+    Future<EventoDb> New ()
+    {
+        EventoDb evento = new EventoDb()
+            ..id = newId()
+            ..active = false;
+    }
+}
 
+
+/////////
+//LEGACY
+/////////
 
 @app.Route("/private/evento", methods: const[app.POST])
 @Encode()

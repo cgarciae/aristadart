@@ -59,7 +59,7 @@ void AuthenticationPlugin(app.Manager manager) {
         User user;
         try
         {
-            user = await dbConn.findOne
+            user = await db.findOne
             (
                 Col.user,
                 User,
