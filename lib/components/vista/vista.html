@@ -308,11 +308,23 @@
           <li ng-repeat="tipo in tiposDeVista"
              ng-click="seleccionarTipoVista (tipo)"
              {{tipo.nombre}} class="boxes">
-             <fieldset>
-                <b>{{tipo.nombre}}</b>
-                <br>   
-                <i>{{tipo.descripcion}}</i>
-                <br>
+            <fieldset style="height: 350px">
+                <legend>
+                    <b>{{tipo.nombre}}</b>
+                </legend>
+                <div class="row">
+                    <div class="large-12 columns">
+                        <div class="small-6 columns">
+                            <img alt="Textura" ng-src="images/webapp/missing_image.png" style="height: 250px">
+                        </div>
+                        <div class="small-5 columns">
+                            <i>{{tipo.descripcion}}</i>
+                        </div>
+                        <div class="small-1 columns">
+                            <a class="button right">$ <i>free</i></a>
+                        </div>
+                    </div>
+                </div>
              </fieldset>
            </li>
         </ul>
