@@ -8,7 +8,11 @@ part of aristadart.client;
 )
 class Acordeon
 {
+    @NgTwoWay('mostrarContenido')
     bool mostrarContenido =false;
+    
+    @NgAttr('titulo')
+    String titulo;
     
     Acordeon(){
         

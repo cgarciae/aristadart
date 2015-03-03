@@ -21,6 +21,7 @@ part 'routing/router.dart';
 part 'components/admin/admin.dart';
 part 'components/admin/model.dart';
 part 'components/admin/target.dart';
+part 'components/widgets/acordeon/acordeon.dart';
 
 
 
