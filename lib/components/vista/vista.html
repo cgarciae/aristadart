@@ -172,102 +172,103 @@
         </div>
     </div>
     <div ng-switch-when="InfoContactoJS, Assembly-CSharp">
-        <div class= "small-12 small-centered columns">
-            <div class="small-3 columns">
+        <div class="large-8 columns">
+            <h3>Elementos Contacto </h3>
+            <a class="add-I" ng-click="vista.NuevoElementoContacto ()"></a>
+            <acordeon titulo="contacto" ng-repeat="contacto in vista.elementosContacto" >
                 <fieldset>
-                    <h3>Elementos Contacto </h3>
-                    <div ng-repeat="contacto in vista.elementosContacto" >
-                        <hr>
-                        <a class="button right tiny" ng-click="EliminarElemento( contacto, vista.elementosContacto)">x</a>
-                        <br>
-                        <div ng-switch="contacto.type__">
-                            <div ng-switch-when="LlamarContactoJS, Assembly-CSharp">
-                                <label>Telefono:</label> <input type="text" ng-model="contacto.telefono">
-                            </div>
-                            <div ng-switch-default>
-                                <a class="button radius left" data-dropdown="dropContacto"
-                                   aria-controls="dropContacto" aria-expanded="false"
-                                   data-options="align:left">
-                                    Escoge el Tipo de Elemento Contacto &raquo;
-                                </a>
-                                <ul id="dropContacto" class="f-dropdown" data-dropdown-content aria-hidden="true" tabindex="-1">
-                                  <li ng-repeat="tipo in tiposElementoContacto"
-                                     ng-click="seleccionarTipoElemento (tipo, contacto)"
-                                     class="panel boxes">
-                                        <b>{{tipo.nombre}}</b>
-                                        <br>   
-                                        <i>{{tipo.descripcion}}</i>
-                                        <br>
-                                   </li>
-                                </ul>
-                            </div>
+                    <a class="button right tiny" ng-click="EliminarElemento( contacto, vista.elementosContacto)">x</a>
+                    <br>
+                    <div ng-switch="contacto.type__">
+                        <div ng-switch-when="LlamarContactoJS, Assembly-CSharp">
+                            <label>Telefono:</label> <input type="text" ng-model="contacto.telefono">
+                        </div>
+                        <div ng-switch-default>
+                            <a class="button radius left" data-dropdown="dropContacto"
+                               aria-controls="dropContacto" aria-expanded="false"
+                               data-options="align:left">
+                                Escoge el Tipo de Elemento Contacto &raquo;
+                            </a>
+                            <ul id="dropContacto" class="f-dropdown" data-dropdown-content aria-hidden="true" tabindex="-1">
+                              <li ng-repeat="tipo in tiposElementoContacto"
+                                 ng-click="seleccionarTipoElemento (tipo, contacto)"
+                                 class="panel boxes">
+                                    <b>{{tipo.nombre}}</b>
+                                    <br>   
+                                    <i>{{tipo.descripcion}}</i>
+                                    <br>
+                               </li>
+                            </ul>
                         </div>
                     </div>
-                    <hr>
-                    <br>
-                    <a class="add-I" ng-click="vista.NuevoElementoContacto ()"></a>
                 </fieldset>
-            </div>
-                <div class="small-5 columns">
-                    <fieldset ng-repeat="info in vista.elementosInfo" >
-                    <a class="button right large" ng-click="EliminarElemento( info, vista.elementosInfo)">x</a>
-                    <br>
-                        <div ng-switch="info.type__">
-                            <div ng-switch-when="TituloInfoJS, Assembly-CSharp">
-                                <label>Titulo:</label> <input type="text" ng-model="info.titulo">
-                            </div>
-                            <div ng-switch-when="ImagenInfoJS, Assembly-CSharp">
-                                <form enctype="multipart/form-data" method="POST">                                    
-                                    <!--UPLOAD FILE-->                                    
-                                    Choose a file to upload: <input name="file" type="file" accept="image/*"><br>
-                                    <button class="button large" ng-click="uploadElementosInfoImageFile ($event, info)">Upload</button>
-                                    
-                                    <!--SCREENSHOT-->
-                                    <div ng-switch="info.imageId != null && info.imageId !=''">  
-                                        <a ng-switch-when="true"
-                                            ng-href="{{'public/file/' + info.imageId}}"
-                                            target="_blank">
-                                            <img alt="screenshoot Elemento Info" 
-                                                ng-src="{{'public/file/' + info.imageId}}">
-                                        </a>
-                                        <img ng-switch-default
-                                              alt="screenshoot Elemento Info" 
-                                              ng-src="images/webapp/missing_image.png">
-                                    </div>
-                                </form>                                                
-                            </div>
-                            <div ng-switch-when="InfoTextoJS, Assembly-CSharp">
-                                <label>Titulo:</label> <input type="text" ng-model="info.titulo">
-                                <label>Descripción:</label> <textarea ng-model="info.descripcion"></textarea>
-                            </div>
-                            <div ng-switch-default>
-                                <a class="button radius left" data-dropdown="dropInfo"
-                                   aria-controls="dropInfo" aria-expanded="false"
-                                   data-options="align:left">
-                                    Escoge el Tipo de Elemento Información &raquo;
-                                </a>
-                                <ul id="dropInfo" class="f-dropdown" data-dropdown-content aria-hidden="true" tabindex="-1">
-                                  <li ng-repeat="tipo in tiposElementoInfo"
-                                     ng-click="seleccionarTipoElemento (tipo, info)"
-                                     class="panel boxes">
-                                        <b>{{tipo.nombre}}</b>
-                                        <br>   
-                                        <i>{{tipo.descripcion}}</i>
-                                        <br>
-                                   </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </fieldset>
-                    <br>
-                    <a class="add-I" ng-click="vista.NuevoElementoInfo ()"></a>
-            </div>
+            </acordeon>
         </div>
+        <hr>
+        <h3>Info Contacto</h3>
+        <a class="add-I" ng-click="vista.NuevoElementoInfo ()"></a>
+        <br>
+        <div class="large-8 collumns">
+            <acordeon titulo="elemento contacto" ng-repeat="info in vista.elementosInfo" >
+                <fieldset>
+                <a class="button right large" ng-click="EliminarElemento( info, vista.elementosInfo)">x</a>
+                <br>
+                <div ng-switch="info.type__">
+                    <div ng-switch-when="TituloInfoJS, Assembly-CSharp">
+                        <label>Titulo:</label> <input type="text" ng-model="info.titulo">
+                    </div>
+                    <div ng-switch-when="ImagenInfoJS, Assembly-CSharp">
+                        <form enctype="multipart/form-data" method="POST">                                    
+                            <!--UPLOAD FILE-->                                    
+                            Choose a file to upload: <input name="file" type="file" accept="image/*"><br>
+                            <button class="button large" ng-click="uploadElementosInfoImageFile ($event, info)">Upload</button>
+                            
+                            <!--SCREENSHOT-->
+                            <div ng-switch="info.imageId != null && info.imageId !=''">  
+                                <a ng-switch-when="true"
+                                    ng-href="{{'public/file/' + info.imageId}}"
+                                    target="_blank">
+                                    <img alt="screenshoot Elemento Info" 
+                                        ng-src="{{'public/file/' + info.imageId}}">
+                                </a>
+                                <img ng-switch-default
+                                      alt="screenshoot Elemento Info" 
+                                      ng-src="images/webapp/missing_image.png">
+                            </div>
+                        </form>                                                
+                    </div>
+                    <div ng-switch-when="InfoTextoJS, Assembly-CSharp">
+                        <label>Titulo:</label> <input type="text" ng-model="info.titulo">
+                        <label>Descripción:</label> <textarea ng-model="info.descripcion"></textarea>
+                    </div>
+                    <div ng-switch-default>
+                        <a class="button radius left" data-dropdown="dropInfo"
+                           aria-controls="dropInfo" aria-expanded="false"
+                           data-options="align:left">
+                            Escoge el Tipo de Elemento Información &raquo;
+                        </a>
+                        <ul id="dropInfo" class="f-dropdown" data-dropdown-content aria-hidden="true" tabindex="-1">
+                          <li ng-repeat="tipo in tiposElementoInfo"
+                             ng-click="seleccionarTipoElemento (tipo, info)"
+                             class="panel boxes">
+                                <b>{{tipo.nombre}}</b>
+                                <br>   
+                                <i>{{tipo.descripcion}}</i>
+                                <br>
+                           </li>
+                        </ul>
+                      </div>
+                    </div>
+                </fieldset>
+            </acordeon>
+       </div>
     </div>
     <div ng-switch-when="MultimediaJS, Assembly-CShar">
         <div class="large-8 columns">
             <div class="small-10 small-centered columns">
-                <fieldset ng-repeat="textura in vista.textures" >
+            <br>
+                <acordeon titulo="Textura" ng-repeat="textura in vista.textures" >
+                <fieldset>
                     <a class="button right" ng-click="EliminarElemento( textura, vista.textures)">X</a>
                     <br>
                     <ul class="no-bullet">
@@ -281,6 +282,7 @@
                         <li><label>Descripción:</label> <input type="text" ng-model="textura.texto"></li>
                     </ul>
                 </fieldset>
+                </acordeon>
                 <a ng-click='vista.NuevaTextura ()' class="add-I"></a>
             </div>
         </div>
