@@ -1,7 +1,6 @@
 part of aristadart.server;
 
 
-
 @app.Route("/private/evento/:id/vistas")
 @Encode()
 Future<VistasResp> getVistas(@app.Attr() MongoDb dbConn, String id) async
@@ -22,6 +21,7 @@ Future<VistasResp> getVistas(@app.Attr() MongoDb dbConn, String id) async
         ..vistas = vistas;
 }
 
+@deprecated
 @app.Route("/private/vista",methods: const[app.POST])
 @Encode()
 Future<IdResp> newVista(@app.Attr() MongoDb dbConn) async
@@ -36,15 +36,30 @@ Future<IdResp> newVista(@app.Attr() MongoDb dbConn) async
         ..id = vista.id;
 }
 
+@app.Route("/vista",methods: const[app.POST])
+@Private()
+@Encode()
+Future<IdResp> newVista2() async
+{
+        
+    var vista = new Vista()
+        ..id = new ObjectId().toHexString();
+
+    await db.insert (Col.vista, vista);
+    
+    return new IdResp()
+        ..id = vista.id;
+}
+
 @app.Route("/private/vista", methods: const[app.PUT])
 @Encode()
-Future<Resp> saveVista(@app.Attr() MongoDb dbConn, @Decode() Vista vista) async
+Future<Resp> saveVista(@Decode() Vista vista) async
 {
     print (app.request.body);
     
     //print (vista.muebles[0].imageId);
     
-    await dbConn.update
+    await db.update
     (   
         Col.vista, 
         where.id(StringToId(vista.id)), 

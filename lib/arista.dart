@@ -20,6 +20,7 @@ part 'models/cloud_image_target.dart';
 part 'models/elemento_construccion.dart';
 part 'models/objeto_unity.dart';
 part 'models/user.dart';
+part 'models/file.dart';
 part 'models/panel_info.dart';
 part 'models/validation_rules/truth.dart';
 
@@ -99,11 +100,26 @@ QueryMap MapToQueryMap (Map map) => new QueryMap(map);
 
 class Resp
 {
-    @Field() bool get success => nullOrEmpty(error);
-    @Field() bool get failed => ! success;
+    bool get success => nullOrEmpty(error);
+    bool get failed => ! success;
     
     @Field() String error;
     @Field() int errCode;
+}
+
+class DbObj extends Resp
+{
+    @Id() String id;
+}
+
+abstract class Ref extends DbObj
+{
+    @Field() String get href;
+}
+
+class PlainRef extends Ref
+{
+    @Field() String href;
 }
 
 class VistasResp extends Resp
@@ -193,9 +209,16 @@ class MapResp extends Resp
 */
 List flatten (List<List> list) => list.expand(F.identity).toList();
 
+abstract class Header
+{
+    static const String contentType = 'Content-Type';
+    static const String authorization = 'Authorization';
+}
+
 abstract class ContType
 {
-    static String applicationJson = "application/json";
+    static const String applicationJson = "application/json";
+    static const String multipart = "multipart";
 }
 
 abstract class Method

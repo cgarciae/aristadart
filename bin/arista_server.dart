@@ -15,7 +15,6 @@ import 'package:shelf/shelf.dart' as shelf;
 import 'package:redstone_mapper/plugin.dart';
 import 'package:redstone/server.dart';
 import 'utils.dart';
-import 'authorization.dart';
 import 'package:fp/fp.dart' as F;
 
 part 'services/user_services.dart';
@@ -27,11 +26,15 @@ part 'services/objeto_unity_services.dart';
 part 'services/local_target_services.dart';
 part 'services/test_services.dart';
 part 'services/vuforia_services.dart';
+part 'authorization.dart';
 
 ObjectId StringToId (String id) => new ObjectId.fromHexString(id);
+String newId () => new ObjectId().toHexString();
 
 HttpSession get session => app.request.session;
 ObjectId get userId => session['id'];
+
+MongoDb get db => app.request.attributes.dbConn;
 
 const String ADMIN = "ADMIN";
 
@@ -107,4 +110,60 @@ Function ifNotNull (String failMessage, dynamic f (dynamic))
         
         return f (obj);
     };
+}
+
+ModifierBuilder getRefModifierBuilder (Ref obj, [MongoDb dbConn])
+{
+    return getModifierBuilder
+    (
+        obj..error = null,
+        dbConn
+    );
+}
+
+ModifierBuilder getModifierBuilder (Object obj, [MongoDb dbConn])
+{
+    dbConn = dbConn == null ? db : dbConn;
+    Map<String, dynamic> map = dbConn.encode(obj);
+    
+    map = cleanMap (map);
+    
+    print (map);
+    
+    Map mod = {r'$set' : map};
+    
+    print (mod);
+    
+    return new ModifierBuilder()
+        ..map = mod;
+}
+
+dynamic cleanMap (dynamic json)
+{
+    if (json is List)
+    {
+        return json.map (cleanMap).toList();
+    }
+    else if (json is Map)
+    {
+        var map = {};
+        for (String key in json.keys)
+        {
+            var value = json[key];
+            
+            if (value == null)
+                continue;
+            
+            if (value is List || value is Map)
+                map[key] = cleanMap (value);
+            
+            else
+                map[key] = value;
+        }
+        return map;
+    }
+    else
+    {
+        return json;
+    }
 }

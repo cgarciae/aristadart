@@ -87,4 +87,14 @@ class TA
     @Id() String id;
     @Field () String nombre;
     @Field () TA ref;
+    
+    TA()
+    {
+        nombre = "!";
+    }
+}
+
+class TB extends TA
+{
+    
 }

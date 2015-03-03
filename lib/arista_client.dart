@@ -3,13 +3,10 @@ library aristadart.client;
 import 'package:aristadart/arista.dart';
 
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:redstone_mapper/mapper.dart';
 import 'package:angular/angular.dart';
 import 'dart:html' as dom;
-import 'package:redstone/query_map.dart';
-import 'package:fp/fp.dart';
 
 part 'components/evento/evento.dart';
 part 'components/widgets/loader/loader.dart';
@@ -22,134 +19,113 @@ part 'components/admin/admin.dart';
 part 'components/admin/model.dart';
 part 'components/admin/target.dart';
 
-
-
 dom.Storage get storage => dom.window.localStorage;
 
-class ReqParam
+String appendRequestParams (String path, Map<String,String> params)
 {
-    String field;
-    String value;
-    
-    ReqParam (this.field, this.value);
-    
-    String get formula => field + '=' + value;
-}
-
-String reduceParams (List<ReqParam> params) =>  params.fold('?', (String acum, ReqParam elem) => (acum == '?' ? acum : acum + '&') + elem.formula);
-
-Future<dom.HttpRequest> makeRequest (String method, String path, {dynamic data, Map headers})
-{
-    if (data == null)
+    path += '?';
+    for (String key in params.keys)
     {
-        if (headers == null)
-        {
-            return dom.HttpRequest.request
-            (
-                path,
-                method: method
-            );
-        }
-        else
-        {
-            return dom.HttpRequest.request
-            (
-                path,
-                method: method,
-                requestHeaders: headers
-            );
-        }
+        path += '${key}=${params[key]}&';
     }
-    else
-    {
-        if (headers == null)
-        {
-            return dom.HttpRequest.request
-            (
-                path,
-                method: method,
-                sendData: data
-            );
-        }
-        else
-        {
-            return dom.HttpRequest.request
-            (
-                path,
-                method: method,
-                requestHeaders: headers,
-                sendData: data
-            );
-        }
-    } 
+    
+    return path;
 }
 
-Future<String> requestString (String method, String path, {dynamic data, Map headers})
+Future<dom.HttpRequest> makeRequest (String method, String path, 
+                                    {dynamic data, Map headers, void onProgress (dom.ProgressEvent p), 
+                                    String userId, Map<String,String> params})
 {
-    return makeRequest (method, path, data: data, headers: headers) 
+    if (userId != null)
+        addToHeaders(headers, {Header.authorization : userId});
+    
+    if (params != null)
+        path = appendRequestParams(path, params);
+    
+    return dom.HttpRequest.request
+    (
+        path,
+        method: method,
+        requestHeaders: headers,
+        sendData: data,
+        onProgress: onProgress
+    );
+}
+
+Future<String> requestString (String method, String path, {dynamic data, Map headers, 
+                                void onProgress (dom.ProgressEvent p), String userId, Map<String,String> params})
+{
+    return makeRequest
+    (
+        method, path, data: data, headers: headers,
+        onProgress: onProgress, userId: userId,
+        params: params
+    ) 
     .then ((dom.HttpRequest r) => r.responseText);
 }
 
-Future<dynamic> requestDecoded (Type type, String method, String path, {dynamic data, Map headers})
+Future<dynamic> requestDecoded (Type type, String method, String path, {dynamic data, 
+                                Map headers, void onProgress (dom.ProgressEvent p), 
+                                String userId, Map<String,String> params})
 {
-    return requestString (method, path, data: data, headers: headers)   
+    return requestString 
+    (
+        method, path, data: data, headers: headers, 
+        onProgress: onProgress, userId: userId,
+        params: params
+    )   
     .then (decodeTo (type));
 }
 
-Future<QueryMap> requestQueryMap (String method, String path, {dynamic data, Map headers})
+Future<dynamic> formRequestDecoded (Type type, String method, String path, dom.FormElement form, {Map headers, 
+                                    void onProgress (dom.ProgressEvent p), String userId,
+                                    Map<String,String> params})
 {
-    return requestString (method, path, data: data, headers: headers)
-    .then (JSON.decode)
-    .then (MapToQueryMap);
+    return requestDecoded
+    (
+        type, method, path, headers: headers,
+        onProgress: onProgress, userId: userId,
+        params: params, 
+        data: new dom.FormData (form)
+    );
 }
 
-Future<dynamic> formRequestDecoded (Type type, String method, String path, dom.FormElement form, {Map headers})
-{
-    return requestDecoded(type, method, path, data: new dom.FormData(form), headers: headers);
+/**
+ * Hace un request al [path] enviando [obj] codificado a `JSON` y decodifica la respuesta al tipo [type]. 
+ * 
+ * [method] especifica el verbo http como `GET`, `PUT` o `POST`.
+ */
+Future<dynamic> jsonRequestDecoded (Type type, String method, String path, Object obj, 
+                                    {Map headers, void onProgress (dom.ProgressEvent p), 
+                                    String userId, Map<String,String> params})
+{   
+    return requestDecoded
+    (
+        type, method, path, data: encodeJson(obj),
+        onProgress: onProgress, params: params,
+        headers: addToHeaders
+        (
+            headers,
+            {Header.contentType : ContType.applicationJson}
+        )
+    );
 }
 
-Future<QueryMap> formRequestQueryMap (Type type, String method, String path, dom.FormElement form, {Map headers})
-{
-    return requestQueryMap(method, path, data: new dom.FormData(form), headers: headers);
-}
 
-Map addJSONContentType (Map headers)
+Map addToHeaders (Map headers, Map additions)
 {
-    var contentType = {'Content-Type' : ContType.applicationJson};
+    //var contentType = {Header.contentType : ContType.applicationJson};
         
     if (headers != null)
-        headers.addAll (contentType);
+        headers.addAll (additions);
     else
-        headers = contentType;
+        headers = additions;
     
     return headers;
 }
 
-Future<dynamic> jsonRequestDecoded (Type type, String method, String path, Object obj, {Map headers})
-{   
-    return requestDecoded
-    (
-        type, 
-        method, 
-        path, 
-        data: encodeJson(obj), 
-        headers: addJSONContentType(headers)
-    );
-}
-
-Future<QueryMap> jsonRequestQueryMap (Type type, String method, String path, Object obj, {Map headers})
-{
-    return requestQueryMap
-    (
-        method, 
-        path, 
-        data: encodeJson(obj), 
-        headers: addJSONContentType(headers)
-    );
-}
-
 Future<Resp> saveInCollection (String collection, Object obj){
-    return jsonRequestDecoded(Resp, Method.PUT, "private/$collection", obj);
+    return jsonRequestDecoded (Resp, Method.PUT, "private/$collection", obj);
 }
 
 Future<Resp> deleteFromCollection(String collection, String id){
@@ -219,6 +195,9 @@ loginUser (Router router, UserAdminResp resp)
 @Injectable()
 class MainController 
 {
+    bool abierto = true;
+    String titulo = "";
+    
     Router router;
     
     static MainController i;
