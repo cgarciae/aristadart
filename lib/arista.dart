@@ -201,6 +201,7 @@ List flatten (List<List> list) => list.expand(F.identity).toList();
 abstract class Header
 {
     static const String contentType = 'Content-Type';
+    static const String authorization = 'Authorization';
 }
 
 abstract class ContType

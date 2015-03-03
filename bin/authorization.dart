@@ -52,19 +52,27 @@ void AuthenticationPlugin(app.Manager manager) {
         var id = request.headers.authorization;
                 
         if (id == null)
-            return new app.ErrorResponse(403, {"error": "authorization header expected"});
+            return new app.ErrorResponse(403, {"error": "Authentication Error: Authorization header expected"});
         
         print ("1");
         
-        var user = await dbConn.findOne
-        (
-            Col.user,
-            User,
-            where.id(StringToId(id))
-        );
+        User user;
+        try
+        {
+            user = await dbConn.findOne
+            (
+                Col.user,
+                User,
+                where.id(StringToId(id))
+            );
+        }
+        on ArgumentError catch (e)
+        {
+            return new app.ErrorResponse(403, {"error": "Authentication Error: ID length must be 24"});
+        }
         
         if (user == null)
-            return new app.ErrorResponse(403, {"error": "Invalid ID: user does not exist"});
+            return new app.ErrorResponse(403, {"error": "Authentication Error: User does not exist"});
         
         
         return route(pathSegments, injector, request);
