@@ -4,7 +4,7 @@ part of aristadart.client;
 (
     selector : "acordeon",
     templateUrl: 'components/widgets/acordeon/acordeon.html',
-    useShadowDom: false
+    cssUrl: 'components/widgets/acordeon/acordeon.css'
 )
 class Acordeon
 {
