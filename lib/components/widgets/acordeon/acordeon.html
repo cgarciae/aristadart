@@ -1,7 +1,7 @@
-<div id="acordeon" ng-click="mostrarContenido=!mostrarContenido">
-    <a id="titulo-acordeon" >{{titulo}}</a>
-    <div ng-if="mostrarContenido">
+<div id="acordeon">
+    <a id="titulo-acordeon" ng-click="mostrarContenido=!mostrarContenido">{{titulo}}</a>
+    <span ng-if="mostrarContenido">
         <content></content>
-    </div>
+    </span>
 </div>
-
+<br>
