@@ -3,13 +3,10 @@ library aristadart.client;
 import 'package:aristadart/arista.dart';
 
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:redstone_mapper/mapper.dart';
 import 'package:angular/angular.dart';
 import 'dart:html' as dom;
-import 'package:redstone/query_map.dart';
-import 'package:fp/fp.dart';
 
 part 'components/evento/evento.dart';
 part 'components/widgets/loader/loader.dart';
@@ -21,29 +18,29 @@ part 'routing/router.dart';
 part 'components/admin/admin.dart';
 part 'components/admin/model.dart';
 part 'components/admin/target.dart';
-part 'components/widgets/acordeon/acordeon.dart';
-
 
 dom.Storage get storage => dom.window.localStorage;
 
-class ReqParam
+String appendRequestParams (String path, Map<String,String> params)
 {
-    String field;
-    String value;
+    path += '?';
+    for (String key in params.keys)
+    {
+        path += '${key}=${params[key]}&';
+    }
     
-    ReqParam (this.field, this.value);
-    
-    String get formula => field + '=' + value;
+    return path;
 }
-
-String reduceParams (List<ReqParam> params) =>  params.fold('?', (String acum, ReqParam elem) => (acum == '?' ? acum : acum + '&') + elem.formula);
 
 Future<dom.HttpRequest> makeRequest (String method, String path, 
                                     {dynamic data, Map headers, void onProgress (dom.ProgressEvent p), 
-                                    String userId})
+                                    String userId, Map<String,String> params})
 {
     if (userId != null)
         addToHeaders(headers, {Header.authorization : userId});
+    
+    if (params != null)
+        path = appendRequestParams(path, params);
     
     return dom.HttpRequest.request
     (
@@ -56,34 +53,40 @@ Future<dom.HttpRequest> makeRequest (String method, String path,
 }
 
 Future<String> requestString (String method, String path, {dynamic data, Map headers, 
-                                void onProgress (dom.ProgressEvent p), String userId})
+                                void onProgress (dom.ProgressEvent p), String userId, Map<String,String> params})
 {
     return makeRequest
     (
         method, path, data: data, headers: headers,
-        onProgress: onProgress, userId: userId
+        onProgress: onProgress, userId: userId,
+        params: params
     ) 
     .then ((dom.HttpRequest r) => r.responseText);
 }
 
-Future<dynamic> requestDecoded (Type type, String method, String path, {dynamic data, Map headers,
-                                void onProgress (dom.ProgressEvent p), String userId})
+Future<dynamic> requestDecoded (Type type, String method, String path, {dynamic data, 
+                                Map headers, void onProgress (dom.ProgressEvent p), 
+                                String userId, Map<String,String> params})
 {
     return requestString 
     (
         method, path, data: data, headers: headers, 
-        onProgress: onProgress, userId: userId
+        onProgress: onProgress, userId: userId,
+        params: params
     )   
     .then (decodeTo (type));
 }
 
 Future<dynamic> formRequestDecoded (Type type, String method, String path, dom.FormElement form, {Map headers, 
-                                    void onProgress (dom.ProgressEvent p), String userId})
+                                    void onProgress (dom.ProgressEvent p), String userId,
+                                    Map<String,String> params})
 {
     return requestDecoded
     (
-        type, method, path, data: new dom.FormData (form), 
-        headers: headers, onProgress: onProgress, userId: userId
+        type, method, path, headers: headers,
+        onProgress: onProgress, userId: userId,
+        params: params, 
+        data: new dom.FormData (form)
     );
 }
 
@@ -93,15 +96,13 @@ Future<dynamic> formRequestDecoded (Type type, String method, String path, dom.F
  * [method] especifica el verbo http como `GET`, `PUT` o `POST`.
  */
 Future<dynamic> jsonRequestDecoded (Type type, String method, String path, Object obj, 
-                                    {Map headers, void onProgress (dom.ProgressEvent p), String userId})
+                                    {Map headers, void onProgress (dom.ProgressEvent p), 
+                                    String userId, Map<String,String> params})
 {   
     return requestDecoded
     (
-        type, 
-        method, 
-        path, 
-        data: encodeJson(obj),
-        onProgress: onProgress,
+        type, method, path, data: encodeJson(obj),
+        onProgress: onProgress, params: params,
         headers: addToHeaders
         (
             headers,
@@ -124,7 +125,7 @@ Map addToHeaders (Map headers, Map additions)
 }
 
 Future<Resp> saveInCollection (String collection, Object obj){
-    return jsonRequestDecoded(Resp, Method.PUT, "private/$collection", obj);
+    return jsonRequestDecoded (Resp, Method.PUT, "private/$collection", obj);
 }
 
 Future<Resp> deleteFromCollection(String collection, String id){

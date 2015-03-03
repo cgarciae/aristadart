@@ -45,7 +45,7 @@ Future<IdResp> newVista2() async
     var vista = new Vista()
         ..id = new ObjectId().toHexString();
 
-    await dbConn.insert (Col.vista, vista);
+    await db.insert (Col.vista, vista);
     
     return new IdResp()
         ..id = vista.id;
@@ -59,7 +59,7 @@ Future<Resp> saveVista(@Decode() Vista vista) async
     
     //print (vista.muebles[0].imageId);
     
-    await dbConn.update
+    await db.update
     (   
         Col.vista, 
         where.id(StringToId(vista.id)), 

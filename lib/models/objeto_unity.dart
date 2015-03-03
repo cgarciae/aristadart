@@ -47,12 +47,6 @@ class ObjetoUnitySend extends ObjetoUnity
     }
 }
 
-abstract class Ref extends Resp
-{
-    @Id() String id;
-    @Field() String get href;
-}
-
 class ObjetoUnityRef extends Ref
 {
     @Field() String get href => id != null ? "${localHost}public/objetounity/${id}" : null;

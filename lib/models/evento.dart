@@ -1,9 +1,24 @@
 part of aristadart.general;
 
-class Evento
+class EventoDb extends Ref
 {
+    @Field() String get href => localHost + "evento/$id";
+        
+    @Field() TextureGUI imagenPreview;
+    @Field () String nombre;
+    @Field () String descripcion;
+    
+    @Field() String get url => localHost + "export/evento/$id";
+    
+    @Field() List<PlainRef> viewIds;
+    @Field() PlainRef cloudRecoTargetId;
+}
+
+class Evento extends Ref
+{
+    @Field() String get href => localHost + "evento/$id";
+    
     @Field() TextureGUI imagenPreview = new TextureGUI();
-    @Id () String id;
     @Field () String nombre = '';
     @Field () String descripcion = '';
     
