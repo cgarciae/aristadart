@@ -1,123 +1,147 @@
 part of aristadart.server;
 
-
-
-//A public service. Anyone can create a new user
-@app.Route("/user", methods: const[app.POST])
-@Encode()
-postUser(@app.Attr() MongoDb dbConn, @Decode() UserComplete user) async
-{   
-    print (encode(user));
-    
-    UserComplete foundUser = await dbConn.findOne 
-    (
-        Col.user,
-        UserComplete,
-        where
-            .eq("email", user.email)
-    );
-    
-    if (foundUser != null)
-    {
-        return new Resp()
-            ..error = "User Exists";
-    }    
-
-    var plainPassword = user.password;
-    
-    user.id = new ObjectId().toHexString();
-    user.password = encryptPassword (user.password);
-    user.admin = false;
-    user.money = 0;
-          
-    await dbConn.insert(Col.user, user);
-
-    return login 
-    (   
-        dbConn, 
-        new UserSecure()
-            ..email = user.email
-            ..password = plainPassword
-    );
-}
-
-//A public service. Anyone can create a new user
-@app.Route("/user/:id", methods: const[app.GET])
-@Encode()
-getUser(@app.Attr() MongoDb dbConn, String id) async
+@app.Group('/user')
+class UserServives
 {
-    User user = await dbConn.findOne
-    (
-        Col.user,
-        User,
-        where
-            .id(StringToId(id))
-    );
-    
-    if (user == null)
-        return new Resp()
-            ..error = "User not found";
-    
+    Future<User> QueryUser (Map query) async
+    {
+        User user = await db.findOne
+        (
+            Col.user,
+            User,
+            where.raw(query)
+        );
         
-    return new UserResp()
-        ..user = user;
-}
-
-@app.Route("/user/login", methods: const[app.POST])
-@Encode()
-login(@app.Attr() MongoDb dbConn, @Decode() UserSecure user) async
-{   
-    
-    print (user.email);
-    print (user.password);
-    
-    if (user.email == null || user.password == null)
-    {
-        print ("aca");
-        return new IdResp()
-            ..error = "WRONG_USER_OR_PASSWORD2";
+        if (user == null)
+            return new User()
+                ..error = "Usuario no encontrado";
+        
+        return user;
     }
     
-    user.password = encryptPassword(user.password);
-    
-    print (user.password);
-    
-    UserAdmin foundUser = await dbConn.findOne 
-    (
-        Col.user,
-        UserAdmin,
-        where
-            .eq("email", user.email)
-            .eq("password", user.password)
-    );
-    
-    //User doesnt exist
-    if (foundUser == null)
+    @app.DefaultRoute (methods: const [app.POST, app.PUT])
+    @Encode()
+    Future<User> NewOrLogin (@Decode() ProtectedUser user) async
     {
-        return new IdResp()
-            ..error = "WRONG USERNAME OR PASSWORD";
+        try
+        {
+            User dbUser = await QueryUser({'email' : user.email});
+            
+            if (dbUser.success)
+                return dbUser;
+            
+            user = user..id = newId()
+                    ..money = 0
+                    ..admin = false;
+            
+            await db.insert
+            (
+                Col.user, 
+                user
+            );
+              
+            return Cast (User, user);
+        }
+        catch (e, s)
+        {
+            return new User()
+                ..error = "$e $s";
+        }
     }
     
-    
-    session["id"] = StringToId(foundUser.id);
-    session["admin"] = foundUser.admin;
-    
-    Set roles = new Set();
-    
-    if (foundUser.admin)
+    @app.DefaultRoute (methods: const [app.PUT])
+    @Private()
+    @Encode()
+    Future<User> Update (@Decode() User delta) async
     {
-        roles.add(ADMIN);
+        try
+        {
+            await db.update
+            (
+                Col.user,
+                where.id(StringToId(userId)),
+                getModifierBuilder(delta)
+            );
+              
+            return Get ();
+        }
+        catch (e, s)
+        {
+            return new User()
+                ..error = "$e $s";
+        }
     }
     
-    session["roles"] = roles;
+    @app.DefaultRoute (methods: const [app.GET])
+    @Private()
+    @Encode()
+    Future<User> Get () async
+    {
+        User user = await db.findOne
+        (
+            Col.user,
+            User,
+            where.id(StringToId(userId))
+        );
+        
+        if (user == null)
+            return new User ()
+                ..error = "Usuario no encontrado";
+          
+        return user;
+    }
     
-    return new UserAdminResp()
-        ..user = (new UserAdmin()
-            ..id = foundUser.id
-            ..admin = foundUser.admin
-            ..email = foundUser.email
-            ..nombre = foundUser.nombre
-            ..apellido = foundUser.apellido);
+    @app.Route ('/eventos', methods: const [app.GET])
+    @Private()
+    @Encode()
+    Future<ListEventoResp> Eventos (String id) async
+    {
+        try
+        {
+            List<Evento> eventos = await db.find
+            (
+                Col.evento,
+                Evento,
+                where.eq("owner._id", StringToId(userId))
+            );
+            
+            return new ListEventoResp()
+                ..eventos = eventos;
+        }
+        catch (e, s)
+        {
+            return new ListEventoResp()
+                ..error = "$e $s";
+        }
+    }
+    
+    @app.Route ('/isAdmin')
+    @Private()
+    @Encode()
+    Future<BoolResp> isAdmin () async
+    {
+        try
+        {
+            ProtectedUser user = await db.findOne
+            (
+                Col.user,
+                ProtectedUser,
+                where.id(StringToId(userId))
+            );
+            
+            if (user == null)
+                return new BoolResp ()
+                    ..error = "User not found";
+            
+            return new BoolResp()
+                ..value = user.admin;
+        }
+        catch (e, s)
+        {
+            return new BoolResp()
+                ..error = "$e $s";
+        }
+    }
 }
 
 @app.Route ('/private/user/isadmin')

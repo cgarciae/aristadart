@@ -104,30 +104,6 @@ class EventoServices
         }
     }
     
-    @app.Route ('/all', methods: const[app.GET])
-    @Private()
-    @Encode()
-    Future<ListEventoResp> All () async
-    {
-        try
-        {
-            List<Evento> eventos = await db.find
-            (
-                Col.evento,
-                Evento,
-                where.eq("owner._id", StringToId(userId))
-            );
-            
-            return new ListEventoResp()
-                ..eventos = eventos;
-        }
-        catch (e, s)
-        {
-            return new ListEventoResp()
-                ..error = "$e $s";
-        }
-    }
-    
     @app.Route ('/:id/vistas', methods: const[app.GET])
     @Private()
     @Encode()

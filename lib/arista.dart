@@ -98,6 +98,8 @@ Map ObjectToMap (dynamic obj)
 QueryMap NewQueryMap () => new QueryMap(new Map());
 QueryMap MapToQueryMap (Map map) => new QueryMap(map);
 
+dynamic Cast (Type type, Object obj) => decode (encode(obj), type);
+
 class Resp
 {
     bool get success => nullOrEmpty(error);

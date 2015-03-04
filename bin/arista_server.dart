@@ -57,8 +57,7 @@ Future<List<dynamic>> deleteFiles (GridFS fs, dynamic fileSelector)
 
 Stream<List<int>> getData (GridOut gridOut)
 {
-    
-    
+
     StreamController<List<int>> controller = new StreamController<List<int>>();
     var n = 0;
           
