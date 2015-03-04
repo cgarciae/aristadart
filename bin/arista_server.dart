@@ -34,6 +34,7 @@ String newId () => new ObjectId().toHexString();
 HttpSession get session => app.request.session;
 
 MongoDb get db => app.request.attributes.dbConn;
+GridFS get fs => new GridFS(db.innerConn);
 String get userId => app.request.headers.authorization;
 
 const String ADMIN = "ADMIN";
@@ -53,6 +54,16 @@ Future<List<dynamic>> deleteFiles (GridFS fs, dynamic fileSelector)
         return Future.wait([removeChunks, removeFiles]);
     });
         
+}
+
+Future<List<dynamic>> deleteFile (String id)
+{
+    var fileId = StringToId(id);
+    
+    var removeFiles = fs.files.remove (where.id (fileId));
+    var removeChunks = fs.chunks.remove (where.eq ('files_id', fileId));
+        
+    return Future.wait([removeChunks, removeFiles]);  
 }
 
 Stream<List<int>> getData (GridOut gridOut)
