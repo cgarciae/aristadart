@@ -1,7 +1,6 @@
 <div>
     <span ng-if="!editar" ng-click="editar=true">
-        <label>{{label}}</label>
-        <a>{{contenido}}</a>
+        <label>{{label}}</label>{{contenido}}
     </span>
     <input ng-if="editar" type="text"
         ng-blur="editar=false"

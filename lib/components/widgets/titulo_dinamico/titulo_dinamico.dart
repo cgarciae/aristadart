@@ -4,7 +4,7 @@ part of aristadart.client;
 (
     selector : "titulo-dinamico",
     templateUrl: 'components/widgets/titulo_dinamico/titulo_dinamico.html',
-    cssUrl: 'components/widgets/titulo_dinamico/titulo_dinamico.css'
+    useShadowDom: false
 )
 class TituloDinamico
 {
