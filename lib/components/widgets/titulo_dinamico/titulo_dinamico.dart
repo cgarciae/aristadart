@@ -8,6 +8,9 @@ part of aristadart.client;
 )
 class TituloDinamico
 {
+    @NgTwoWay('editar')
+    bool editar= false;
+    
     @NgTwoWay('contenido')
     String contenido ='';
     
