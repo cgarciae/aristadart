@@ -9,7 +9,7 @@ part of aristadart.client;
 class LoginVista extends ShadowRootAware
 {
     
-    
+    User user = new User();
     Router router;
     bool immediate = false;
     
@@ -23,23 +23,9 @@ class LoginVista extends ShadowRootAware
     
     
       onShadowRoot(dom.ShadowRoot root){}
-    
-    login ()
+      
+    login2 ()
     {
-        getClient().then((auth.AutoRefreshingAuthClient client){
-            
-        var oauthApi = new oauth.Oauth2Api(client);
-        
-        print ("aca");
-        
-        oauthApi.userinfo.get().then((oauth.Userinfoplus info){
-                    
-        
-        User user = new User()
-            ..email = info.email
-            ..nombre = info.name
-            ..apellido = info.familyName;
-        
         return jsonRequestDecoded
         (
             User, 
@@ -52,15 +38,67 @@ class LoginVista extends ShadowRootAware
         if (dbUser.failed)
         {
             print (dbUser.error);
-            return;
+            return null;
         }
-        
         userId = dbUser.id;
-        
         print (encode(dbUser));
         
-        router.go('home', {});
+        return requestDecoded
+        (
+            BoolResp, Method.GET, '/user/isAdmin'
+        )
+        .then((BoolResp resp){
+            
+        loggedAdmin = resp.success && resp.value;
         
+        router.go('home', {});
+        });
+        });
+    }
+    
+    login ()
+    {
+        getClient().then((auth.AutoRefreshingAuthClient client){
+            
+        var oauthApi = new oauth.Oauth2Api(client);
+        
+        print ("aca");
+        
+        oauthApi.userinfo.get().then((oauth.Userinfoplus info){
+                    
+        
+        User googleUser = new User()
+            ..email = info.email
+            ..nombre = info.name
+            ..apellido = info.familyName;
+        
+        return jsonRequestDecoded
+        (
+            User, 
+            Method.POST,
+            '/user',
+            googleUser
+        )
+        .then((User dbUser){
+            
+        if (dbUser.failed)
+        {
+            print (dbUser.error);
+            return null;
+        }
+        userId = dbUser.id;
+        print (encode(dbUser));
+        
+        return requestDecoded
+        (
+            BoolResp, Method.GET, '/user/isAdmin'
+        )
+        .then((BoolResp resp){
+            
+        loggedAdmin = resp.success && resp.value;
+        
+        router.go('home', {});
+        });
         });
         });
         });

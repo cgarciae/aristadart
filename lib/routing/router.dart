@@ -7,21 +7,7 @@ Future<bool> get serverUserLoggedIn
 
 Future<bool> get serverUserAdmin
 {
-    return requestDecoded
-    (
-        BoolResp,
-        Method.GET,
-        'private/user/isadmin'
-    )
-    .then ((BoolResp resp){
-    
-    print ("Is admin? ${resp.value}");
-    var isAdmin = (resp.success && resp.value);
-    storage['admin'] = isAdmin.toString();
-    
-    return isAdmin;
-    
-    });
+    return new Future.value(loggedAdmin);
 }
 
 void recipeBookRouteInitializer(Router router, RouteViewFactory view) 
@@ -32,6 +18,7 @@ void recipeBookRouteInitializer(Router router, RouteViewFactory view)
         event.allowEnter (
             serverUserLoggedIn.then((bool logged){
             
+            print ("Logged $logged");
             if (! logged)
                 router.go
                 (
@@ -48,6 +35,7 @@ void recipeBookRouteInitializer(Router router, RouteViewFactory view)
         event.allowEnter (
             serverUserLoggedIn.then((bool logged){
             
+            print ("Logged $logged");
             if (! logged)
             {
                 router.go
@@ -61,7 +49,6 @@ void recipeBookRouteInitializer(Router router, RouteViewFactory view)
             return serverUserAdmin.then((bool admin){
             
             print ("Auth admin $admin");
-            
             if (! admin)
             {
                 router.go

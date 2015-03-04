@@ -35,7 +35,7 @@ class HomeVista
         .catchError((e)
         {
             print ('Error type ${e.runtimeType}');
-            router.go('login', {});
+            //router.go('login', {});
         },
         test: (e) => e is dom.ProgressEvent);
         

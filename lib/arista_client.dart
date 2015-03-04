@@ -236,6 +236,7 @@ class MainController
 
 bool get loggedIn => notNullOrEmpty(userId);
 bool get loggedAdmin => storage['admin'] == true.toString();
+set loggedAdmin (bool value) => storage['admin'] = value.toString();
 
 String get userId => storage['userId'];
 set userId (String id) => storage['userId'] = id;
