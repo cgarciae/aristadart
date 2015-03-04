@@ -238,12 +238,12 @@ abstract class Method
 
 abstract class Col
 {
-    static final String user = 'user';
-    static final String evento = 'evento';
-    static final String vista = 'vista';
-    static final String recoTarget = 'recoTarget';
-    static final String objetoUnity = 'objetoUnity';
-    static final String localTarget = 'localTarget';
+    static const String user = 'user';
+    static const String evento = 'evento';
+    static const String vista = 'vista';
+    static const String cloudTarget = 'cloudTarget';
+    static const String objetoUnity = 'objetoUnity';
+    static const String localTarget = 'localTarget';
 }
 
 abstract class ErrCode

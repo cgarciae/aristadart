@@ -1,261 +1,128 @@
 part of aristadart.server;
 
-Future<Map> uploadImageToVuforia (String method, String path, List<int> imageData, String metadata) async
+class VuforiaServices
 {
-    var base64Image = crypto.CryptoUtils.bytesToBase64 (imageData);
-    var metadataBytes = crypto.CryptoUtils.bytesToBase64 (metadata.codeUnits);
+    Future<VuforiaResponse> GetTarget (String id) async
+    {
+        return VuforiaServices.makeVuforiaRequest
+        (
+            Method.GET,
+            '/targets/$id'
+        );
+    }
+    static Future<VuforiaResponse> updateImage (String targetId, List<int> imageData)
+    {
+        return makeVuforiaRequest
+        (
+            Method.PUT,
+            '/targets/$targetId',
+            element: encryptElement
+            (
+                new VuforiaTargetRecord(), 
+                imageData: imageData
+            )
+        );
+    }
     
-    String body = conv.JSON.encode
-    ({
-        "name": metadata,
-        "width" : 1.0,
-        "image" : base64Image,
-        "application_metadata" : metadataBytes
-    });
-    
-    http.StreamedResponse resp = await makeVuforiaRequest(method, path, body, ContType.applicationJson).send();
-    
-    print ("Request headers ${resp.request.headers}");
-    print ("Response headers ${resp.headers}");
-        
-    return resp.stream.toList()
-        .then (flatten)
-        .then(bytesToJSON);
-}
-
-Future<Map> streamResponseToJSON (http.StreamedResponse resp)
-{
-    return resp.stream.toList()
-        .then (flatten)
-        .then (bytesToJSON);
-}
-
-@app.Route("/private/vuforiaImage/:eventoID", methods: const [app.POST], allowMultipartRequest: true)
-@Encode()
-newImageVuforia(@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, String eventoID) async
-{
-    String imageID;
-    
-    HttpBodyFileUpload file = form ['file'];
-    var gridFS = new GridFS (dbConn.innerConn);
-    var input = new Stream.fromIterable([file.content]);
-    var gridIn = gridFS.createFile(input, file.filename)
-        ..contentType = file.contentType.value;
-    
+    static Future<VuforiaResponse> newImage (List<int> imageData, String metadata)
+    {
+        VuforiaTargetRecord obj = new VuforiaTargetRecord()
+            ..width = 1.0;
             
-    await gridIn.save();
-            
-    QueryMap map = await uploadImageToVuforia
-    (
-         Method.POST, 
-         "/targets", 
-         file.content, 
-         eventoID
-     )
-    .then (MapToQueryMap);
-        
-    print (map);
-        
-    if (map.result_code == "TargetCreated")
-    {
-        imageID = gridIn.id.toHexString();
-        String targetID = map.target_id;
-        
-        return createRecoTarget (dbConn, eventoID, imageID, targetID);
+        return makeVuforiaRequest
+        (
+            Method.POST,
+            '/targets',
+            element: encryptElement
+            (
+                obj, 
+                imageData: imageData, 
+                metadata: metadata
+            )
+        );
     }
-    else
+    
+    static VuforiaTargetRecord encryptElement (VuforiaTargetRecord element, {String metadata, List<int> imageData})
     {
-        await deleteFile (dbConn, imageID);
-                
-        return new Resp()
-            ..error = map.result_code;
+        if (metadata != null)
+        {
+            element.name = metadata;
+            element.application_metadata = crypto.CryptoUtils.bytesToBase64 (element.name.codeUnits);
+        }
+        
+        if (imageData != null)
+        {
+            element.image = crypto.CryptoUtils.bytesToBase64 (imageData);
+        }
+        
+        return element;
+    }
+    
+    
+    
+    static Future<VuforiaResponse> makeVuforiaRequest (String verb, String path, {VuforiaTargetRecord element}) async
+    {
+        String body;
+        String contentType;
+        
+        if (element != null)
+        {
+            body = encodeJson(element);
+            contentType = ContType.applicationJson;
+        }
+        else
+        {
+            body = "";
+            contentType = "";
+        }
+        
+        print (body);
+        
+        String date = HttpDate.format(new DateTime.now());
+        String accessKey = "8524c879ec19a80b912f989c33091af8ddd7ea8c";
+       
+        String signature = _createSignature
+        (
+            verb, path, body, 
+            contentType, date
+        );
+        
+        Map<String,String> headers = 
+        {
+            "Authorization" : "VWS ${accessKey}:${signature}",
+            "Date" : date
+        };
+        
+        if (notNullOrEmpty(contentType))
+            headers.addAll({Header.contentType : contentType});
+        
+        var req = new http.Request
+        (
+            verb, 
+            new Uri.https("vws.vuforia.com", path)
+        );
+         
+        req.headers.addAll(headers);
+        
+        if (body != null && body.length > 0)
+            req.body = body;
+        
+        http.StreamedResponse resp = await req.send();
+        
+        return streamResponseDecoded (VuforiaResponse, resp);
+    }
+    
+    static String _createSignature (String verb, String path, String body, String contentType, String date) 
+    {
+          var hash = md5hash (body);
+          
+          var stringToSign = '$verb\n$hash\n$contentType\n$date\n$path';
+          
+          print(stringToSign);
+
+          var server_secret_key = "a26b48430ac02696539b02957f0830572eaa4c6a";
+          var signature = base64_HMAC_SHA1(server_secret_key, stringToSign);
+
+        return signature;
     }
 }
-
-@app.Route("/private/vuforiaImage/:eventoID", methods: const [app.PUT], allowMultipartRequest: true)
-@Encode()
-updateImageVuforia(@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, String eventoID) async
-{
-    
-    HttpBodyFileUpload file = form ['file'];
-    
-    Evento evento = await dbConn.findOne
-    (
-        Col.evento,
-        Evento,
-        where.id (StringToId (eventoID))
-    );
-    
-    if (evento == null) return new Resp()
-        ..error = "Evento not found";
-    
-    var cloudRecoID = evento.cloudRecoTargetId;
-    
-    CloudImageTarget reco = await dbConn.findOne
-    (
-        Col.recoTarget,
-        CloudImageTarget, 
-        where.id (StringToId (cloudRecoID))
-    );
-        
-    if (reco == null) return new Resp ()
-        ..error = "Cloud Reco found";
-    
-    var targetID = reco.targetId;
-    var imageID = reco.imageId;
-    
-    Resp resp = await updateFile (dbConn, form, imageID);
-
-    if (! resp.success)
-        return resp;
-        
-    QueryMap map = await uploadImageToVuforia (Method.PUT, "/targets/${targetID}", file.content, eventoID)
-            .then(MapToQueryMap);
-        
-    if (map.result_code == "TargetCreated" || map.result_code == "Success")
-    {
-        return new Resp();
-    }
-    else
-    {
-        return new Resp()
-            ..error = map.result_code;
-    }
-}
-
-@app.Route("/public/vuforiatarget/:eventoID", methods: const [app.GET])
-@Encode()
-Future<Resp> getVuforiaTarget(@app.Attr() MongoDb dbConn, String eventoID) async
-{
-    Evento evento = await dbConn.findOne
-    (
-        Col.evento,
-        Evento,
-        where.id (StringToId (eventoID))
-    );
-    
-    if (evento == null) 
-        return new Resp()
-            ..error = "Evento not found";
-    
-    CloudImageTarget reco = await dbConn.findOne
-    (
-        Col.recoTarget, 
-        CloudImageTarget,
-        where.id (StringToId (evento.cloudRecoTargetId))
-    );
-    
-    VuforiaTarget vuforiaTarget = await makeVuforiaRequest(Method.GET, "/targets/${reco.targetId}", "", "")
-        .send()
-        .then (streamResponseToJSON)
-        .then ((Map m) => decode(m, VuforiaTarget));
-
-    //TODO: Crear clase VuforiaTargetResp
-    
-    if (vuforiaTarget.result_code != "Success") 
-        vuforiaTarget.error = vuforiaTarget.result_code;
-    
-    return vuforiaTarget;
-}
-
-@app.Route("/public/cloudTarget/:recoID", methods: const [app.GET])
-@Encode()
-Future<RecoTargetResp> getCloudRecoTarget(@app.Attr() MongoDb dbConn, String recoID) async
-{
-    CloudImageTarget reco = await dbConn.findOne
-    (
-        Col.recoTarget,
-        CloudImageTarget,
-        where.id(StringToId(recoID))
-    );
-    
-    if (reco == null) 
-        return new RecoTargetResp ()
-            ..error = "Cloud Reco not found";
-    
-    return new RecoTargetResp ()
-        ..recoTarget = reco;
-}
-
-Future<RecoTargetResp> createRecoTarget (MongoDb dbConn, String eventoID, String imageID, String targetID) async
-{
-    var recoTarget = new CloudImageTarget()
-        ..imageId = imageID
-        ..targetId = targetID
-        ..id = new ObjectId().toHexString();
-        
-    await dbConn.insert (Col.recoTarget, recoTarget);
-    
-    await dbConn.update 
-    (
-        Col.evento, 
-        where.id (StringToId (eventoID)), 
-        modify.set ('cloudRecoTargetId', recoTarget.id)
-    );
-    
-    return new RecoTargetResp ()
-        ..recoTarget = (new CloudImageTarget()
-            ..id = recoTarget.id
-            ..imageId = imageID
-            ..targetId = targetID);
-}
-
-createSignature (String verb, String path, String body, String contentType, String date) 
-{
-      var hash = md5hash (body);
-      
-      print (hash);
-      
-      var stringToSign = '$verb\n$hash\n$contentType\n$date\n$path';
-      
-      print(stringToSign);
-
-      var server_secret_key = "a26b48430ac02696539b02957f0830572eaa4c6a";
-      var signature = base64_HMAC_SHA1(server_secret_key, stringToSign);
-
-    return signature;
-}
-
-String md5hash (String body)
-{
-    var md5 = new crypto.MD5()
-        ..add(conv.UTF8.encode (body));
-    
-    return crypto.CryptoUtils.bytesToHex (md5.close());
-}
-
-String base64_HMAC_SHA1 (String hexKey, String stringToSign)
-{
-    
-    var hmac = new crypto.HMAC(new crypto.SHA1(), conv.UTF8.encode (hexKey))
-        ..add(conv.UTF8.encode (stringToSign));
-    
-    return crypto.CryptoUtils.bytesToBase64(hmac.close());
-}
-
-http.Request makeVuforiaRequest (String verb, String path, String body, String contentType)
-{
-    String date = HttpDate.format(new DateTime.now());
-    String accessKey = "8524c879ec19a80b912f989c33091af8ddd7ea8c";
-   
-    String signature = createSignature (verb, path, body, contentType, date);
-    
-    Map<String,String> headers = 
-    {
-        "Authorization" : "VWS ${accessKey}:${signature}",
-        "Content-Type" : contentType,
-        "Date" : date
-    };
-    
-    var req = new http.Request (verb, new Uri.https("vws.vuforia.com", path))
-        ..headers.addAll(headers);
-    
-    print ("Body length ${body.length}");
-    
-    if (body != null && body.length > 0)
-        req.body = body;
-    
-    return req;
-}
-
-

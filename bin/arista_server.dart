@@ -25,6 +25,7 @@ part 'services/file_services.dart';
 part 'services/objeto_unity_services.dart';
 part 'services/local_target_services.dart';
 part 'services/test_services.dart';
+part 'services/cloud_target_services.dart';
 part 'services/vuforia_services.dart';
 part 'authorization.dart';
 
@@ -39,6 +40,39 @@ String get userId => app.request.headers.authorization;
 
 const String ADMIN = "ADMIN";
 
+
+HttpBodyFileUpload FormToFileUpload (Map form)
+    => form.values.where((value) => value is HttpBodyFileUpload).first;
+
+Future<Map> streamResponseToJSON (http.StreamedResponse resp)
+{
+    return resp.stream.toList()
+        .then (flatten)
+        .then (bytesToJSON);
+}
+
+Future<dynamic> streamResponseDecoded (Type type, http.StreamedResponse resp) async
+{
+    Map json = await streamResponseToJSON (resp);
+    return decode(json, type);
+}
+
+String md5hash (String body)
+{
+    var md5 = new crypto.MD5()
+        ..add(conv.UTF8.encode (body));
+    
+    return crypto.CryptoUtils.bytesToHex (md5.close());
+}
+
+String base64_HMAC_SHA1 (String hexKey, String stringToSign)
+{
+    
+    var hmac = new crypto.HMAC(new crypto.SHA1(), conv.UTF8.encode (hexKey))
+        ..add(conv.UTF8.encode (stringToSign));
+    
+    return crypto.CryptoUtils.bytesToBase64(hmac.close());
+}
 
 Future<List<dynamic>> deleteFiles (GridFS fs, dynamic fileSelector)
 {
@@ -88,15 +122,26 @@ Stream<List<int>> getData (GridOut gridOut)
     return controller.stream;
 }
 
+String bytesToString (List<int> list)
+{    
+    return conv.UTF8.decode (list);
+}
+
 Map bytesToJSON (List<int> list)
 {
     var string = conv.UTF8.decode (list);
     var map = conv.JSON.decode (string);
     
-    print (string);
-    print (map);
-    
     return map;
+}
+
+Future<dynamic> streamedResponseToObject (Type type, http.StreamedResponse resp) async
+{
+    String json = await resp.stream.toList()
+        .then (flatten)
+        .then(bytesToString);
+        
+    return decodeJson(json, type);
 }
 
 Function ifDidntFail (Function f)

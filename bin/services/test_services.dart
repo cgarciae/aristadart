@@ -1,5 +1,36 @@
 part of aristadart.server;
 
+@app.Route ('/testVuforiaImage', methods: const[app.POST], allowMultipartRequest: true)
+@Encode()
+Future<VuforiaResponse> testVuforiaImage (@app.Body(app.FORM) Map form) async
+{
+    
+    HttpBodyFileUpload file = FormToFileUpload(form);
+    
+    return VuforiaServices.newImage(file.content, newId());
+}
+
+@app.Route ('/updateVuforiaImage/:id', methods: const[app.PUT], allowMultipartRequest: true)
+@Encode()
+Future<VuforiaResponse> updateVuforiaImage (String id, @app.Body(app.FORM) Map form) async
+{
+    
+    HttpBodyFileUpload file = FormToFileUpload(form);
+    
+    return VuforiaServices.updateImage(id, file.content);
+}
+
+@app.Route ('/getV/:id', methods: const[app.GET])
+@Encode()
+Future<VuforiaResponse> testGetVuforiaImage (String id) async
+{
+    return VuforiaServices.makeVuforiaRequest
+    (
+        Method.GET,
+        '/targets/$id'
+    );
+}
+
 @app.Route ('/testPrivate')
 @Private()
 testPrivate () => "funciona";
