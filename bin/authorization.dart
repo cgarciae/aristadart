@@ -40,19 +40,12 @@ class Private {
 void AuthenticationPlugin(app.Manager manager) {
     
     
-    manager.addErrorHandler
-    (
-        new app.ErrorHandler.conf(403, urlPattern: r'/.*'), 
-        "Unauthorized Request", 
-        (_) => "Unauthorized request, must loggin"
-    );
-    
     manager.addRouteWrapper(Private, (metadata, Map<String,String> pathSegments, injector, app.Request request, route) async {
     
         var id = request.headers.authorization;
                 
         if (id == null)
-            return new app.ErrorResponse(403, {"error": "Authentication Error: Authorization header expected"});
+            return {"error": "Authentication Error: Authorization header expected"};
         
         print ("1");
         
@@ -68,11 +61,11 @@ void AuthenticationPlugin(app.Manager manager) {
         }
         on ArgumentError catch (e)
         {
-            return new app.ErrorResponse(403, {"error": "Authentication Error: ID length must be 24"});
+            return {"error": "Authentication Error: ID length must be 24"};
         }
         
         if (user == null)
-            return new app.ErrorResponse(403, {"error": "Authentication Error: User does not exist"});
+            return  {"error": "Authentication Error: User does not exist"};
         
         
         return route(pathSegments, injector, request);

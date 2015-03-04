@@ -38,11 +38,17 @@ Future<dom.HttpRequest> makeRequest (String method, String path,
                                     {dynamic data, Map headers, void onProgress (dom.ProgressEvent p), 
                                     String userId, Map<String,String> params})
 {
+    print (headers);
+    print (userId);
+    
     if (userId != null)
-        addToHeaders(headers, {Header.authorization : userId});
+        headers = addToHeaders(headers, {Header.authorization : userId});
     
     if (params != null)
         path = appendRequestParams(path, params);
+    
+    print (headers);
+    print (userId);
     
     return dom.HttpRequest.request
     (
@@ -117,11 +123,14 @@ Future<dynamic> jsonRequestDecoded (Type type, String method, String path, Objec
 Map addToHeaders (Map headers, Map additions)
 {
     //var contentType = {Header.contentType : ContType.applicationJson};
-        
+    
+
+    
     if (headers != null)
         headers.addAll (additions);
     else
         headers = additions;
+    
     
     return headers;
 }
@@ -211,8 +220,10 @@ class MainController
     
     logout ()
     {
-        userId = null;
+        userId = "";
         loggedAdmin = false;
+        
+        router.go('login', {});
     }
             
     bool get isLoggedIn => loggedIn;

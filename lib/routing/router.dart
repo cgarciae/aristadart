@@ -1,5 +1,7 @@
 part of aristadart.client;
 
+const String loginRoute = "view/login_view.html";
+
 Future<bool> get serverUserLoggedIn
 {
     return new Future.value(loggedIn);
@@ -20,11 +22,13 @@ void recipeBookRouteInitializer(Router router, RouteViewFactory view)
             
             print ("Logged $logged");
             if (! logged)
+            {
                 router.go
                 (
                     'login', {},
                     forceReload: true
                 );
+            }
             
             return logged;
         }));          
@@ -65,26 +69,61 @@ void recipeBookRouteInitializer(Router router, RouteViewFactory view)
         );
     }
     
+    ifLoggedIn (String route)
+    {
+        return (RouteEnterEvent e)
+        {
+            if (loggedIn)
+            {
+                view (route) (e);
+            }
+            else
+            {
+                router.go
+                (
+                    'login', {},
+                    forceReload: true
+                );
+            }
+        };
+    }
+    
+    ifAdmin (String route)
+    {
+        return (RouteEnterEvent e)
+        {
+            if (loggedAdmin)
+            {
+                view (route) (e);
+            }
+            else
+            {
+                router.go
+                (
+                    'home', {},
+                    forceReload: true
+                );
+            }
+        };
+    }
+    
     view.configure(
     {
         'login': ngRoute
         (
             path: '/login',
             defaultRoute: true,
-            enter : view ('view/login_view.html'),
-            preEnter: (RoutePreEnterEvent event)
+            enter : (RouteEnterEvent event)
             {
-                print ("Loggin in");
-                event.allowEnter (
-                    serverUserLoggedIn.then((bool logged){
-                    
-                    if (logged)
-                        router.go('home', {}, forceReload: true);
-                    
-                    return ! logged;
-                    
-                    })
-                );          
+                print (loggedIn);
+                if (loggedIn)
+                {
+                    router.go('home', {}, forceReload: true);
+                }
+                else
+                {
+                    view (loginRoute) (event);
+                }       
             },
             mount: 
             {
@@ -99,14 +138,13 @@ void recipeBookRouteInitializer(Router router, RouteViewFactory view)
         'home': ngRoute
         (
             path: '/home',
-            enter: view ('view/home_view.html'),
-            preEnter: authenticate2
+            enter: ifLoggedIn ('view/home_view.html')
         ),
                 
         'evento': ngRoute 
         (
             path: '/evento/:eventoID',
-            preEnter: (RoutePreEnterEvent event)
+            enter: (RouteEnterEvent event)
             {   
                 var id = event.parameters['eventoID'];
                 
@@ -116,18 +154,15 @@ void recipeBookRouteInitializer(Router router, RouteViewFactory view)
                     return;
                 }
                 
-                authenticate2 (event);
-                
-            },
-            enter: view ('view/evento_view.html')
+                ifLoggedIn ('view/evento_view.html') (event);
+            }
         ),
         
         'vista' : ngRoute
         (
             path: '/vista/:eventoID/:vistaID',
-            preEnter: (RoutePreEnterEvent event)
+            enter: (RouteEnterEvent event)
             {   
-                event.parameters.keys.forEach(print);
                 
                 var eventoID = event.parameters['eventoID'];
                 var viewID = event.parameters['vistaID'];
@@ -139,30 +174,26 @@ void recipeBookRouteInitializer(Router router, RouteViewFactory view)
                     return;
                 }
                 
-                authenticate2(event);
-            },
-            enter: view ('view/vista_view.html')
+                ifLoggedIn ('view/vista_view.html')(event);
+            }
         ),
         
         'admin' : ngRoute
         (
             path: '/admin',
-            enter: view('view/admin_view.html'),
-            preEnter: authenticateAdmin2
+            enter: ifAdmin ('view/admin_view.html')
         ),
         
         'adminModel' : ngRoute
         (
             path: '/admin/model',
-            enter: view('view/model_view.html'),
-            preEnter: authenticateAdmin2
+            enter: ifAdmin('view/model_view.html')
         ),
         
         'adminTarget' : ngRoute
         (
             path: '/admin/target',
-            enter: view('view/target_view.html'),
-            preEnter: authenticateAdmin2
+            enter: ifAdmin('view/target_view.html')
         ),
         
         'A' : ngRoute 
@@ -170,7 +201,6 @@ void recipeBookRouteInitializer(Router router, RouteViewFactory view)
             path : '/A/:parA',
             enter: (RouteEnterEvent e)
             {
-                print ('ENTERED A');
                 e.parameters.keys.forEach(print);
             },
             mount: 
@@ -180,8 +210,7 @@ void recipeBookRouteInitializer(Router router, RouteViewFactory view)
                     path: '/B/:parB',
                     enter: (RouteEnterEvent e)
                     {
-                        print ('ENTERED B');
-                        e.parameters.keys.forEach(print);
+                        
                     }
                 )
             }
@@ -193,8 +222,8 @@ void recipeBookRouteInitializer(Router router, RouteViewFactory view)
             path: '/A/:A/B/:B',
             enter: (RouteEnterEvent e)
             {
-                print ('BBB');
-                e.parameters.keys.forEach(print);
+                
+                
             }
         )
         

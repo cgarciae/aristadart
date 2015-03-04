@@ -45,7 +45,8 @@ class LoginVista extends ShadowRootAware
         
         return requestDecoded
         (
-            BoolResp, Method.GET, '/user/isAdmin'
+            BoolResp, Method.GET, 'user/isAdmin', 
+            userId: dbUser.id
         )
         .then((BoolResp resp){
             
@@ -94,6 +95,9 @@ class LoginVista extends ShadowRootAware
             BoolResp, Method.GET, '/user/isAdmin'
         )
         .then((BoolResp resp){
+            
+        if (resp.failed)
+            return print (resp.error);
             
         loggedAdmin = resp.success && resp.value;
         
