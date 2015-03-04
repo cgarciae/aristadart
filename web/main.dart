@@ -39,6 +39,7 @@ class MyAppModule extends Module
         bind (ModelVista);
         bind (TargetVista);
         bind (Acordeon);
+        bind (TituloDinamico);
         bind (RouteInitializerFn, toValue: recipeBookRouteInitializer);
         bind (NgRoutingUsePushState, toValue: new NgRoutingUsePushState.value(false));
     }
