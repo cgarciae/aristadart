@@ -18,7 +18,7 @@ class LoginVista extends ShadowRootAware
     
     LoginVista (this.router)
     {
-        
+
     }
     
     

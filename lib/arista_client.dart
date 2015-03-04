@@ -211,17 +211,8 @@ class MainController
     
     logout ()
     {
-        return requestDecoded(Resp, Method.GET,'user/logout').then((Resp resp){
-        
-        if (resp.success)
-        {
-            router.go('login', {});
-        }
-        else
-        {
-            print("Logout Failed");
-        }
-        });
+        userId = null;
+        loggedAdmin = false;
     }
             
     bool get isLoggedIn => loggedIn;
