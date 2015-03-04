@@ -2,19 +2,7 @@ part of aristadart.client;
 
 Future<bool> get serverUserLoggedIn
 {
-    return requestDecoded
-    (
-        Resp,
-        Method.GET,
-        'user/loggedin'
-    )
-    .then((Resp resp){
-
-    storage['logged'] = resp.success.toString();
-    
-    return resp.success;
-    
-    });
+    return new Future.value(loggedIn);
 }
 
 Future<bool> get serverUserAdmin

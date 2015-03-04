@@ -7,6 +7,8 @@ import 'dart:async';
 import 'package:redstone_mapper/mapper.dart';
 import 'package:angular/angular.dart';
 import 'dart:html' as dom;
+import "package:googleapis_auth/auth_browser.dart" as auth;
+import 'package:googleapis/oauth2/v2.dart' as oauth;
 
 part 'components/evento/evento.dart';
 part 'components/widgets/loader/loader.dart';
@@ -232,5 +234,8 @@ class MainController
     
 }
 
-bool get loggedIn => storage['logged'] == true.toString();
+bool get loggedIn => notNullOrEmpty(userId);
 bool get loggedAdmin => storage['admin'] == true.toString();
+
+String get userId => storage['userId'];
+set userId (String id) => storage['userId'] = id;

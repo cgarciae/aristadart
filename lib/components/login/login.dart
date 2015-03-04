@@ -9,10 +9,12 @@ part of aristadart.client;
 class LoginVista extends ShadowRootAware
 {
     
-    UserSecure user = new UserSecure();
-    Router router;
     
-    bool nuevo = false;
+    Router router;
+    bool immediate = false;
+    
+    var id = new auth.ClientId("287932517253-d6fp73ms7d33ith6r561p1g225q5th0h.apps.googleusercontent.com", null);
+    var scopes = ["openid", "email"];
     
     LoginVista (this.router)
     {
@@ -24,59 +26,75 @@ class LoginVista extends ShadowRootAware
     
     login ()
     {
-        print (encodeJson(user));
-        print (user.password);
-        return jsonRequestDecoded 
+        getClient().then((auth.AutoRefreshingAuthClient client){
+            
+        var oauthApi = new oauth.Oauth2Api(client);
+        
+        print ("aca");
+        
+        oauthApi.userinfo.get().then((oauth.Userinfoplus info){
+                    
+        
+        User user = new User()
+            ..email = info.email
+            ..nombre = info.name
+            ..apellido = info.familyName;
+        
+        return jsonRequestDecoded
         (
-            UserAdminResp,
-            Method.POST, 
-            'user/login',
+            User, 
+            Method.POST,
+            '/user',
             user
         )
-        .then((UserAdminResp resp){
+        .then((User dbUser){
+            
+        if (dbUser.failed)
+        {
+            print (dbUser.error);
+            return;
+        }
         
-        if (resp.success)
-        {
-            loginUser(router, resp);
-        }
-        else
-        {
-            print (resp.error);
-        }
+        userId = dbUser.id;
+        
+        print (encode(dbUser));
+        
+        router.go('home', {});
+        
+        });
+        });
+        });
+    }
+    
+    Future<auth.AutoRefreshingAuthClient> getClient()
+    {
+        return auth.createImplicitBrowserFlow(id, scopes)
+                            .then((auth.BrowserOAuth2Flow flow) {
+                        
+        return flow.clientViaUserConsent(immediate: immediate).then((auth.AutoRefreshingAuthClient client){
+            
+        immediate = false;
+        
+        return client;
+        
+        }).catchError((_) {
+                
+        immediate = true;    
+                
+        }, test: (error) => error is auth.UserConsentException);
         });
     }
     
     onPressEnter (dom.KeyboardEvent event)
     {
-        if (event.keyCode == 13)
-        {
-            login();
-        }
+        
     }
     
     nuevoUsuario()
     {
-        nuevo = true;
-        router.go ('login.nuevo', {});
+        
     }
     
     
-
-    /// send data to server
-    sendDatas(dynamic data) 
-    {
-        final req = new dom.HttpRequest();
-        
-        req.onReadyStateChange.listen((dom.Event e) 
-        {
-            if (req.readyState == dom.HttpRequest.DONE && (req.status == 200 || req.status == 0)) 
-            {
-                dom.window.alert("upload complete");
-            }
-        });
-        
-        req.open ("POST", "http://127.0.0.1:8080/upload");
-        req.send (data);
-    }
 }
 
