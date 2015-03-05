@@ -1,6 +1,5 @@
 part of aristadart.client;
 
-final _log = new Logger('angular.ui.demo.alert');
 
 @Component
 (
@@ -30,7 +29,7 @@ class AristaAlert
       if(alerts.length > index) {
         alerts.removeAt(index);
       } else {
-        _log.fine('AlertDemoComponent.closeAlert($index (invalid!))');
+        print("*****Error");
       }
     }
    
