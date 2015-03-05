@@ -87,33 +87,28 @@ class EventoServices extends MongoDbService<Evento>
     }
     
     @app.Route('/:id/addVista/:vistaId', methods: const [app.POST, app.PUT])
+    @Catch()
     @Private()
     @Encode()
-    Future<Vista> AddEvento (String id, String vistaId) async
+    Future<Vista> AddVista (String id, String vistaId) async
     {
-        try
-        {
-            var vista = new Vista()
-                ..id = vistaId;
-            
-            await db.update
+        
+        var vista = new Vista()
+            ..id = vistaId;
+        
+        await db.update
+        (
+            collectionName,
+            where.id(StringToId(id)),
+            modify.addToSet
             (
-                collectionName,
-                where.id(StringToId(id)),
-                modify.addToSet
-                (
-                    "vistas", 
-                    cleanMap(db.encode(vista))
-                )
-            );
-            
-            return Get (id);
-        }
-        catch (e, s)
-        {
-            return new Vista ()
-                ..error = "$e $s";
-        }
+                "vistas", 
+                cleanMap(db.encode(vista))
+            )
+        );
+        
+        return Get (id);
+        
     }
     
     @app.Route ('/:id/vistas', methods: const[app.GET])

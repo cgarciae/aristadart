@@ -6,32 +6,30 @@ class VistaServices extends MongoDbService<VistaTotal>
     VistaServices () : super (Col.vista);
     
     @app.DefaultRoute(methods: const [app.POST])
+    @Catch()
     @Private()
     @Encode()
     Future<Vista> New (@app.QueryParam("type") int typeNumber, @app.QueryParam("eventoId") String eventoId) async
     {
-        try
-        {
-            Vista vista = Vista.Factory (Vista.IndexToType[typeNumber])
-                ..id = newId()
-                ..owner = (new User()
-                    ..id = userId);
-            
-            
-            await db.insert
-            (
-                Col.vista,
-                vista
-            );
-            
-            
-            return vista;
-        }
-        catch (e, s)
-        {
-            return new Vista()
-                ..error = "$e $s";
-        }
+        
+        Vista vista = Vista.Factory (Vista.IndexToType[typeNumber])
+            ..id = newId()
+            ..owner = (new User()
+                ..id = userId);
+        
+        
+        await db.insert
+        (
+            Col.vista,
+            vista
+        );
+        
+        if (eventoId != null)
+            await new EventoServices().AddVista(eventoId, vista.id);
+        
+        
+        return vista;
+        
     }
     
     @app.Route('/:id', methods: const [app.GET])
