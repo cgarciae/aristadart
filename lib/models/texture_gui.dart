@@ -12,6 +12,8 @@ class TextureGUI
     {
         if (web)
             return file != null ? file.href : missingImage;
+        else
+            return path != null ? path : missingImage;
     }
 
     @Field() String texto = '';
