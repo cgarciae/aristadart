@@ -254,3 +254,5 @@ abstract class ErrCode
 
 bool notNullOrEmpty (String s) => ! (s == null || s == '');
 bool nullOrEmpty (String s) => ! notNullOrEmpty (s);
+
+const String missingImage = "images/webapp/missing_image.png";

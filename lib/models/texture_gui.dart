@@ -2,13 +2,17 @@ part of aristadart.general;
 
 class TextureGUI
 {
-    @Field() String path = '';
+    @Field() String path;
     
     @Field() bool web = true;
     
-    @Field() String get urlTextura => path != null && path != "" ?
-                                      (web ? localHost + path : path)
-                                      : "";
+    @Field() FileDb file;
+    
+    @Field() String get urlTextura
+    {
+        if (web)
+            return file != null ? file.href : missingImage;
+    }
 
     @Field() String texto = '';
 
