@@ -224,8 +224,9 @@ abstract class Header
 
 abstract class ContType
 {
-    static const String applicationJson = "application/json";
+    static const String applicationJson = r"application/json";
     static const String multipart = "multipart";
+    static const String imagePng = r"image/png";
 }
 
 abstract class Method

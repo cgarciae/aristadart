@@ -2,6 +2,9 @@ part of aristadart.general;
 
 class VuforiaTargetRecord
 {
+    String get id => target_id;
+    set (String id) => target_id = id;
+    
     @Field() String target_id;
     @Field() bool active_flag;
     @Field() String name;
@@ -12,15 +15,17 @@ class VuforiaTargetRecord
     @Field() String application_metadata;
 }
 
-class VuforiaResponse extends Ref
+class VuforiaResponse extends Resp
 {
+    @Id() String id;
+    @Field() String target_id;
     @Field() String result_code;
     @Field() VuforiaTargetRecord target_record;
     @Field() String transaction_id;
     @Field() List<String> similar_targets;
     @Field() List<String> results;
     
-    @Field() String get href => id != null ? localHost + "cloudTarget/${id}" : null;
+    bool get success => result_code == VuforiaResultCode.Success;
 }
 
 abstract class VuforiaResultCode

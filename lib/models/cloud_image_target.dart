@@ -4,7 +4,7 @@ class CloudTarget extends Ref
 {
     @Field() String get href => localHost + '${Col.cloudTarget}/$id';
     @Field() FileDb image;
-    @Field() DbObj target;
+    @Field() VuforiaTargetRecord target;
 }
 
 

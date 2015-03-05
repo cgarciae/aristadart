@@ -1,22 +1,21 @@
 part of aristadart.server;
 
 @app.Group('/vista')
-class VistaServices
+class VistaServices extends MongoDbService<VistaTotal>
 {
+    VistaServices () : super (Col.vista);
+    
     @app.DefaultRoute(methods: const [app.POST])
     @Private()
     @Encode()
-    Future<Vista> New (@app.QueryParam("type") String type, @app.QueryParam("eventoId") String eventoId) async
+    Future<Vista> New (@app.QueryParam("type") int typeNumber, @app.QueryParam("eventoId") String eventoId) async
     {
         try
         {
-            Vista vista = Vista.Factory (type)
+            Vista vista = Vista.Factory (Vista.IndexToType[typeNumber])
                 ..id = newId()
-                ..eventos = 
-                [
-                    new Evento ()
-                        ..id = eventoId
-                ];
+                ..owner = (new User()
+                    ..id = userId);
             
             
             await db.insert
@@ -86,8 +85,53 @@ class VistaServices
         }
     }
     
+    @app.Route('/:id', methods: const [app.DELETE])
+    @Private()
+    @Encode()
+    Future<DbObj> Delete (String id) async
+    {
+        try
+        {
+            
+            await remove
+            (
+                where.id (StringToId (id))
+            );
+            
+            return new DbObj()
+                ..id = id;
+        }
+        catch (e, s)
+        {
+            return new DbObj ()
+                ..error = "$e $s";
+        }
+    }
+    
+    
     @app.Route('/all', methods: const [app.GET])
-    Future All () => db.collection (Col.vista).find().toList();
+    @Private()
+    @Encode()
+    Future<ListVistaResp> All () async
+    {
+        try
+        {
+            List<VistaTotal> vistasTotal = await find
+            (
+                where.eq("owner._id", StringToId(userId))
+            );
+            
+            List<Vista> vistas = vistasTotal.map((VistaTotal v) => v.vista).toList();
+            
+            return new ListVistaResp()
+                ..vistas = vistas;
+        }
+        catch (e, s)
+        {
+            return new ListVistaResp()
+                ..error = "$e $s";
+        }
+    }
     
 }
 

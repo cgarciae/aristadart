@@ -3,8 +3,8 @@ part of aristadart.general;
 class VistaTotal
 {
     //Info general
+    @Field() User owner;
     @Id() String id;
-    @Field() List<Evento> eventos;
     @Field() String type__;
     @Field() TextureGUI icon;
 
@@ -33,18 +33,10 @@ class VistaTotal
         switch (type__)
         {
             case "ConstruccionRAJS, Assembly-CSharp":
-                v = new ConstruccionRA()
-                    ..id = id
-                    ..icon = icon
-                    ..eventos = eventos
-                    
-                    ..objetoUnity = objetoUnity
-                    ..localTarget = localTarget
-                    ..cuartos = cuartos
-                    ..muebles = muebles;
+                v = Cast(ConstruccionRA, this);
                 break;
             default:
-                v = new EmptyVista();
+                v = Cast(Vista, this);
                 break;
                 
         }
@@ -55,10 +47,10 @@ class VistaTotal
 
 class Vista extends Ref
 {
-    @Field() List<Evento> eventos;
     @Field() String get type__ => null;
     @Field() String get href => localHost + 'vista/$id';
     @Field() TextureGUI icon;
+    @Field() User owner;
     
     static Vista Factory ([String type__])
     {
@@ -75,6 +67,11 @@ class Vista extends Ref
         
         return v;
     }
+    
+    static const Map<int,String> IndexToType = const
+    {
+        1 : VistaType.construccionRA
+    };
     
     
     Resp valid () => new Resp()..error = "Vista sin type__";

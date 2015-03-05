@@ -6,7 +6,9 @@ class FileServices
     @app.DefaultRoute(methods: const[app.POST], allowMultipartRequest: true)
     @Private()
     @Encode()
-    Future<FileDb> NewOrUpdate (@app.Body(app.FORM) Map form, [String id]) async
+    Future<FileDb> NewOrUpdate (@app.Body(app.FORM) QueryMap form, 
+                                @Decode(fromQueryParams: true) FileDb fileDb,
+                                [String id]) async
     {
         try
         {
@@ -29,9 +31,16 @@ class FileServices
                 gridIn.id = StringToId(id);
             }
             
-            //Convert metadata and save id
-            FileDb fileDb = decode(app.request.queryParams, FileDb);
-            fileDb.id = gridIn.id.toHexString();
+            
+            fileDb
+                ..id = gridIn.id.toHexString()
+                ..filename = file.filename
+                ..owner = (new User()
+                    ..id = userId);
+            
+            if (file.contentType.value.contains("image"))
+                fileDb.type = file.contentType.value;
+            
             
             //Convert to map and clean null fields
             var metadata = cleanMap(db.encode(fileDb));
@@ -74,6 +83,32 @@ class FileServices
         catch (e, s)
         {
             return {"error" : "$e $s"};
+        }
+    }
+    
+    @app.Route ('/:id/metadata', methods: const [app.GET])
+    @Private()
+    @Encode()
+    Future<FileDb> GetMetadata (String id) async
+    {
+        try
+        {
+            GridOut gridOut = await fs.findOne
+            (
+                where.id (StringToId(id))
+            );
+            
+            
+            if (gridOut == null)
+                return new FileDb()
+                    ..error = "El archivo no existe";
+            
+            return db.decode(gridOut.metaData, FileDb);
+        }
+        catch (e, s)
+        {
+            return new FileDb()
+                ..error = "$e $s";
         }
     }
     
@@ -120,4 +155,34 @@ class FileServices
                 ..error = "$e $s";
         }
     }
+    
+    @app.Route('/all', methods: const[app.GET])
+    @Private()
+    @Encode()
+    Future All (@app.QueryParam('type') String type) async
+    {
+        
+        Stream<QueryMap> stream = fs.files.find
+        (
+            where.eq("metadata.owner._id", StringToId(userId))
+        )
+        .stream
+        .map(MapToQueryMap);
+        
+        if (type != null)
+            stream = stream.where((QueryMap file)
+                    => (file.contentType as String).contains(type) || file.metadata.type == type);
+        
+        
+        return stream.map((QueryMap file) => db.decode(file.metadata, FileDb)).toList();
+    }
+    
+    @app.Route('/allImages', methods: const[app.GET])
+    @Private()
+    @Encode()
+    Future AllImages () async
+    {
+        return All ('image');
+    }
+    
 }

@@ -19,7 +19,7 @@ class UserServives
         return user;
     }
     
-    @app.DefaultRoute (methods: const [app.POST, app.PUT])
+    @app.DefaultRoute (methods: const [app.POST])
     @Encode()
     Future<User> NewOrLogin (@Decode() ProtectedUser user) async
     {
@@ -96,23 +96,15 @@ class UserServives
     @Encode()
     Future<ListEventoResp> Eventos (String id) async
     {
-        try
-        {
-            List<Evento> eventos = await db.find
-            (
-                Col.evento,
-                Evento,
-                where.eq("owner._id", StringToId(userId))
-            );
-            
-            return new ListEventoResp()
-                ..eventos = eventos;
-        }
-        catch (e, s)
-        {
-            return new ListEventoResp()
-                ..error = "$e $s";
-        }
+        List<Evento> eventos = await db.find
+        (
+            Col.evento,
+            Evento,
+            where.eq("owner._id", StringToId(userId))
+        );
+        
+        return new ListEventoResp()
+            ..eventos = eventos;
     }
     
     @app.Route ('/isAdmin')

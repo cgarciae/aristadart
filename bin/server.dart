@@ -21,6 +21,7 @@ main() async
     app.addPlugin(getMapperPlugin(dbManager));
     app.addPlugin(AuthorizationPlugin);
     app.addPlugin(AuthenticationPlugin);
+    app.addPlugin(ErrorCatchPlugin);
     
     app.setShelfHandler (createStaticHandler
     (

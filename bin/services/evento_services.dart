@@ -1,8 +1,10 @@
 part of aristadart.server;
 
 @app.Group ('/evento')
-class EventoServices
+class EventoServices extends MongoDbService<Evento>
 {
+    EventoServices () : super (Col.evento);
+    
     @app.DefaultRoute (methods: const[app.POST])
     @Private()
     @Encode()
@@ -13,6 +15,7 @@ class EventoServices
             Evento evento = new Evento()
                 ..id = newId()
                 ..active = true
+                ..vistas = []
                 ..owner = (new User()
                     ..id = userId);
             
@@ -104,6 +107,36 @@ class EventoServices
         }
     }
     
+    @app.Route('/:id/addVista/:vistaId', methods: const [app.POST, app.PUT])
+    @Private()
+    @Encode()
+    Future<Vista> AddEvento (String id, String vistaId) async
+    {
+        try
+        {
+            var vista = new Vista()
+                ..id = vistaId;
+            
+            await db.update
+            (
+                collectionName,
+                where.id(StringToId(id)),
+                modify.addToSet
+                (
+                    "vistas", 
+                    cleanMap(db.encode(vista))
+                )
+            );
+            
+            return Get (id);
+        }
+        catch (e, s)
+        {
+            return new Vista ()
+                ..error = "$e $s";
+        }
+    }
+    
     @app.Route ('/:id/vistas', methods: const[app.GET])
     @Private()
     @Encode()
@@ -111,20 +144,27 @@ class EventoServices
     {
         try
         {
+            Evento evento = await Get (id);
+            
+            if (evento.failed)
+                return new ListVistaResp ()
+                    ..error = evento.error;
+            
+            if (evento.vistas == null || evento.vistas.isEmpty)
+                return new ListVistaResp ()
+                    ..vistas = [];
+            
+            var vistasId = evento.vistas
+                    .map(F.getField(#id))
+                    .map(StringToId)
+                    .toList();
+            
             List<VistaTotal> vistasTotal = await db.find
             (
                 Col.vista,
                 VistaTotal,
-                {
-                    "eventos" :
-                    {
-                        r'$elemMatch' :
-                        {
-                            r'_id' : StringToId (id)
-                        }
-                    }
-                }
-            );
+                where.oneFrom("_id", vistasId)
+            ).t;
             
             print (encodeJson(vistasTotal));
             
@@ -147,6 +187,20 @@ class EventoServices
             return new ListVistaResp()
                 ..error = "$e $s";
         }
+    }
+    
+    @app.Route ('/all', methods: const[app.GET])
+    @Private()
+    @Encode()
+    Future<ListEventoResp> All () async
+    {
+        List<Evento> eventos = await find
+        (
+            where.eq("owner._id", userId) 
+        );
+        
+        return new ListEventoResp()
+            ..eventos = eventos;
     }
 }
 

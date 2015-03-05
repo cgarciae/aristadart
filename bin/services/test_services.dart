@@ -1,10 +1,12 @@
 part of aristadart.server;
 
+@app.Route ('/testQuery')
+testQuery (@app.QueryParam('algo') String algo, @app.QueryParam('mas') String mas) => "$algo $mas";
+
 @app.Route ('/testVuforiaImage', methods: const[app.POST], allowMultipartRequest: true)
 @Encode()
 Future<VuforiaResponse> testVuforiaImage (@app.Body(app.FORM) Map form) async
 {
-    
     HttpBodyFileUpload file = FormToFileUpload(form);
     
     return VuforiaServices.newImage(file.content, newId());
@@ -20,23 +22,68 @@ Future<VuforiaResponse> updateVuforiaImage (String id, @app.Body(app.FORM) Map f
     return VuforiaServices.updateImage(id, file.content);
 }
 
-@app.Route ('/getV/:id', methods: const[app.GET])
+@app.Route ('/testOverride')
 @Encode()
-Future<VuforiaResponse> testGetVuforiaImage (String id) async
+testOverride () async
 {
-    return VuforiaServices.makeVuforiaRequest
+    
+    var id = newId();
+    
+    VuforiaResponse resp = new VuforiaResponse()
+        ..result_code = "Success"
+        ..id = id
+        ..target_record = (new VuforiaTargetRecord()
+            ..name = "Garcia");
+    
+    var col = 'testVuforia';
+    
+    await db.insert(col, resp);
+    
+    var delta = new VuforiaResponse()
+        ..target_record = (new VuforiaTargetRecord()
+                ..width = 2);
+        
+    
+    await db.update
     (
-        Method.GET,
-        '/targets/$id'
+        col,
+        where.id(StringToId(id)),
+        delta,
+        override: false
     );
+    
+    return db.findOne (col, VuforiaResponse, where.id(StringToId(id)));
+}
+
+@Encode()
+@app.Route ('/testErro1/:n')
+
+@Private()
+@Catch()
+
+testError1 (int n) async
+{
+    print ("hola");
+    var resp = await testError2(n);
+    return resp;
+}
+
+@app.Route ('/testErro2')
+@Encode()
+testError2 (int n) async
+{
+    await db.find(Col.cloudTarget, Resp);
+    
+    if (n != 1)
+        throw new Exception ("invalid id");
+    
+    return new BoolResp()
+        ..value = true;
 }
 
 @app.Route ('/testPrivate')
 @Private()
 testPrivate () => "funciona";
-
-@app.Route ('/testQuery')
-testQuery (@app.QueryParam('algo') String algo) => algo;
 
 @app.Route("/test")
 @Encode()
