@@ -287,6 +287,8 @@ class EventoVista
     
     iniciarCargaVistasUsuario()
     {
+        cargarVistasUsuario = true;
+        
         requestDecoded
         (
             ListVistaResp,
