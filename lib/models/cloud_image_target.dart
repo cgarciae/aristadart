@@ -1,16 +1,10 @@
 part of aristadart.general;
 
-class CloudImageTargetDb extends Ref
+class CloudTarget extends Ref
 {
-    @ReferenceId() String imageId;
-    @Field() String targetId;
-}
-
-class CloudImageTarget
-{
-    @Id() String id;
-    @ReferenceId() String imageId;
-    @Field() String targetId;
+    @Field() String get href => localHost + '${Col.cloudTarget}/$id';
+    @Field() FileDb image;
+    @Field() VuforiaTargetRecord target;
 }
 
 

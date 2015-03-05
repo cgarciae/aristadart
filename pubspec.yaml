@@ -5,6 +5,8 @@ dependencies:
   browser: any
   di: any
   fp: any
+  googleapis: any
+  googleapis_auth: any
   http: any
   mongo_dart: any
   redstone: any

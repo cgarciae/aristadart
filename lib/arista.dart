@@ -98,6 +98,8 @@ Map ObjectToMap (dynamic obj)
 QueryMap NewQueryMap () => new QueryMap(new Map());
 QueryMap MapToQueryMap (Map map) => new QueryMap(map);
 
+dynamic Cast (Type type, Object obj) => decode (encode(obj), type);
+
 class Resp
 {
     bool get success => nullOrEmpty(error);
@@ -112,14 +114,19 @@ class DbObj extends Resp
     @Id() String id;
 }
 
-abstract class Ref extends DbObj
-{
-    @Field() String get href;
-}
-
-class PlainRef extends Ref
+class Ref extends DbObj
 {
     @Field() String href;
+}
+
+class ListEventoResp extends Resp
+{
+    @Field() List<Evento> eventos;
+}
+
+class ListVistaResp extends Resp
+{
+    @Field() List<Vista> vistas;
 }
 
 class VistasResp extends Resp
@@ -217,8 +224,9 @@ abstract class Header
 
 abstract class ContType
 {
-    static const String applicationJson = "application/json";
+    static const String applicationJson = r"application/json";
     static const String multipart = "multipart";
+    static const String imagePng = r"image/png";
 }
 
 abstract class Method
@@ -231,12 +239,12 @@ abstract class Method
 
 abstract class Col
 {
-    static final String user = 'user';
-    static final String evento = 'evento';
-    static final String vista = 'vista';
-    static final String recoTarget = 'recoTarget';
-    static final String objetoUnity = 'objetoUnity';
-    static final String localTarget = 'localTarget';
+    static const String user = 'user';
+    static const String evento = 'evento';
+    static const String vista = 'vista';
+    static const String cloudTarget = 'cloudTarget';
+    static const String objetoUnity = 'objetoUnity';
+    static const String localTarget = 'localTarget';
 }
 
 abstract class ErrCode

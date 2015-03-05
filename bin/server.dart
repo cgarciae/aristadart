@@ -21,6 +21,7 @@ main() async
     app.addPlugin(getMapperPlugin(dbManager));
     app.addPlugin(AuthorizationPlugin);
     app.addPlugin(AuthenticationPlugin);
+    app.addPlugin(ErrorCatchPlugin);
     
     app.setShelfHandler (createStaticHandler
     (
@@ -31,13 +32,15 @@ main() async
      
     app.setupConsoleLog();
     await app.start(port: port);
-         
-    MongoDb dbConn = await dbManager.getConnection();
     
-    UserComplete user = await dbConn.findOne
+    MongoDb dbConn = await dbManager.getConnection();  
+    
+   
+    
+    User user = await dbConn.findOne
     (
         Col.user,
-        UserComplete,
+        User,
         where
             .eq('admin', true)
     );

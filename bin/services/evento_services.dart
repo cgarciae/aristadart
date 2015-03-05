@@ -1,15 +1,206 @@
 part of aristadart.server;
 
 @app.Group ('/evento')
-class EventoServices
+class EventoServices extends MongoDbService<Evento>
 {
+    EventoServices () : super (Col.evento);
+    
     @app.DefaultRoute (methods: const[app.POST])
+    @Private()
     @Encode()
-    Future<EventoDb> New ()
+    Future<Evento> New () async
     {
-        EventoDb evento = new EventoDb()
-            ..id = newId()
-            ..active = false;
+        try
+        {
+            Evento evento = new Evento()
+                ..id = newId()
+                ..active = true
+                ..vistas = []
+                ..owner = (new User()
+                    ..id = userId);
+            
+            
+            await db.insert 
+            (   
+                Col.evento, 
+                evento
+            );
+            
+            return evento;
+        }
+        catch (e, s)
+        {
+            return new Evento()
+                ..error = "$e $s";
+        } 
+    }
+    
+    @app.Route ('/:id', methods: const[app.PUT])
+    @Private()
+    @Encode()
+    Future<Evento> Update (String id, @Decode() Evento delta) async
+    {
+        try
+        {
+            await db.update 
+            (   
+                Col.evento,
+                where.id (StringToId (id)),
+                getModifierBuilder (delta)
+            );
+            
+            return Get (id);
+        }
+        catch (e, s)
+        {
+            return new Evento()
+                ..error = "$e $s";
+        }
+    }
+    
+    @app.Route ('/:id', methods: const[app.GET])
+    @Encode()
+    Future<Evento> Get (String id) async
+    {
+        try
+        {
+            Evento evento = await db.findOne
+            (
+                Col.evento,
+                Evento,
+                where.id(StringToId(id))
+            );
+            
+            if (evento == null)
+                return new Evento()
+                    ..error = "Evento no encontrado";
+            
+            return evento;
+        }
+        catch (e, s)
+        {
+            return new Evento()
+                ..error = "$e $s";
+        }
+    }
+    
+    @app.Route ('/:id', methods: const[app.DELETE])
+    @Private()
+    @Encode()
+    Future<DbObj> Delete (String id) async
+    {
+        try
+        {
+            await db.remove
+            (
+                Col.evento,
+                where.id(StringToId(id))
+            );
+            
+            return new DbObj()
+                ..id = id;
+        }
+        catch (e, s)
+        {
+            return new DbObj()
+                ..error = "$e $s";
+        }
+    }
+    
+    @app.Route('/:id/addVista/:vistaId', methods: const [app.POST, app.PUT])
+    @Private()
+    @Encode()
+    Future<Vista> AddEvento (String id, String vistaId) async
+    {
+        try
+        {
+            var vista = new Vista()
+                ..id = vistaId;
+            
+            await db.update
+            (
+                collectionName,
+                where.id(StringToId(id)),
+                modify.addToSet
+                (
+                    "vistas", 
+                    cleanMap(db.encode(vista))
+                )
+            );
+            
+            return Get (id);
+        }
+        catch (e, s)
+        {
+            return new Vista ()
+                ..error = "$e $s";
+        }
+    }
+    
+    @app.Route ('/:id/vistas', methods: const[app.GET])
+    @Private()
+    @Encode()
+    Future<ListVistaResp> Vistas (String id) async
+    {
+        try
+        {
+            Evento evento = await Get (id);
+            
+            if (evento.failed)
+                return new ListVistaResp ()
+                    ..error = evento.error;
+            
+            if (evento.vistas == null || evento.vistas.isEmpty)
+                return new ListVistaResp ()
+                    ..vistas = [];
+            
+            var vistasId = evento.vistas
+                    .map(F.getField(#id))
+                    .map(StringToId)
+                    .toList();
+            
+            List<VistaTotal> vistasTotal = await db.find
+            (
+                Col.vista,
+                VistaTotal,
+                where.oneFrom("_id", vistasId)
+            ).t;
+            
+            print (encodeJson(vistasTotal));
+            
+            List<Vista> vistas = vistasTotal.map((VistaTotal v){
+                
+                Vista vista = v.vista;
+                
+                print (vista.runtimeType);
+                print (encodeJson(vista.eventos));
+                
+                return vista;
+                
+            }).toList();
+            
+            return new ListVistaResp()
+                ..vistas = vistas;
+        }
+        catch (e, s)
+        {
+            return new ListVistaResp()
+                ..error = "$e $s";
+        }
+    }
+    
+    @app.Route ('/all', methods: const[app.GET])
+    @Private()
+    @Encode()
+    Future<ListEventoResp> All () async
+    {
+        List<Evento> eventos = await find
+        (
+            where.eq("owner._id", userId) 
+        );
+        
+        return new ListEventoResp()
+            ..eventos = eventos;
     }
 }
 

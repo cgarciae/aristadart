@@ -9,74 +9,134 @@ part of aristadart.client;
 class LoginVista extends ShadowRootAware
 {
     
-    UserSecure user = new UserSecure();
+    User user = new User();
     Router router;
+    bool immediate = false;
     
-    bool nuevo = false;
+    var id = new auth.ClientId("287932517253-d6fp73ms7d33ith6r561p1g225q5th0h.apps.googleusercontent.com", null);
+    var scopes = ["openid", "email"];
     
     LoginVista (this.router)
     {
-        
+
     }
     
     
       onShadowRoot(dom.ShadowRoot root){}
+      
+    login2 ()
+    {
+        return jsonRequestDecoded
+        (
+            User, 
+            Method.POST,
+            '/user',
+            user
+        )
+        .then((User dbUser){
+            
+        if (dbUser.failed)
+        {
+            print (dbUser.error);
+            return null;
+        }
+        userId = dbUser.id;
+        print (encode(dbUser));
+        
+        return requestDecoded
+        (
+            BoolResp, Method.GET, 'user/isAdmin', 
+            userId: dbUser.id
+        )
+        .then((BoolResp resp){
+            
+        loggedAdmin = resp.success && resp.value;
+        
+        router.go('home', {});
+        });
+        });
+    }
     
     login ()
     {
-        print (encodeJson(user));
-        print (user.password);
-        return jsonRequestDecoded 
-        (
-            UserAdminResp,
-            Method.POST, 
-            'user/login',
-            user
-        )
-        .then((UserAdminResp resp){
+        getClient().then((auth.AutoRefreshingAuthClient client){
+            
+        var oauthApi = new oauth.Oauth2Api(client);
         
-        if (resp.success)
+        print ("aca");
+        
+        oauthApi.userinfo.get().then((oauth.Userinfoplus info){
+                    
+        
+        User googleUser = new User()
+            ..email = info.email
+            ..nombre = info.name
+            ..apellido = info.familyName;
+        
+        return jsonRequestDecoded
+        (
+            User, 
+            Method.POST,
+            '/user',
+            googleUser
+        )
+        .then((User dbUser){
+            
+        if (dbUser.failed)
         {
-            loginUser(router, resp);
+            print (dbUser.error);
+            return null;
         }
-        else
-        {
-            print (resp.error);
-        }
+        userId = dbUser.id;
+        print (encode(dbUser));
+        
+        return requestDecoded
+        (
+            BoolResp, Method.GET, '/user/isAdmin'
+        )
+        .then((BoolResp resp){
+            
+        if (resp.failed)
+            return print (resp.error);
+            
+        loggedAdmin = resp.success && resp.value;
+        
+        router.go('home', {});
+        });
+        });
+        });
+        });
+    }
+    
+    Future<auth.AutoRefreshingAuthClient> getClient()
+    {
+        return auth.createImplicitBrowserFlow(id, scopes)
+                            .then((auth.BrowserOAuth2Flow flow) {
+                        
+        return flow.clientViaUserConsent(immediate: immediate).then((auth.AutoRefreshingAuthClient client){
+            
+        immediate = false;
+        
+        return client;
+        
+        }).catchError((_) {
+                
+        immediate = true;    
+                
+        }, test: (error) => error is auth.UserConsentException);
         });
     }
     
     onPressEnter (dom.KeyboardEvent event)
     {
-        if (event.keyCode == 13)
-        {
-            login();
-        }
+        
     }
     
     nuevoUsuario()
     {
-        nuevo = true;
-        router.go ('login.nuevo', {});
+        
     }
     
     
-
-    /// send data to server
-    sendDatas(dynamic data) 
-    {
-        final req = new dom.HttpRequest();
-        
-        req.onReadyStateChange.listen((dom.Event e) 
-        {
-            if (req.readyState == dom.HttpRequest.DONE && (req.status == 200 || req.status == 0)) 
-            {
-                dom.window.alert("upload complete");
-            }
-        });
-        
-        req.open ("POST", "http://127.0.0.1:8080/upload");
-        req.send (data);
-    }
 }
 

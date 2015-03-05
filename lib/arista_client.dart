@@ -7,11 +7,11 @@ import 'dart:async';
 import 'package:redstone_mapper/mapper.dart';
 import 'package:angular/angular.dart';
 import 'dart:html' as dom;
-import 'package:logging/logging.dart' show Logger;
+import "package:googleapis_auth/auth_browser.dart" as auth;
+import 'package:googleapis/oauth2/v2.dart' as oauth;
 
 part 'components/evento/evento.dart';
 part 'components/widgets/loader/loader.dart';
-part 'components/widgets/alert/alert.dart';
 part 'components/vista/vista.dart';
 part 'components/login/login.dart';
 part 'components/login/nuevo_usuario.dart';
@@ -38,11 +38,17 @@ Future<dom.HttpRequest> makeRequest (String method, String path,
                                     {dynamic data, Map headers, void onProgress (dom.ProgressEvent p), 
                                     String userId, Map<String,String> params})
 {
+    print (headers);
+    print (userId);
+    
     if (userId != null)
-        addToHeaders(headers, {Header.authorization : userId});
+        headers = addToHeaders(headers, {Header.authorization : userId});
     
     if (params != null)
         path = appendRequestParams(path, params);
+    
+    print (headers);
+    print (userId);
     
     return dom.HttpRequest.request
     (
@@ -117,11 +123,14 @@ Future<dynamic> jsonRequestDecoded (Type type, String method, String path, Objec
 Map addToHeaders (Map headers, Map additions)
 {
     //var contentType = {Header.contentType : ContType.applicationJson};
-        
+    
+
+    
     if (headers != null)
         headers.addAll (additions);
     else
         headers = additions;
+    
     
     return headers;
 }
@@ -211,17 +220,10 @@ class MainController
     
     logout ()
     {
-        return requestDecoded(Resp, Method.GET,'user/logout').then((Resp resp){
+        userId = "";
+        loggedAdmin = false;
         
-        if (resp.success)
-        {
-            router.go('login', {});
-        }
-        else
-        {
-            print("Logout Failed");
-        }
-        });
+        router.go('login', {});
     }
             
     bool get isLoggedIn => loggedIn;
@@ -234,5 +236,9 @@ class MainController
     
 }
 
-bool get loggedIn => storage['logged'] == true.toString();
+bool get loggedIn => notNullOrEmpty(userId);
 bool get loggedAdmin => storage['admin'] == true.toString();
+set loggedAdmin (bool value) => storage['admin'] = value.toString();
+
+String get userId => storage['userId'];
+set userId (String id) => storage['userId'] = id;

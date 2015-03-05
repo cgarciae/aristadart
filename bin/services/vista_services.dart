@@ -1,5 +1,140 @@
 part of aristadart.server;
 
+@app.Group('/vista')
+class VistaServices extends MongoDbService<VistaTotal>
+{
+    VistaServices () : super (Col.vista);
+    
+    @app.DefaultRoute(methods: const [app.POST])
+    @Private()
+    @Encode()
+    Future<Vista> New (@app.QueryParam("type") int typeNumber, @app.QueryParam("eventoId") String eventoId) async
+    {
+        try
+        {
+            Vista vista = Vista.Factory (Vista.IndexToType[typeNumber])
+                ..id = newId()
+                ..owner = (new User()
+                    ..id = userId);
+            
+            
+            await db.insert
+            (
+                Col.vista,
+                vista
+            );
+            
+            
+            return vista;
+        }
+        catch (e, s)
+        {
+            return new Vista()
+                ..error = "$e $s";
+        }
+    }
+    
+    @app.Route('/:id', methods: const [app.GET])
+    @Encode()
+    Future<Vista> Get (String id) async
+    {
+        try
+        {
+            VistaTotal vistaTotal = await db.findOne
+            (
+                Col.vista,
+                VistaTotal,
+                where.id (StringToId (id))
+            );
+            
+            if (vistaTotal == null)
+                return new Vista()
+                    ..error = "Vista not found";
+            
+            
+            return vistaTotal.vista;
+        }
+        catch (e, s)
+        {
+            return new Vista ()
+                ..error = "$e $s";
+        }
+    }
+    
+    @app.Route('/:id', methods: const [app.PUT])
+    @Private()
+    @Encode()
+    Future<Vista> Update (String id, @Decode() VistaTotal vista) async
+    {
+        try
+        {
+            
+            await db.update
+            (
+                Col.vista,
+                where.id (StringToId (id)),
+                getModifierBuilder(vista)
+            );
+            
+            return Get (id);
+        }
+        catch (e, s)
+        {
+            return new Vista ()
+                ..error = "$e $s";
+        }
+    }
+    
+    @app.Route('/:id', methods: const [app.DELETE])
+    @Private()
+    @Encode()
+    Future<DbObj> Delete (String id) async
+    {
+        try
+        {
+            
+            await remove
+            (
+                where.id (StringToId (id))
+            );
+            
+            return new DbObj()
+                ..id = id;
+        }
+        catch (e, s)
+        {
+            return new DbObj ()
+                ..error = "$e $s";
+        }
+    }
+    
+    
+    @app.Route('/all', methods: const [app.GET])
+    @Private()
+    @Encode()
+    Future<ListVistaResp> All () async
+    {
+        try
+        {
+            List<VistaTotal> vistasTotal = await find
+            (
+                where.eq("owner._id", StringToId(userId))
+            );
+            
+            List<Vista> vistas = vistasTotal.map((VistaTotal v) => v.vista).toList();
+            
+            return new ListVistaResp()
+                ..vistas = vistas;
+        }
+        catch (e, s)
+        {
+            return new ListVistaResp()
+                ..error = "$e $s";
+        }
+    }
+    
+}
+
 
 @app.Route("/private/evento/:id/vistas")
 @Encode()
@@ -36,20 +171,20 @@ Future<IdResp> newVista(@app.Attr() MongoDb dbConn) async
         ..id = vista.id;
 }
 
-@app.Route("/vista",methods: const[app.POST])
-@Private()
-@Encode()
-Future<IdResp> newVista2() async
-{
-        
-    var vista = new Vista()
-        ..id = new ObjectId().toHexString();
-
-    await db.insert (Col.vista, vista);
-    
-    return new IdResp()
-        ..id = vista.id;
-}
+//@app.Route("/vista",methods: const[app.POST])
+//@Private()
+//@Encode()
+//Future<IdResp> newVista2() async
+//{
+//        
+//    var vista = new Vista()
+//        ..id = new ObjectId().toHexString();
+//
+//    await db.insert (Col.vista, vista);
+//    
+//    return new IdResp()
+//        ..id = vista.id;
+//}
 
 @app.Route("/private/vista", methods: const[app.PUT])
 @Encode()

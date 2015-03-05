@@ -40,21 +40,13 @@ class Private {
 void AuthenticationPlugin(app.Manager manager) {
     
     
-    manager.addErrorHandler
-    (
-        new app.ErrorHandler.conf(403, urlPattern: r'/.*'), 
-        "Unauthorized Request", 
-        (_) => "Unauthorized request, must loggin"
-    );
-    
-    manager.addRouteWrapper(Private, (metadata, Map<String,String> pathSegments, injector, app.Request request, route) async {
-    
-        var id = request.headers.authorization;
-                
-        if (id == null)
-            return new app.ErrorResponse(403, {"error": "Authentication Error: Authorization header expected"});
+    manager.addRouteWrapper(Private, (metadata, Map<String,String> pathSegments, injector, app.Request request, app.RouteHandler route) async {
         
-        print ("1");
+        var id = request.headers.authorization;
+        
+        print("Private");       
+        if (id == null)
+            return new Resp()..error = "Authentication Error: Authorization header expected";
         
         User user;
         try
@@ -68,17 +60,47 @@ void AuthenticationPlugin(app.Manager manager) {
         }
         on ArgumentError catch (e)
         {
-            return new app.ErrorResponse(403, {"error": "Authentication Error: ID length must be 24"});
+            return new Resp()..error = "Authentication Error: ID length must be 24";
         }
         
         if (user == null)
-            return new app.ErrorResponse(403, {"error": "Authentication Error: User does not exist"});
+            return new Resp()..error = "Authentication Error: User does not exist";
         
         
         return route(pathSegments, injector, request);
     
   }, includeGroups: true);
-    
+}
+
+class Catch {
   
+  const Catch();
+  
+}
+
+
+void ErrorCatchPlugin(app.Manager manager) {
+    
+    
+    manager.addRouteWrapper(Catch, (metadata, Map<String,String> pathSegments, 
+                                    injector, app.Request request, 
+                                    app.RouteHandler route) async {
+        print("Catch");
+        try
+        {
+            var result = route(pathSegments, injector, request);
+            
+            if (result is Future)
+                return await result;
+            else
+                return result;
+        }
+        catch (e, s)
+        {
+            return new Resp()
+                ..error = "$e $s";
+        }
+    
+  }, includeGroups: true);
 }
 
