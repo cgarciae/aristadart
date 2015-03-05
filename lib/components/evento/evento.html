@@ -51,6 +51,10 @@
 </fieldset>
 <h2>Edita y crea tus vistas</h2>
 <div class="save right" ng-click='save()'></div>
+<div ng-if="alert.show" data-alert class="alert-box radius" ng-class="alert['type']" ng-repeat="alert in alert.alerts" >
+  {{alert['msg']}}
+  <a href="#" class="close" ng-click="closeAlert($index)">&times;</a>
+</div> 
 <div class="row">
     <ul class="small-block-grid-2 medium-block-grid-3 large-block-grid-4">
         <li ng-repeat="vista in vistas"

@@ -19,6 +19,8 @@ class EventoVista
     
     Router router;
     
+    AristaAlert alert = new AristaAlert();
+    
     EventoVista (RouteProvider routeProvider, this.router) 
     {
         var eventoID = routeProvider.parameters['eventoID'];
@@ -52,8 +54,13 @@ class EventoVista
         saveInCollection('evento', evento)
         .then(doIfSuccess((Resp resp)
         {
-            router.go('home', {});
-        }));
+            print("Se guardo con exito");
+            alert.addAlert({'type': 'success','msg': 'El evento ha sido guardada exitosamente'}); 
+        if(resp.failed){
+            return print(resp.error);
+        }  
+        }));       
+        
     }
     
     nuevaVista ()
