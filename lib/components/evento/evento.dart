@@ -58,6 +58,7 @@ class EventoVista
     
     nuevaVista ()
     {
+        
         print (Method.POST);
         /*
         newFromCollection ('vista').then (doIfSuccess ((resp) 

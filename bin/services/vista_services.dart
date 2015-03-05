@@ -14,6 +14,8 @@ class VistaServices extends MongoDbService<VistaTotal>
         
         Vista vista = Vista.Factory (Vista.IndexToType[typeNumber])
             ..id = newId()
+            ..icon = (new TextureGUI()
+                ..texto = "Mi vista")
             ..owner = (new User()
                 ..id = userId);
         
