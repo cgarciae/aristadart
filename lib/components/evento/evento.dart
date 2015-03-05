@@ -320,6 +320,7 @@ class EventoVista
             return print (_evento.error);
             
         evento.vistas.add(vista);
+        cargarVistasUsuario = false;
         });
     }
 }
