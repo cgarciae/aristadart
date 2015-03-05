@@ -13,6 +13,7 @@ import 'package:googleapis/oauth2/v2.dart' as oauth;
 part 'components/evento/evento.dart';
 part 'components/widgets/loader/loader.dart';
 part 'components/widgets/dummy/dummy.dart';
+part 'components/widgets/alert/alert.dart';
 part 'components/vista/vista.dart';
 part 'components/login/login.dart';
 part 'components/login/nuevo_usuario.dart';

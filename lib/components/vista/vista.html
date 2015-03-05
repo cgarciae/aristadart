@@ -1,5 +1,9 @@
 <fieldset class="large-4 columns" ng-if="vista.type__ != null && vista.type__ != ''">
     <div class="save right" ng-click='saveAndLeave()'></div>
+    <div ng-if="alert.show" data-alert class="alert-box radius" ng-class="alert['type']" ng-repeat="alert in alert.alerts" >
+      {{alert['msg']}}
+      <a href="#" class="close" ng-click="closeAlert($index)">&times;</a>
+    </div>      
     <div class= "row">
         <div>
             <h3>Edición Vista</h3>

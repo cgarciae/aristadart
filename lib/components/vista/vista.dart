@@ -12,6 +12,8 @@ class VistaVista
     VistaExportable vista = new VistaExportable();
     String eventoID;
     String tituloVista='';
+    AristaAlert alert = new AristaAlert();
+    
     
     List<TipoDeVista> tiposDeVista = const 
     [
@@ -164,8 +166,14 @@ class VistaVista
         print ('Local Target Id: ${vista.localTargetId}');
         return saveInCollection (Col.vista, vista).then((Resp resp){
 
-        if (resp.success)
-            router.go('evento', {'eventoID' : eventoID});
+        if (resp.success){
+            //Mensaje exitoso al guardar la vista
+            print("Se guardo la vista");
+            alert.addAlert({'type': 'success','msg': 'La vista ha sido guardada exitosamente'});        
+            
+            print("terminando SaveAndLeave");        
+            
+        }
         else
             print (resp.error);
         
