@@ -16,6 +16,10 @@ class EventoVista
     String targetImageUrl = "";
     
     Router router;
+    
+    //Variables dummy
+    List<Vista> vistasUsuario = [];
+    bool cargarVistasUsuario = false;
 
     
     EventoVista (RouteProvider routeProvider, this.router) 
@@ -45,10 +49,11 @@ class EventoVista
             userId: userId
         )
         .then((ListVistaResp listVistaResp){
+              
         if(listVistaResp.failed)
             return print(listVistaResp.error);
-        evento.vistas =  listVistaResp.vistas;    
           
+        evento.vistas =  listVistaResp.vistas;    
         });
         });
     }
@@ -277,6 +282,43 @@ class EventoVista
                 targetImageUrl = 'public/file/${resp.recoTarget.imageId}';
             }));
         }
+    }
+    
+    
+    iniciarCargaVistasUsuario()
+    {
+        requestDecoded
+        (
+            ListVistaResp,
+            Method.GET,
+            'vista/all',
+            userId: userId
+        )
+        .then((ListVistaResp resp){
+            
+        if (resp.failed)
+            return print (resp.error);
+            
+        vistasUsuario = resp.vistas;
+        });
+    }
+    
+    seleccionarVistaEnModal (Vista vista)
+    {
+        requestDecoded
+        (
+            Evento,
+            Method.POST,
+            'evento/${evento.id}/addVista/${vista.id}',
+            userId: userId
+        )
+        .then((Evento _evento){
+            
+        if (_evento.failed)
+            return print (_evento.error);
+            
+        evento.vistas.add(vista);
+        });
     }
 }
 

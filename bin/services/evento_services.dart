@@ -90,7 +90,7 @@ class EventoServices extends MongoDbService<Evento>
     @Catch()
     @Private()
     @Encode()
-    Future<Vista> AddVista (String id, String vistaId) async
+    Future<Evento> AddVista (String id, String vistaId) async
     {
         
         var vista = new Vista()
