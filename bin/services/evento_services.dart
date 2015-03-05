@@ -14,6 +14,8 @@ class EventoServices extends MongoDbService<Evento>
         {
             Evento evento = new Evento()
                 ..id = newId()
+                ..nombre = "Mi Evento"
+                ..descripcion = "Descripcion"
                 ..active = true
                 ..vistas = []
                 ..owner = (new User()
