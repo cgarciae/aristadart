@@ -193,12 +193,13 @@ class EventoServices extends MongoDbService<Evento>
     
     @app.Route ('/all', methods: const[app.GET])
     @Private()
+    @Catch()
     @Encode()
     Future<ListEventoResp> All () async
     {
         List<Evento> eventos = await find
         (
-            where.eq("owner._id", userId) 
+            where.eq("owner._id", StringToId (userId)) 
         );
         
         return new ListEventoResp()
