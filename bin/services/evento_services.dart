@@ -22,9 +22,8 @@ class EventoServices extends MongoDbService<Evento>
                     ..id = userId);
             
             
-            await db.insert 
-            (   
-                Col.evento, 
+            await insert
+            (
                 evento
             );
             
@@ -161,21 +160,14 @@ class EventoServices extends MongoDbService<Evento>
                     .map(StringToId)
                     .toList();
             
-            List<VistaTotal> vistasTotal = await db.find
+            List<VistaTotal> vistasTotal = await new VistaServices().find
             (
-                Col.vista,
-                VistaTotal,
                 where.oneFrom("_id", vistasId)
-            ).t;
-            
-            print (encodeJson(vistasTotal));
+            );
             
             List<Vista> vistas = vistasTotal.map((VistaTotal v){
                 
                 Vista vista = v.vista;
-                
-                print (vista.runtimeType);
-                print (encodeJson(vista.eventos));
                 
                 return vista;
                 
