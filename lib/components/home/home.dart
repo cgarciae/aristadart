@@ -25,19 +25,20 @@ class HomeVista
     
     getUser ()
     {
-        requestDecoded(PanelInfo, Method.GET,'/private/user/panelinfo')
-        .then ((PanelInfo info)
-        {
-            user = info.user;
-            eventos = info.eventos;
-            
-        })
-        .catchError((e)
-        {
-            print ('Error type ${e.runtimeType}');
-            //router.go('login', {});
-        },
-        test: (e) => e is dom.ProgressEvent);
+        //Get el usuerio
+        requestDecoded
+        (
+            User,
+            Method.GET,
+            'user',
+            userId: userId
+        )
+        .then((User _user){
+        
+        user = _user;  
+        });
+        
+        //Get los eventos
         
     }
     

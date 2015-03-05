@@ -57,10 +57,8 @@ testOverride () async
 
 @Encode()
 @app.Route ('/testErro1/:n')
-
-@Private()
 @Catch()
-
+@Private()
 testError1 (int n) async
 {
     print ("hola");

@@ -2,12 +2,10 @@ part of aristadart.server;
 
 class Secure {
   
-  final String role;
-  
+  final String role; 
   const Secure(this.role);
   
 }
-
 
 void AuthorizationPlugin(app.Manager manager) {
   
@@ -44,7 +42,7 @@ void AuthenticationPlugin(app.Manager manager) {
         
         var id = request.headers.authorization;
         
-        print("Private");       
+        //print("Private");       
         if (id == null)
             return new Resp()..error = "Authentication Error: Authorization header expected";
         
@@ -85,9 +83,10 @@ void ErrorCatchPlugin(app.Manager manager) {
     manager.addRouteWrapper(Catch, (metadata, Map<String,String> pathSegments, 
                                     injector, app.Request request, 
                                     app.RouteHandler route) async {
-        print("Catch");
+        //print("Catch");
         try
         {
+            
             var result = route(pathSegments, injector, request);
             
             if (result is Future)
