@@ -98,13 +98,13 @@ handleResponseHeader()
     if (app.request.method == "OPTIONS") 
     {
         //overwrite the current response and interrupt the chain.
-        app.response = new shelf.Response.ok(null, headers: _createCorsHeader());
+        app.response = new shelf.Response.ok(null, headers: _specialHeaders());
         app.chain.interrupt();
     } 
     else 
     {
         //process the chain and wrap the response
-        app.chain.next(() => app.response.change(headers: _createCorsHeader()));
+        app.chain.next(() => app.response.change(headers: _specialHeaders()));
     }
 }
 
@@ -126,4 +126,14 @@ authenticationFilter ()
     }
 }
 
-_createCorsHeader() => {"Access-Control-Allow-Origin": "*"};
+_specialHeaders() 
+{
+    var cross = {"Access-Control-Allow-Origin": "*"};
+    
+    if (tipoBuild <= TipoBuild.jsTesting)
+    {
+        cross['Cache-Control'] = 'private, no-store, no-cache, must-revalidate, max-age=0';
+    }
+    
+    return cross;
+}

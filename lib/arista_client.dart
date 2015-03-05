@@ -222,8 +222,6 @@ class MainController
     
     int n = 1;
     
-    void P() => print ("hola");
-    
     agregar() 
     {
         Dummy.add ((++n).toString());
