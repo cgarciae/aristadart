@@ -1,12 +1,26 @@
 <div class="row large-10 small-centered colums">
-<a data-reveal-id="myModal"  ng-click=>Lista de vistas</a>
+<a data-reveal-id="myModal" >Lista de vistas</a>
 
 <div id="myModal" class="reveal-modal" data-reveal>
-  <h2>Vistas</h2>
-  <div ng-repeat="">
-  
-  </div>
   <a class="close-reveal-modal">&#215;</a>
+  <h2>Vistas</h2>
+  
+  <div ng-if="!cargarVistasUsuario"> 
+      <button ng-click="iniciarCargaVistasUsuario()">Cargar Vistas</button>
+  </div>
+  <a ng-click='nuevaVista()' class="add close-reveal-modal">&#215;</a>
+  <div ng-if="cargarVistasUsuario">
+    <div ng-repeat="vistaUsuario in vistasUsuario">
+        <fieldset ng-click="seleccionarVistaEnModal(vistaUsuario)" class="boxes">
+            <legend>
+                <div class="row">
+                    <div class="small-8 columns">{{vistaUsuario.icon.texto}}</div>
+                </div>
+            </legend>
+            <img alt="{{vistaUsuario.icon.urlTextura}}" ng-src="{{vistaUsuario.icon.urlTextura}}" class="gray-b">
+         </fieldset>
+    </div>    
+  </div>
 </div>
 <fieldset>
     <legend>EDICIÓN EVENTO</legend>
