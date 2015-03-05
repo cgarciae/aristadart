@@ -46,29 +46,21 @@ class EventoServices extends MongoDbService<Evento>
     }
     
     @app.Route ('/:id', methods: const[app.GET])
+    @Catch()
     @Encode()
     Future<Evento> Get (String id) async
     {
-        try
-        {
-            Evento evento = await db.findOne
-            (
-                Col.evento,
-                Evento,
-                where.id(StringToId(id))
-            );
+        Evento evento = await db.findOne
+        (
+            Col.evento,
+            Evento,
+            where.id(StringToId(id))
+        );
             
-            if (evento == null)
-                return new Evento()
-                    ..error = "Evento no encontrado";
-            
-            return evento;
-        }
-        catch (e, s)
-        {
-            return new Evento()
-                ..error = "$e $s";
-        }
+        if (evento == null)
+            throw new Exception ("Evento no encontrado");
+          
+        return evento;
     }
     
     @app.Route ('/:id', methods: const[app.DELETE])
