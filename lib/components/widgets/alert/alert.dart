@@ -11,13 +11,14 @@ part of aristadart.client;
 class AristaAlert 
 {
     @NgTwoWay("alerts")
-    List<Map<String,String>> alerts = [];
+    static List<Map<String,String>> alerts = [];
     
     @NgTwoWay("show")
     bool show = false;
 
     AristaAlert() {
       print("*****AlertDemoComponent");
+      alerts.clear();
     }
 
     void addAlert(Map<String,String> params) {
@@ -25,12 +26,6 @@ class AristaAlert
       show = true;
     }
 
-    void closeAlert(int index) {
-      if(alerts.length > index) {
-        alerts.removeAt(index);
-      } else {
-        print("*****Error");
-      }
-    }
+
    
 }

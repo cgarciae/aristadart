@@ -10,100 +10,129 @@ part of aristadart.client;
 )
 class EventoVista
 {
-    EventoExportable evento = new EventoExportable();
-    
-    List<VistaExportable> get vistas => evento.vistas;
-    set vistas (List<VistaExportable> vs) => evento.vistas = vs;
-    
+    bool cambio = false;
+    Evento evento = new Evento();
+       
     String targetImageUrl = "";
     
     Router router;
-    
-    AristaAlert alert = new AristaAlert();
+
     
     EventoVista (RouteProvider routeProvider, this.router) 
     {
         var eventoID = routeProvider.parameters['eventoID'];
 
         //Cargar evento
-        requestDecoded(EventoExportable, Method.GET, "private/evento/$eventoID").then((EventoExportable e)
-        {
-            evento = e;
-            
-            setTargetImage();
-            
-            return cargarVistas(e.id);
+        requestDecoded
+        (
+            Evento,
+            Method.GET,
+            'evento/$eventoID',
+            userId: userId
+        )
+        .then((Evento _evento){
+        if(_evento.failed)
+            return print(_evento.error);            
+        
+        evento = _evento;
+        
+        //Cargar vistas
+        requestDecoded
+        (
+            ListVistaResp,
+            Method.GET,
+            '${evento.href}/vistas',
+            userId: userId
+        )
+        .then((ListVistaResp listVistaResp){
+        if(listVistaResp.failed)
+            return print(listVistaResp.error);
+        evento.vistas =  listVistaResp.vistas;    
+          
+        });
         });
     }
     
-    cargarVistas (String eventID)
+    saveDescripcion ()
     {
-        return requestDecoded(
-            VistasExportableResp, 
-            Method.GET,
-            "private/evento/$eventID/vistas"
+        if(!cambio)
+          return;
+        jsonRequestDecoded
+        (
+            Evento,
+            Method.PUT,
+            evento.href,
+            new Evento()
+                ..descripcion = evento.descripcion,
+            userId: userId
         )
-        .then(doIfSuccess((VistasExportableResp resp)
-        {
-            vistas = resp.vistas;
-        }));
+        .then((Evento evento){
+        if(evento.failed)
+            return print(evento.error);
+        cambio = false;
+        //alert.addAlert({'type': 'success','msg': 'La descripción ha sido guardada exitosamente'});
+        });
     }
     
+    saveNombre ()
+    {
+        jsonRequestDecoded
+        (
+            Evento,
+            Method.PUT,
+            evento.href,
+            new Evento()
+                ..nombre = evento.nombre,
+            userId: userId
+        )
+        .then((Evento evento){
+        if(evento.failed)
+            return print(evento.error);
+        //alert.addAlert({'type': 'success','msg': 'El nombre ha sido guardada exitosamente'});         
+        });
+  
+    }
+    
+      
     save ()
     {
         saveInCollection('evento', evento)
         .then(doIfSuccess((Resp resp)
         {
-            print("Se guardo con exito");
-            alert.addAlert({'type': 'success','msg': 'El evento ha sido guardada exitosamente'}); 
-        if(resp.failed){
-            return print(resp.error);
-        }  
+            print("Se guardo con exito");            
+            if(resp.failed){
+                return print(resp.error);
+            }  
         }));       
         
     }
     
+    /*
+    void closeAlert(Map alert) {
+        alerts.remove(alert);
+    }
+
+     */
+    
     nuevaVista ()
     {
-        print (Method.POST);
-        /*
-        newFromCollection ('vista').then (doIfSuccess ((resp) 
-            => addVistaId (resp.id))
-        );
-         */
-        newFromCollection ('vista').then((IdResp idResp){
         
-        if(idResp.failed){
-            return print(idResp.error);
-        }
+        requestDecoded
+        (
+            Vista,
+            Method.POST,
+            'vista',
+            params: {"eventoID" : evento.id}, 
+            userId: userId
+        )
+        .then((Vista _vista){
+        if(_vista.failed)
+            return print(_vista.error);
         
-        //addVista
-        var eventoID = evento.id;
-        return pushIDtoList('evento', eventoID, 'viewIds', idResp.id).then((Resp resp){
+        evento.vistas.add(_vista);
         
-        if(resp.failed)
-        {
-            return print(resp.error);
-        }
-        
-        var vista = new Vista()
-            ..id = idResp.id
-            ..icon.texto = "Nueva Vista";
-        
-        //saveVista
-        return saveInCollection('vista', vista).then((Resp resp2){
-        
-        if(resp2.failed)
-        {
-            return print (resp2.error);
-        } 
-                      
-        vistas.add (vista);
-        evento.viewIds.add (vista.id);
-        
-        });
-        });
-        });
+        });    
+       
     }
     
     Future<Resp> addVistaId  (String vistaID)

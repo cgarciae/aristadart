@@ -34,19 +34,47 @@ class HomeVista
             userId: userId
         )
         .then((User _user){
-        
-        user = _user;  
+        if(_user.success)
+            user = _user;
+        else
+            print(_user.error);
         });
         
         //Get los eventos
+        
+        requestDecoded
+        (
+            ListEventoResp,
+            Method.GET,
+            'evento/all',
+            userId: userId
+        )
+        .then((ListEventoResp resp){
+        if(resp.success)
+            eventos = resp.eventos;
+        else
+            print(resp.error);    
+          
+        });
         
     }
     
     nuevoEvento ()
     {
-        requestDecoded(IdResp, Method.POST, 'private/evento')
-        
-        .then (doIfSuccess ((resp) => addEventId (resp.id)));
+        requestDecoded
+        (
+            Evento,
+            Method.POST,
+            'evento',
+            userId: userId
+        )
+        .then((Evento evento){
+        if(evento.success)
+            eventos.add(evento);
+        else
+            print(evento.error);    
+          
+        });
     }
     
     Future<Resp> addEventId  (String eventID)
@@ -71,17 +99,21 @@ class HomeVista
     eliminar (Evento e, dom.MouseEvent event)
     {
         event.stopImmediatePropagation();
-        
-        
-        print ("ELIMINAR");
-        
-        deleteFromCollection ('evento', e.id).then((Resp resp){
-
-        if (resp.success)
-            eventos.remove (e);
-        
+       
+        requestDecoded
+        (
+            DbObj,
+            Method.DELETE,
+            e.href,
+            userId: userId
+        )
+        .then((DbObj dbObj){
+        if(dbObj.success)
+            eventos.remove(e);
+        else
+            print(dbObj.error);    
+          
         });
-
     }
     
     go2Admin(){
