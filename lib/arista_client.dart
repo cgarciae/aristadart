@@ -112,7 +112,7 @@ Future<dynamic> jsonRequestDecoded (Type type, String method, String path, Objec
     (
         type, method, path, data: encodeJson(obj),
         onProgress: onProgress, params: params,
-        headers: addToHeaders
+        userId: userId, headers: addToHeaders
         (
             headers,
             {Header.contentType : ContType.applicationJson}
