@@ -12,6 +12,7 @@ import 'package:googleapis/oauth2/v2.dart' as oauth;
 
 part 'components/evento/evento.dart';
 part 'components/widgets/loader/loader.dart';
+part 'components/widgets/dummy/dummy.dart';
 part 'components/widgets/alert/alert.dart';
 part 'components/vista/vista.dart';
 part 'components/login/login.dart';
@@ -217,6 +218,14 @@ class MainController
     MainController (this.router)
     {
         i = this;
+        
+    }
+    
+    int n = 1;
+    
+    agregar() 
+    {
+        Dummy.add ((++n).toString());
     }
     
     logout ()

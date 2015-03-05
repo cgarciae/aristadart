@@ -86,8 +86,7 @@ void ErrorCatchPlugin(app.Manager manager) {
         //print("Catch");
         try
         {
-            
-            var result = route(pathSegments, injector, request);
+            var result = route (pathSegments, injector, request);
             
             if (result is Future)
                 return await result;
@@ -97,7 +96,7 @@ void ErrorCatchPlugin(app.Manager manager) {
         catch (e, s)
         {
             return new Resp()
-                ..error = "$e $s";
+                ..error = "$e     $s";
         }
     
   }, includeGroups: true);
