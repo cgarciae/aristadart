@@ -99,6 +99,7 @@ QueryMap NewQueryMap () => new QueryMap(new Map());
 QueryMap MapToQueryMap (Map map) => new QueryMap(map);
 
 dynamic Cast (Type type, Object obj) => decode (encode(obj), type);
+dynamic Clone (Object obj) => decode (encode(obj), obj.runtimeType);
 
 class Resp
 {

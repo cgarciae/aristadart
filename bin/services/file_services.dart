@@ -30,7 +30,9 @@ class FileServices
         }
         
         
-        metadata
+        FileDb newMetadata = Clone (metadata);
+        
+        newMetadata
             ..id = gridIn.id.toHexString()
             ..filename = file.filename
             ..type = file.contentType.value
@@ -39,7 +41,7 @@ class FileServices
         
         
         //Convert to map and clean null fields
-        var metadataMap = cleanMap(db.encode(metadata));
+        var metadataMap = cleanMap(db.encode(newMetadata));
         
         //Save metadata
         gridIn.metaData = metadataMap;

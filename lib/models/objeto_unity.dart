@@ -12,27 +12,27 @@ class ObjetoUnity extends Ref
     
     bool get active => activeAndroid && activeIOS;
     bool get activeAll => activeAndroid && activeIOS && activeMAC && activeWindows;
-    bool get updated => updatedAndroid && updatedIOS;
-    bool get updatedAll => updatedAndroid && updatedIOS && updatedMAC && updatedWindows;
+    bool get updated => androidUpdated && iosUpdated;
+    bool get updatedAll => androidUpdated && iosUpdated && osxUpdated && windowsUpdated;
     
     @Field() int version;
     @Field() FileDb screenshotId;
     @Field() bool updatePending;
     
-    @Field() FileDb modelIdAndroid;
-    bool get activeAndroid => modelIdAndroid != null && notNullOrEmpty (modelIdAndroid.id);
-    @Field() bool updatedAndroid;
+    @Field() FileDb android;
+    bool get activeAndroid => android != null && notNullOrEmpty (android.id);
+    @Field() bool androidUpdated;
     
-    @Field() FileDb modelIdIOS;
-    bool get activeIOS => modelIdIOS != null && notNullOrEmpty (modelIdIOS.id);
-    @Field() bool updatedIOS;
+    @Field() FileDb ios;
+    bool get activeIOS => ios != null && notNullOrEmpty (ios.id);
+    @Field() bool iosUpdated;
     
-    @Field() FileDb modelIdWindows;
-    bool get activeWindows => modelIdWindows != null && notNullOrEmpty (modelIdWindows.id);
-    @Field() bool updatedWindows;
+    @Field() FileDb windows;
+    bool get activeWindows => windows != null && notNullOrEmpty (windows.id);
+    @Field() bool windowsUpdated;
     
-    @Field() FileDb modelIdMAC;
-    @Field() bool get activeMAC => modelIdMAC != null && notNullOrEmpty (modelIdMAC.id);
-    @Field() bool updatedMAC;
+    @Field() FileDb osx;
+    @Field() bool get activeMAC => osx != null && notNullOrEmpty (osx.id);
+    @Field() bool osxUpdated;
     
 }

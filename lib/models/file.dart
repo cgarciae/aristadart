@@ -15,6 +15,14 @@ class ListFileDb extends Resp
     @Field() List<FileDb> images;
 }
 
+abstract class SystemType
+{
+    static const String ios = "ios";
+    static const String osx = "osx";
+    static const String windows = "windows";
+    static const String android = "android";
+}
+
 abstract class FileDbType
 {
     static const String imagen = "imagen";

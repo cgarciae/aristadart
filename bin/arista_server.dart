@@ -7,13 +7,13 @@ import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'package:crypto/crypto.dart' as crypto;
 import 'package:redstone/server.dart' as app;
-
+import 'package:redstone/query_map.dart';
 import 'package:redstone_mapper_mongo/manager.dart';
 import 'package:redstone_mapper_mongo/service.dart';
 
 import 'package:mongo_dart/mongo_dart.dart';
 import 'package:redstone_mapper/mapper.dart';
-import 'package:redstone/query_map.dart';
+
 import 'package:shelf/shelf.dart' as shelf;
 import 'package:redstone_mapper/plugin.dart';
 import 'package:redstone/server.dart';
