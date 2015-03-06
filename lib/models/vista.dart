@@ -6,7 +6,7 @@ class VistaTotal
     @Field() User owner;
     @Id() String id;
     @Field() String type__;
-    @Field() TextureGUI icon;
+    @Field() String nombre;
 
     //ConstruccionRA
     @Field() ObjetoUnity objetoUnity;
@@ -50,6 +50,7 @@ class Vista extends Ref
     @Field() String get type__ => null;
     @Field() String get href => localHost + 'vista/$id';
     @Field() User owner;
+    @Field() String nombre;
     
     String get icon => IconDir.missingImage;
     
