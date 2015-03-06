@@ -7,9 +7,9 @@ class FileServices
     @app.DefaultRoute(methods: const[app.POST], allowMultipartRequest: true)
     @Private()
     @Encode()
-    Future<FileDb> NewOrUpdate (@app.Body(app.FORM) QueryMap form, 
+    Future<FileDb> NewOrUpdate (@app.Body(app.FORM) Map form, 
                                 @Decode(fromQueryParams: true) FileDb metadata,
-                                [String id]) async
+                                {String id, String ownerId}) async
     {
         HttpBodyFileUpload file = FormToFileUpload(form);
             
@@ -26,7 +26,7 @@ class FileServices
         //Maybe set id
         if (id != null)
         {
-            gridIn.id = StringToId(id);
+            
         }
         
         //Set new metadata
@@ -36,14 +36,26 @@ class FileServices
         else
             newMetadata = new FileDb();
         
+        if (newMetadata.type == null)
+            newMetadata.type = file.contentType.value;
         
+        if (ownerId == null)
+            newMetadata.owner = (new User()
+            ..id = userId);
+        
+        if (id != null)
+        {
+            gridIn.id = StringToId(id);
+            metadata.id = id;
+        }
+        else
+        {
+            metadata.id = gridIn.id.toHexString();
+        }
         
         newMetadata
-            ..id = gridIn.id.toHexString()
-            ..filename = file.filename
-            ..type = file.contentType.value
-            ..owner = (new User()
-                ..id = userId);
+            ..error = null
+            ..filename = file.filename;
         
         print ("Metadata es ${encode(newMetadata)}");
         
@@ -103,8 +115,7 @@ class FileServices
         
         
         if (gridOut == null)
-            return new FileDb()
-                ..error = "El archivo no existe";
+            throw new Exception ("El archivo no existe");
         
         return db.decode(gridOut.metaData, FileDb);
         
@@ -113,12 +124,12 @@ class FileServices
     @app.Route('/:id', methods: const[app.PUT], allowMultipartRequest: true)
     @Private()
     @Encode()
-    Future<FileDb> Update (String id, @app.Body(app.FORM) Map form) async
+    Future<FileDb> Update (String id, @app.Body(app.FORM) Map form, {String ownerId}) async
     {
         
         FileDb metadata = await GetMetadata(id);
         DbObj obj = await Delete (id);
-        FileDb fileDb = await NewOrUpdate(form, metadata, id);
+        FileDb fileDb = await NewOrUpdate(form, metadata, id: id, ownerId: ownerId);
         
         return fileDb;
     }

@@ -23,6 +23,12 @@ abstract class SystemType
     static const String android = "android";
 }
 
+abstract class LocalTargetFileType
+{
+    static const String xml = "xml";
+    static const String dat = "dat";
+}
+
 abstract class FileDbType
 {
     static const String imagen = "imagen";

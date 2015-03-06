@@ -127,7 +127,7 @@ class CloudTargetServices
                     ..error = "Fracaso subir imagen a vuforia: ${response.result_code}";
             
                     
-            FileDb image = await new FileServices().NewOrUpdate (form);
+            FileDb image = await new FileServices().NewOrUpdate (form, new FileDb());
              
             if (image.failed)
                 return new CloudTarget()

@@ -72,16 +72,27 @@ class UserServives
         }
     }
     
+    @app.Route ('/:id', methods: const [app.GET])
+    @Private(ADMIN)
+    @Encode()
+    Future<User> GetUser (String id) async
+    {
+        return Get (id);
+    }
+    
     @app.DefaultRoute (methods: const [app.GET])
     @Private()
     @Encode()
-    Future<User> Get () async
+    Future<User> Get ([String id]) async
     {
+        //Define userId
+        var _userId = id == null ? userId : id;
+        
         User user = await db.findOne
         (
             Col.user,
             User,
-            where.id(StringToId(userId))
+            where.id(StringToId(_userId))
         );
         
         if (user == null)

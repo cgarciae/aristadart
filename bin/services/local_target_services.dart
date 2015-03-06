@@ -1,331 +1,292 @@
 part of aristadart.server;
 
-//POST private/objetounity () -> ObjetoUnitySendResp
-//PUT private/objetounity (json ObjetoUnity) -> Resp
-//GET private/objetounity/:id () -> ObjetoUnitySendResp
-//DELETE private/objetounity/:id () -> Resp
-//POST|PUT private/objetounity/:id/userfile (form FormElement) ->
-//ADMIN >> POST|PUT private/objetounity/:id/modelfile/:system (form FormElement) -> ObjetoUnitySendResp
-//GET private/user/objetounitymodels () -> ObjetoUnitySendListResp
 
-
-@app.Route('/private/localTarget', methods: const [app.POST])
-@Encode()
-newLocalTarget (@app.Attr() MongoDb dbConn) async
-{   
-    try
+@app.Group('/${Col.localTarget}')
+@Catch()
+class LocalImageTargetServices extends MongoDbService<LocalImageTarget>
+{
+    LocalImageTargetServices() : super (Col.localTarget);
+    
+    @app.DefaultRoute (methods: const [app.POST])
+    @Private()
+    @Encode()
+    Future<ObjetoUnity> New () async
     {
-        var obj = new LocalImageTargetSend()
-            ..id = new ObjectId().toHexString()
-            ..name = 'Nuevo Target Local'
+        LocalImageTarget localTarget = new LocalImageTarget()
+            ..name = "Nuevo Target"
             ..version = 0
             ..updatePending = false
-            ..owner = (session["id"] as ObjectId).toHexString();
+            ..datUpdated = false
+            ..xmlUpdated = false
+            ..id = newId()     
+            ..owner = (new User()
+                ..id = userId);
         
-        await dbConn.insert
+        await insert(localTarget);
+        
+        return localTarget;
+    }
+    
+    @app.Route ('/:id', methods: const [app.GET])
+    @Encode()
+    Future<LocalImageTarget> Get (String id) async
+    {
+        LocalImageTarget localTarget = await findOne
         (
-            Col.localTarget, 
-            obj
+            where.id(StringToId(id))
         );
         
-        return new LocalImageTargetSendResp()
-            ..obj = obj;
+        if (localTarget == null)
+            throw new Exception("Local Image Target no encontrado");
+        
+        return localTarget;
     }
-    catch (e, stacktrace)
+    
+    @app.Route ('/:id', methods: const [app.PUT])
+    @Private()
+    @Encode()
+    Future<LocalImageTarget> Update (String id, @Decode() LocalImageTarget delta) async
     {
-        return new LocalImageTargetSendResp()
-            ..error = e.toString() + stacktrace.toString();
-    }
-}
-
-@app.Route('/private/localTarget', methods: const [app.PUT])
-@Encode()
-putLocalTarget (@app.Attr() MongoDb dbConn, @Decode() LocalImageTarget obj) async
-{
-    print (encodeJson(obj));
-    try 
-    {
-        await dbConn.update
+        await db.update
         (
-            Col.localTarget,
-            where.id (StringToId(obj.id)),
-            obj,
-            override: false
+            collectionName,
+            where.id(StringToId(id)),
+            getModifierBuilder(delta)
         );
         
-        return new Resp();
+        return Get(id);
     }
-    catch (e, stacktrace)
+    
+    @app.Route ('/:id', methods: const [app.DELETE])
+    @Private()
+    @Encode()
+    Future<DbObj> Delete (String id) async
     {
-        return new Resp()
-            ..error = e.toString() + stacktrace.toString();
-    }
-}
-
-@app.Route('/private/localTarget/:id', methods: const [app.GET])
-@Encode()
-Future<LocalImageTargetSendResp> getLocalTarget (@app.Attr() MongoDb dbConn, String id) async
-{
-    try
-    {   
-        LocalImageTargetSend obj = await dbConn.findOne
+        await remove
         (
-            Col.localTarget,
-            LocalImageTargetSend,
-            where.id (StringToId (id))
+            where.id(StringToId(id))
         );
         
-        if (obj == null)
-            return new LocalImageTargetSendResp ()
-                ..error = "Local Target not found";
-        
-        
-        return new LocalImageTargetSendResp()
-            ..obj = obj;
+        return new DbObj()
+            ..id = id;
     }
-    catch (e, stacktrace)
+    
+    @app.Route ('/:id/image', methods: const [app.POST, app.PUT], allowMultipartRequest: true)
+    @Private()
+    @Encode()
+    Future<LocalImageTarget> NewOrUpdateUserFile (
+                                    String id, 
+                                    @app.Body(app.FORM) QueryMap form, 
+                                    @Decode(fromQueryParams: true) FileDb metadata) async
     {
-        return new LocalImageTargetSendResp()
-            ..error = e.toString() + stacktrace.toString();
-    }
-}
-
-@app.Route('/private/localTarget/:id', methods: const [app.DELETE])
-@Encode()
-deleteLocalTarget (@app.Attr() MongoDb dbConn, String id) async
-{
-    try
-    {   
-        await dbConn.remove
-        (
-            Col.localTarget,
-            where.id (StringToId (id))
-        );
-
-        return new Resp();
-    }
-    catch (e, stacktrace)
-    {
-        return new Resp()
-            ..error = e.toString() + stacktrace.toString();
-    }
-}
-
-
-@app.Route('/private/localTarget/:id/userfile', methods: const [app.POST, app.PUT], allowMultipartRequest: true)
-@Encode()
-postOrPutLocalTargetImageFile (@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, String id) async
-{
-    try
-    {
-        IdResp fileIdResp;
+        //Variables
+        FileDb userFile;
         
-        LocalImageTargetSendResp objResp = await getLocalTarget (dbConn, id);
+        //Obtener objeto unity
+        LocalImageTarget obj = await Get (id);
         
-        if (! objResp.success)
-            return objResp;
-        
-        if (notNullOrEmpty (objResp.obj.imageId))
+        //Revisar si userFile existe
+        if (obj.image != null)
         {
-            fileIdResp = await updateFile
-            (
-                dbConn, form, 
-                objResp.obj.imageId
-            );
+            //Update
+            userFile = await new FileServices().Update (obj.image.id, form);
         }
         else
         {
-            fileIdResp = await newFile(dbConn, form);
+            //New
+            userFile = await new FileServices().NewOrUpdate(form, metadata);
         }
         
+        //Crear cambios
+        LocalImageTarget delta = new LocalImageTarget()
+            ..updatePending = true
+            ..image = (new FileDb()
+                ..id = userFile.id);
         
-        if (! fileIdResp.success)
-            return fileIdResp;
+        //Guardar cambios
+        await Update (id, delta);
+       
         
-        await dbConn.update
+        return Get(id);
+    }
+    
+    @app.Route ('/:id/publish', methods: const [app.PUT])
+    @Private()
+    @Encode()
+    Future<LocalImageTarget> Publish (String id) async
+    {
+        //Obtener el objeto
+        LocalImageTarget obj = await Get (id);
+        
+        //Avisar error si el objeto no esta propiamente actualizado
+        if (! (obj.active && obj.updated))
+            throw new Exception("No se puede publicar LocalImageTarget. Estado Actual: ${encodeJson(obj)}");
+        
+        //Crear cambios
+        LocalImageTarget delta = new LocalImageTarget()
+            ..version = obj.version + 1
+            ..updatePending = false
+            ..datUpdated = false
+            ..xmlUpdated = false;
+        
+        //Guardar
+        await db.update
         (
-            Col.localTarget,
-            where
-                .id (StringToId (id)),
-            modify
-                .set('imageId', StringToId (fileIdResp.id))
-                .set('updatePending', true)
+            collectionName,
+            where.id(StringToId(id)),
+            getModifierBuilder(delta)
         );
         
-        return fileIdResp; 
+        //Retornar objeto modificado
+        return Get (id);
     }
-    catch (e, stacktrace)
+    
+    @app.Route ('/:id/files', methods: const [app.PUT], allowMultipartRequest: true)
+    @Private()
+    @Encode()
+    Future<LocalImageTarget> UpdateFiles (String id,
+                                @app.Body(app.FORM) QueryMap form) async
     {
-        return new IdResp()
-            ..error = e.toString() + stacktrace.toString();
+        //Definir cambio
+        LocalImageTarget delta = new LocalImageTarget();
+        
+        //Objeto actual
+        LocalImageTarget obj = await Get (id);
+        
+        obj.owner = await new UserServives().GetUser(obj.owner.id);
+        
+        //Si se envio archivo para 'xml'
+        if (form.xml != null && form.xml is app.HttpBodyFileUpload)
+        {
+            //Actualizar FileDb obj.ios
+            FileDb newFile = await actualizarArchivos
+            (
+                obj.xml, LocalTargetFileType.xml, form.xml, obj.owner.id
+            );
+            
+            //Guardar unicamente el [id] en delta
+            delta
+            ..xml = (new FileDb()
+                ..id = newFile.id)
+            ..xmlUpdated = true;
+        }
+        
+        //Si se envio archivo para 'dat'
+        if (form.dat != null && form.dat is app.HttpBodyFileUpload)
+        {
+            //Actualizar FileDb obj.android
+            FileDb newFile = await actualizarArchivos
+            (
+                obj.dat, LocalTargetFileType.dat, form.dat, obj.owner.id
+            );
+          
+            //Guardar unicamente el [id] en delta
+            delta
+            ..dat = (new FileDb()
+                ..id = newFile.id)
+            ..datUpdated = true;
+        }
+        
+        //Guardar cambios
+        return Update(id, delta);
     }
-}
+    
+    @app.Route ('/find', methods: const [app.GET])
+    @Private(ADMIN)
+    @Encode()
+    Future<ListLocalImageTargetResp> Find (@app.QueryParam() bool updatePending,
+           @app.QueryParam() String userId) async
+    {
+        //Definir query object
+        Map query = {};
+        
+        //Buscar usuario
+        if  (userId != null)
+        query["owner._id"] = StringToId (userId);
+        
+        //Agregar pending
+        if (updatePending != null)
+        query["updatePending"] = updatePending;
+        
+        //Buscar lista
+        List<LocalImageTarget> list = await find (query);
+        
+        //Responder
+        return new ListLocalImageTargetResp()
+        ..list = list;
+    }
 
-Future saveOrUpdateImageFile (MongoDb dbConn, Map form, LocalImageTargetSend obj, String extension) async
-{
-    String fileId;
-    
-    if (extension == 'dat')
+    @app.Route ('/all', methods: const [app.GET])
+    @Encode()
+    Future<ListLocalImageTargetResp> All (@app.QueryParam() bool updatePending) async
     {
-        fileId = obj.datId;
-    }
-    else if (extension == 'xml')
-    {
-        fileId = obj.xmlId;
-    }
-    else
-    {
-        return new IdResp()
-            ..error = "Invalid extension path variable: ${extension}";
+        return Find (updatePending, userId);
     }
     
-    IdResp idResp;
-    
-    if (fileId == null)
+    @app.Route ('/deleteAll', methods: const [app.GET])
+    @Private(ADMIN)
+    @Encode()
+    Future<ListLocalImageTargetResp> DeleteAll (@app.QueryParam() bool updatePending,
+                                           @app.QueryParam() String userId) async
     {
-        idResp = await newFile (dbConn, form);
-    }
-    else
-    {
-        idResp = await updateFile(dbConn, form, fileId);
-    }
-    
-    if (! idResp.success)
-        return idResp;
-    
-    if (extension == 'dat')
-    {
-        obj.datId = idResp.id;
-        obj.updatedDat = true;
-    }
-    else if (extension == 'xml')
-    {
-        obj.xmlId = idResp.id;
-        obj.updatedXml = true;
-    }
-    
-    return idResp;   
-}
-
-@app.Route('/private/localTarget/:id/targetfile/:extension', methods: const [app.POST, app.PUT], allowMultipartRequest: true)
-@Encode()
-Future newOrUpdateLocalTargetImageFile (@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, String id, String extension) async
-{
-    try
-    {
-        LocalImageTargetSendResp objResp = await getLocalTarget(dbConn, id);
+        //Definir query object
+        Map query = {};
                 
-        if (! objResp.success)
-            return objResp;
+        //Buscar usuario
+        if  (userId != null)
+            query["owner._id"] = StringToId (userId);
         
-        IdResp idResp = await saveOrUpdateImageFile (dbConn, form, objResp.obj, extension);
+        //Agregar pending
+        if (updatePending != null)
+            query["updatePending"] = updatePending;
         
-        if (! idResp.success)
-            return idResp;
+        //Eliminar lista
+        await remove (query);
         
-        await dbConn.update
-        (
-            Col.localTarget,
-            where.id (StringToId (id)),
-            objResp.obj,
-            override: false
-        );
-        
-        return objResp;
-        
+        //Responder
+        return Find(updatePending, userId);
     }
-    catch (e, stacktrace)
+ 
+    Future<FileDb> actualizarArchivos (FileDb modelo, 
+                                        String extension, 
+                                        app.HttpBodyFileUpload fileUpload,
+                                        String ownerId) async
     {
-        return new LocalImageTargetSendResp()
-            ..error = e.toString() + stacktrace.toString();
-    }
-}
-
-@app.Route ('/private/localTarget/:id/publish', methods: const [app.GET])
-@Encode ()
-Future publishLocalTarget (@app.Attr() MongoDb dbConn, String id) async
-{
-    try
-    {
-        LocalImageTargetSendResp objResp = await getLocalTarget(dbConn, id);
-        
-        if (objResp.failed)
-            return objResp;
-        
-        if (! objResp.obj.updated)
-            return new Resp ()
-               ..error = "No se han actualizado todos los archivos del Local Target";
-        
-        await dbConn.update
-        (
-            Col.localTarget,
-            where
-                .id (StringToId (id)),
-            modify
-                .set('updatePending', false)
-                .inc('version', 1)
-                .set('updatedXml', false)
-                .set('updatedDat', false)
-                
-        );
-        
-        return new Resp();
-    }
-    catch (e, stacktrace)
-    {
-        return new Resp()
-            ..error = e.toString() + stacktrace.toString();
-    }
-}
-
-
-
-
-
-@app.Route('/private/user/localTargets', methods: const [app.GET])
-@Encode()
-Future<LocalImageTargetSendListResp> userLocalTargets (@app.Attr() MongoDb dbConn) async
-{
-    try
-    {  
-        List<LocalImageTargetSend> objs = await dbConn.find
-        (
-            Col.localTarget,
-            LocalImageTargetSend,
-            where
-                .eq('owner', userId)
-        );
-
-        return new LocalImageTargetSendListResp()
-            ..objs = objs;
-    }
-    catch (e, stacktrace)
-    {
-        return new LocalImageTargetSendListResp()
-            ..error = e.toString() + stacktrace.toString();
-    }
-}
-
-@app.Route ('/private/localTarget/pending', methods: const [app.GET], allowMultipartRequest: true)
-@Encode ()
-Future<LocalImageTargetSendListResp> getLocalTargetPending (@app.Attr() MongoDb dbConn) async
-{
-    try
-    {
-        List<LocalImageTargetSend> objs = await dbConn.find
-        (
-            Col.localTarget,
-            LocalImageTargetSend,
-            where
-                .eq ('updatePending', true)
-        );
-        
-        return new LocalImageTargetSendListResp()
-            ..objs = objs;
-    }
-    catch (e, stacktrace)
-    {
-        return new LocalImageTargetSendListResp()
-            ..error = e.toString() + stacktrace.toString();
+        //Definir nuevo form
+          Map newForm = {extension : fileUpload};
+          
+          //Resultado
+          FileDb file;
+          
+          print ("Actualizando $extension");
+          
+          //Si ios ya existe
+          if (modelo != null && modelo.id != null)
+          {
+              print ("Modelo Existe en $extension");
+              file = await new FileServices().Update
+              (
+                  modelo.id,
+                  newForm,
+                  ownerId: ownerId
+              );
+          }
+          else
+          {
+              var metadata = new FileDb()
+                ..type = extension;
+              
+              print ("Modelo no existe en $extension");
+              file = await new FileServices().NewOrUpdate
+              (
+                  newForm,
+                  metadata,
+                  ownerId: ownerId
+              );
+          }
+          
+          print ("Finalizo Actualizacion en $extension, el archivo es ${encodeJson(file)}");
+          
+          return file;
     }
 }

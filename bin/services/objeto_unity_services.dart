@@ -1,16 +1,8 @@
 part of aristadart.server;
 
-//POST private/objetounity () -> ObjetoUnitySendResp
-//PUT private/objetounity (json ObjetoUnity) -> Resp
-//GET private/objetounity/:id () -> ObjetoUnitySendResp
-//DELETE private/objetounity/:id () -> Resp
-//POST|PUT private/objetounity/:id/userfile (form FormElement) ->
-//ADMIN >> POST|PUT private/objetounity/:id/modelfile/:system (form FormElement) -> ObjetoUnitySendResp
-//GET private/user/objetounitymodels () -> ObjetoUnitySendListResp
-
 
 @app.Group('/${Col.objetoUnity}')
-//@Catch()
+@Catch()
 class ObjetoUnityServices extends MongoDbService<ObjetoUnity>
 {
     ObjetoUnityServices() : super (Col.objetoUnity);
@@ -67,7 +59,7 @@ class ObjetoUnityServices extends MongoDbService<ObjetoUnity>
         return Get(id);
     }
     
-    @app.Route ('/:id', methods: const [app.PUT])
+    @app.Route ('/:id', methods: const [app.DELETE])
     @Private()
     @Encode()
     Future<DbObj> Delete (String id) async
@@ -156,7 +148,7 @@ class ObjetoUnityServices extends MongoDbService<ObjetoUnity>
     @app.Route ('/:id/models', methods: const [app.PUT], allowMultipartRequest: true)
     @Private()
     @Encode()
-    Future<ObjetoUnity> SaveAll (String id,
+    Future<ObjetoUnity> UpdateModels (String id,
                                 @app.Body(app.FORM) QueryMap form) async
     {
         //Definir cambio
@@ -165,13 +157,15 @@ class ObjetoUnityServices extends MongoDbService<ObjetoUnity>
         //Objeto actual
         ObjetoUnity obj = await Get (id);
         
+        obj.owner = await new UserServives().GetUser(obj.owner.id);
+        
         //Si se envio archivo para 'ios'
         if (form.ios != null && form.ios is app.HttpBodyFileUpload)
         {
             //Actualizar FileDb obj.ios
             FileDb newFile = await actualizarModelo
             (
-                obj.ios, SystemType.ios, form.ios
+                obj.ios, SystemType.ios, form.ios, obj.owner.id
             );
             
             //Guardar unicamente el [id] en delta
@@ -187,7 +181,7 @@ class ObjetoUnityServices extends MongoDbService<ObjetoUnity>
             //Actualizar FileDb obj.android
             FileDb newFile = await actualizarModelo
             (
-                obj.android, SystemType.android, form.android
+                obj.android, SystemType.android, form.android, obj.owner.id
             );
           
             //Guardar unicamente el [id] en delta
@@ -202,7 +196,7 @@ class ObjetoUnityServices extends MongoDbService<ObjetoUnity>
             //Actualizar FileDb obj.windows
             FileDb newFile = await actualizarModelo
             (
-                obj.windows, SystemType.windows, form.windows
+                obj.windows, SystemType.windows, form.windows, obj.owner.id
             );
           
             //Guardar unicamente el [id] en delta
@@ -217,7 +211,7 @@ class ObjetoUnityServices extends MongoDbService<ObjetoUnity>
             //Actualizar FileDb obj.osx
             FileDb newFile = await actualizarModelo
             (
-                obj.osx, SystemType.osx, form.osx
+                obj.osx, SystemType.osx, form.osx, obj.owner.id
             );
           
             //Guardar unicamente el [id] en delta
@@ -231,6 +225,31 @@ class ObjetoUnityServices extends MongoDbService<ObjetoUnity>
         return Update(id, delta);
     }
     
+    @app.Route ('/find', methods: const [app.GET])
+    @Private(ADMIN)
+    @Encode()
+    Future<ListObjetoUnityResp> Find (@app.QueryParam() bool updatePending,
+           @app.QueryParam() String userId) async
+    {
+        //Definir query object
+        Map query = {};
+        
+        //Buscar usuario
+        if  (userId != null)
+        query["owner._id"] = StringToId (userId);
+        
+        //Agregar pending
+        if (updatePending != null)
+        query["updatePending"] = updatePending;
+        
+        //Buscar lista
+        List<ObjetoUnity> list = await find (query);
+        
+        //Responder
+        return new ListObjetoUnityResp()
+        ..list = list;
+    }
+
     @app.Route ('/all', methods: const [app.GET])
     @Encode()
     Future<ObjetoUnity> All (@app.QueryParam() bool updatePending) async
@@ -261,34 +280,11 @@ class ObjetoUnityServices extends MongoDbService<ObjetoUnity>
         //Responder
         return Find(updatePending, userId);
     }
-                                 
-    
-    @app.Route ('/find', methods: const [app.GET])
-    @Private(ADMIN)
-    @Encode()
-    Future<ListObjetoUnityResp> Find (@app.QueryParam() bool updatePending,
-                                   @app.QueryParam() String userId) async
-    {
-        //Definir query object
-        Map query = {};
-        
-        //Buscar usuario
-        if  (userId != null)
-            query["owner._id"] = StringToId (userId);
-        
-        //Agregar pending
-        if (updatePending != null)
-            query["updatePending"] = updatePending;
-        
-        //Buscar lista
-        List<ObjetoUnity> list = await find (query);
-        
-        //Responder
-        return new ListObjetoUnityResp()
-            ..list = list;
-    }
-    
-    Future<FileDb> actualizarModelo (FileDb modelo, String system, app.HttpBodyFileUpload fileUpload) async
+ 
+    Future<FileDb> actualizarModelo (FileDb modelo, 
+                                    String system,
+                                    app.HttpBodyFileUpload fileUpload,
+                                    String ownerId) async
     {
         //Definir nuevo form
           Map newForm = {system : fileUpload};
@@ -305,7 +301,8 @@ class ObjetoUnityServices extends MongoDbService<ObjetoUnity>
               file = await new FileServices().Update
               (
                   modelo.id,
-                  newForm
+                  newForm,
+                  ownerId: ownerId
               );
           }
           else
@@ -317,7 +314,8 @@ class ObjetoUnityServices extends MongoDbService<ObjetoUnity>
               file = await new FileServices().NewOrUpdate
               (
                   new QueryMap (newForm),
-                  metadata
+                  metadata,
+                  ownerId: ownerId
               );
           }
           

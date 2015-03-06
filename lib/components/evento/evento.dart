@@ -158,14 +158,7 @@ class EventoVista
         });
     }
     
-    String iconoURL (Vista v)
-    {
-        var opcion = v.icon.urlTextura.split(r'/').last; 
-        if ((opcion == null) || (opcion == ''))
-           opcion = 'missing_image';
-        return 'images/webapp/${opcion}.png';
-        
-    }
+    
     
     upload (dom.MouseEvent event)
     {

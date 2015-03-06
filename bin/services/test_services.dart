@@ -113,49 +113,6 @@ gridFSTestFiles(@app.Attr() MongoDb dbConn)
     });
 }
 
-@app.Route("/test/send/:fileID")
-sendImage(@app.Attr() MongoDb dbConn, String fileID)
-{
-    GridFS gridFS = new GridFS (dbConn.innerConn);
-    ObjectId objID = StringToId(fileID);
-            
-    return gridFS.findOne(where.id(objID)).then((GridOut gridOut)
-    {
-        if (gridOut == null)
-        {
-            return {'success' : false};
-        }
-        
-        return getData(gridOut).toList().then(flatten).then((List<int> list)
-        { 
-            var base64Image = crypto.CryptoUtils.bytesToBase64 (list);
-            var metadata = crypto.CryptoUtils.bytesToBase64 ("Funciona!".codeUnits);
-            
-            String body = conv.JSON.encode
-            ({
-                "name": "test1",
-                "width" : 1.0,
-                "image" : base64Image,
-                "application_metadata" : metadata
-            });
-            
-            return makeVuforiaRequest("POST", "/targets", body, "application/json").send()
-            
-            .then((http.StreamedResponse resp)
-            {
-                print ("Request headers ${resp.request.headers}");
-                print ("Response headers ${resp.headers}");
-                
-                return resp.stream.toList();
-            })
-            .then(flatten).then((List<int> list)
-            {   
-                return bytesToJSON (list);
-            });
-            
-        });
-    });
-}
 
 @app.Route ('/test/async')
 @Encode()

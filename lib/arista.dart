@@ -135,20 +135,20 @@ class VistasResp extends Resp
     @Field() List<Vista> vistas = [];
 }
 
-class VistasExportableResp extends Resp
-{
-    @Field() List<VistaExportable> vistas = [];
-}
+//class VistasExportableResp extends Resp
+//{
+//    @Field() List<VistaExportable> vistas = [];
+//}
 
 class VistaResp extends Resp
 {
     @Field() Vista vista;
 }
 
-class VistaExportableResp extends Resp
-{
-    @Field() VistaExportable vista;
-}
+//class VistaExportableResp extends Resp
+//{
+//    @Field() VistaExportable vista;
+//}
 
 class IdResp extends Resp
 {
@@ -165,15 +165,15 @@ class UserResp extends Resp
     @Field() User user;
 }
 
-class UserAdminResp extends Resp
-{
-    @Field() UserAdmin user;
-}
-
-class EventoExportableResp extends Resp
-{
-    @Field() EventoExportable evento;
-}
+//class UserAdminResp extends Resp
+//{
+//    @Field() UserAdmin user;
+//}
+//
+//class EventoExportableResp extends Resp
+//{
+//    @Field() EventoExportable evento;
+//}
 
 class UrlResp extends Resp
 {
@@ -185,30 +185,30 @@ class ObjetoUnityResp extends Resp
     @Field() ObjetoUnity obj;
 }
 
-class ObjetoUnitySendResp extends Resp
-{
-    @Field() ObjetoUnitySend obj;
-}
-
-class LocalImageTargetSendResp extends Resp
-{
-    @Field() LocalImageTargetSend obj;
-}
-
-class ObjetoUnitySendListResp extends Resp
-{
-    @Field() List<ObjetoUnitySend> objs;
-}
-
-class LocalImageTargetSendListResp extends Resp
-{
-    @Field() List<LocalImageTargetSend> objs;
-}
-
-class RecoTargetResp extends Resp
-{
-    @Field() CloudImageTarget recoTarget;
-}
+//class ObjetoUnitySendResp extends Resp
+//{
+//    @Field() ObjetoUnitySend obj;
+//}
+//
+//class LocalImageTargetSendResp extends Resp
+//{
+//    @Field() LocalImageTargetSend obj;
+//}
+//
+//class ObjetoUnitySendListResp extends Resp
+//{
+//    @Field() List<ObjetoUnitySend> objs;
+//}
+//
+//class LocalImageTargetSendListResp extends Resp
+//{
+//    @Field() List<LocalImageTargetSend> objs;
+//}
+//
+//class RecoTargetResp extends Resp
+//{
+//    @Field() CloudImageTarget recoTarget;
+//}
 /*
 class MapResp extends Resp
 {

@@ -8,7 +8,7 @@ class LocalImageTarget extends Ref
     @Field() User owner;
     
     @NotEmpty()
-    @Field() FileDb imageId;
+    @Field() FileDb image;
     
     @NotEmpty()
     @Field() bool updatePending;
@@ -17,13 +17,18 @@ class LocalImageTarget extends Ref
     @Field () int version = 0;
     
     @Field () bool get active => activeDat && activeXml;
-    @Field() bool get updated => updatedDat && updatedXml;
+    @Field() bool get updated => datUpdated && xmlUpdated;
     
-    @Field() FileDb datFile;
-    @Field() bool get activeDat => datFile != null && notNullOrEmpty(datFile.id);
-    @Field() bool updatedDat = false;
+    @Field() FileDb dat;
+    @Field() bool get activeDat => dat != null && notNullOrEmpty(dat.id);
+    @Field() bool datUpdated = false;
     
-    @Field() FileDb xmlFile;
-    @Field() bool get activeXml => xmlFile != null && notNullOrEmpty(xmlFile.id);
-    @Field() bool updatedXml = false;
+    @Field() FileDb xml;
+    @Field() bool get activeXml => xml != null && notNullOrEmpty(xml.id);
+    @Field() bool xmlUpdated = false;
+}
+
+class ListLocalImageTargetResp extends Resp
+{
+    @Field() List<LocalImageTarget> list;
 }
