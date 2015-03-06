@@ -1,63 +1,57 @@
 part of aristadart.server;
 
 @app.Group('/file')
+@Catch()
 class FileServices
 {
     @app.DefaultRoute(methods: const[app.POST], allowMultipartRequest: true)
     @Private()
     @Encode()
     Future<FileDb> NewOrUpdate (@app.Body(app.FORM) QueryMap form, 
-                                @Decode(fromQueryParams: true) FileDb fileDb,
+                                @Decode(fromQueryParams: true) FileDb metadata,
                                 [String id]) async
     {
-        try
+        HttpBodyFileUpload file = FormToFileUpload(form);
+            
+        if (file == null || file.content == null || file.content.length == 0)
+            throw new Exception("File is null or empty");
+        
+        //Define input from uploaded file
+        var input = new Stream.fromIterable([file.content]);
+        
+        //Create gridFS file
+        var gridIn = fs.createFile(input, file.filename)
+            ..contentType = file.contentType.value;
+        
+        //Maybe set id
+        if (id != null)
         {
-            HttpBodyFileUpload file = FormToFileUpload(form);
-            
-            if (file == null || file.content == null || file.content.length == 0)
-                return new FileDb()
-                    ..error = "File is null or empty";
-            
-            //Define input from uploaded file
-            var input = new Stream.fromIterable([file.content]);
-            
-            //Create gridFS file
-            var gridIn = fs.createFile(input, file.filename)
-                ..contentType = file.contentType.value;
-            
-            //Maybe set id
-            if (id != null)
-            {
-                gridIn.id = StringToId(id);
-            }
-            
-            
-            fileDb
-                ..id = gridIn.id.toHexString()
-                ..filename = file.filename
-                ..owner = (new User()
-                    ..id = userId);
-            
-            if (file.contentType.value.contains("image"))
-                fileDb.type = file.contentType.value;
-            
-            
-            //Convert to map and clean null fields
-            var metadata = cleanMap(db.encode(fileDb));
-            
-            //Save metadata
-            gridIn.metaData = metadata;
-                   
-            //Wait till save finishes
-            await gridIn.save();
-            
-            return fileDb;
+            gridIn.id = StringToId(id);
         }
-        catch (e, s)
-        {
-            return new FileDb()
-                ..error = "$e $s";
-        }
+        
+        
+        FileDb newMetadata = Clone (metadata);
+        
+        newMetadata
+            ..id = gridIn.id.toHexString()
+            ..filename = file.filename
+            ..type = file.contentType.value
+            ..owner = (new User()
+                ..id = userId);
+        
+        
+        //Convert to map and clean null fields
+        var metadataMap = cleanMap(db.encode(newMetadata));
+        
+        //Save metadata
+        gridIn.metaData = metadataMap;
+               
+        //Wait till save finishes
+        await gridIn.save();
+        
+        print ("1");
+        
+        return metadata;
     }
     
     @app.Route ('/:id', methods: const [app.GET])
@@ -91,25 +85,21 @@ class FileServices
     @Encode()
     Future<FileDb> GetMetadata (String id) async
     {
-        try
-        {
-            GridOut gridOut = await fs.findOne
-            (
-                where.id (StringToId(id))
-            );
-            
-            
-            if (gridOut == null)
-                return new FileDb()
-                    ..error = "El archivo no existe";
-            
-            return db.decode(gridOut.metaData, FileDb);
-        }
-        catch (e, s)
-        {
+        if (id == null)
+            throw new Exception("No se pudo obtener metadata: id null");
+        
+        GridOut gridOut = await fs.findOne
+        (
+            where.id (StringToId(id))
+        );
+        
+        
+        if (gridOut == null)
             return new FileDb()
-                ..error = "$e $s";
-        }
+                ..error = "El archivo no existe";
+        
+        return db.decode(gridOut.metaData, FileDb);
+        
     }
     
     @app.Route('/:id', methods: const[app.PUT], allowMultipartRequest: true)
@@ -117,24 +107,12 @@ class FileServices
     @Encode()
     Future<FileDb> Update (String id, @app.Body(app.FORM) Map form) async
     {
-        try
-        {
-            DbObj obj = await Delete (id);
-            
-            if (obj.failed)
-                return new FileDb()
-                    ..error = obj.error;
-            
-            FileDb fileDb = await NewOrUpdate(form, id);
-            
-            return fileDb;
-            
-        }
-        catch (e, s)
-        {
-            return new FileDb()
-                ..error = "$e $s";
-        }
+        
+        FileDb metadata = await GetMetadata(id);
+        DbObj obj = await Delete (id);
+        FileDb fileDb = await NewOrUpdate(form, metadata, id);
+        
+        return fileDb;
     }
     
     @app.Route('/:id', methods: const[app.DELETE])
@@ -142,18 +120,10 @@ class FileServices
     @Encode()
     Future<DbObj> Delete (String id) async
     {
-        try
-        {
-             await deleteFile(id);
+        await deleteFile(id);
              
-             return new DbObj()
-                ..id = id;
-        }
-        catch (e, s)
-        {
-            return new DbObj()
-                ..error = "$e $s";
-        }
+        return new DbObj()
+            ..id = id;
     }
     
     @app.Route('/all', methods: const[app.GET])

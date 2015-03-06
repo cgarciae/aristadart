@@ -3,11 +3,8 @@ part of aristadart.general;
 class TextureGUI
 {
     @Field() String path;
-    
-    @Field() bool web = true;
-    
+    @Field() bool web = true;    
     @Field() FileDb file;
-    
     @Field() String get urlTextura
     {
         if (web)

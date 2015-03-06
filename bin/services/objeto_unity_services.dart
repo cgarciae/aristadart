@@ -9,290 +9,237 @@ part of aristadart.server;
 //GET private/user/objetounitymodels () -> ObjetoUnitySendListResp
 
 
-@app.Route('/private/objetounity', methods: const [app.POST])
-@Encode()
-newObjetoUnity (@app.Attr() MongoDb dbConn) async
-{   
-    try
-    {
-        var obj = new ObjetoUnitySend()
-            ..init()
-            ..id = new ObjectId().toHexString()            
-            ..owner = (session["id"] as ObjectId).toHexString();
-        
-        await dbConn.insert (Col.objetoUnity, obj);
-        
-        return new ObjetoUnitySendResp()
-            ..obj = obj;
-    }
-    catch (e, stacktrace)
-    {
-        return new ObjetoUnitySendResp()
-            ..error = e.toString() + stacktrace.toString();
-    }
-}
-
-@deprecated
-@app.Route('/private/objetounity', methods: const [app.PUT])
-@Encode()
-putObjetoUnity (@app.Attr() MongoDb dbConn, @Decode() ObjetoUnity obj) async
+@app.Group('/${Col.objetoUnity}')
+@Catch()
+class ObjetoUnityServices extends MongoDbService<ObjetoUnity>
 {
-    try 
+    ObjetoUnityServices() : super (Col.objetoUnity);
+    
+    @app.DefaultRoute (methods: const [app.POST])
+    @Private()
+    @Encode()
+    Future<ObjetoUnity> New () async
     {
-        await dbConn.update
-        (
-            Col.objetoUnity,
-            where.id (StringToId(obj.id)),
-            obj,
-            override: false
-        );
+        ObjetoUnity obj = new ObjetoUnity()
+            ..name = "Nuevo Modelo"
+            ..version = 0
+            ..updatePending = false
+            ..updatedAndroid = false
+            ..updatedIOS = false
+            ..updatedWindows = false
+            ..updatedMAC= false
+            ..id = newId()     
+            ..owner = (new User()
+                ..id = userId);
         
-        return new Resp();
-    }
-    catch (e, stacktrace)
-    {
-        return new Resp()
-            ..error = e.toString() + stacktrace.toString();
-    }
-}
-
-
-@app.Route('/private/objetounity/:id', methods: const [app.PUT])
-@Encode()
-putObjetoUnity2 (@app.Attr() MongoDb dbConn, @Decode() ObjetoUnitySend obj, String id) async
-{
-    try 
-    {
-        print (id);
+        await insert(obj);
         
-        await dbConn.update
-        (
-            Col.objetoUnity,
-            where.id (StringToId(id)),
-            getRefModifierBuilder(obj)
-        );
-        
-        return dbConn.findOne
-        (
-            Col.objetoUnity,
-            ObjetoUnitySend,
-            where.id (StringToId(id))
-        );
+        return obj;
     }
-    catch (e, stacktrace)
+    
+    @app.Route ('/:id', methods: const [app.GET])
+    @Encode()
+    Future<ObjetoUnity> Get (String id) async
     {
-        return new Resp()
-            ..error = e.toString() + stacktrace.toString();
-    }
-}
-
-@app.Route('/private/objetounity/:id', methods: const [app.GET])
-@Encode()
-Future<ObjetoUnitySendResp> getObjetoUnity (@app.Attr() MongoDb dbConn, String id) async
-{
-    try
-    {   
-        ObjetoUnitySend obj = await dbConn.findOne
+        ObjetoUnity obj = await findOne
         (
-            Col.objetoUnity,
-            ObjetoUnitySend,
             where.id(StringToId(id))
         );
         
         if (obj == null)
-            return new ObjetoUnitySendResp()
-                ..error = "Objeto Unity not found";
+            throw new Exception("Objecto Unity no encontrado");
         
-        
-        return new ObjetoUnitySendResp()
-            ..obj = obj;
+        return obj;
     }
-    catch (e, stacktrace)
+    
+    @app.Route ('/:id', methods: const [app.PUT])
+    @Private()
+    @Encode()
+    Future<ObjetoUnity> Update (String id, @Decode() ObjetoUnity delta) async
     {
-        return new ObjetoUnitySendResp()
-            ..error = e.toString() + stacktrace.toString();
-    }
-}
-
-@app.Route('/private/objetounity/:id', methods: const [app.DELETE])
-@Encode()
-deleteObjetoUnity (@app.Attr() MongoDb dbConn, String id) async
-{
-    try
-    {   
-        await dbConn.remove
+        await db.update
         (
-            Col.objetoUnity,
+            collectionName,
+            where.id(StringToId(id)),
+            getModifierBuilder(delta)
+        );
+        
+        return Get(id);
+    }
+    
+    @app.Route ('/:id', methods: const [app.PUT])
+    @Private()
+    @Encode()
+    Future<DbObj> Delete (String id) async
+    {
+        await remove
+        (
             where.id(StringToId(id))
         );
-
-        return new Resp();
+        
+        return new DbObj()
+            ..id = id;
     }
-    catch (e, stacktrace)
+    
+    @app.Route ('/:id/userFile', methods: const [app.POST, app.PUT], allowMultipartRequest: true)
+    @Private()
+    @Encode()
+    Future<ObjetoUnity> NewOrUpdateUserFile (
+                                    String id, 
+                                    @app.Body(app.FORM) QueryMap form, 
+                                    @Decode(fromQueryParams: true) FileDb metadata) async
     {
-        return new Resp()
-            ..error = e.toString() + stacktrace.toString();
-    }
-}
-
-
-@app.Route('/private/objetounity/:id/userfile', methods: const [app.POST, app.PUT], allowMultipartRequest: true)
-@Encode()
-postOrPutObjetoUnityUserFile (@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, String id) async
-{
-    try
-    {
-        Resp resp;
-        IdResp idResp;
-        ObjetoUnitySendResp objResp;
+        //Variables
+        FileDb userFile;
         
-        resp = await getObjetoUnity(dbConn, id);
+        //Obtener objeto unity
+        ObjetoUnity obj = await Get (id);
         
-        if (! resp.success)
-            return resp;
-        
-        objResp = resp as ObjetoUnitySendResp;
-        
-        if (notNullOrEmpty (objResp.obj.userFileId))
+        //Revisar si userFile existe
+        if (obj.userFile != null)
         {
-            resp = await updateFile 
-                    (dbConn, form, objResp.obj.userFileId);
+            //Update
+            userFile = await new FileServices().Update (obj.userFile.id, form);
         }
         else
         {
-            resp = await newFile(dbConn, form);
+            //New
+            userFile = await new FileServices().NewOrUpdate(form, metadata);
         }
         
+        //Crear cambios
+        ObjetoUnity delta = new ObjetoUnity()
+            ..updatePending = true
+            ..userFile = (new FileDb()
+                ..id = userFile.id);
         
-        if (! resp.success)
-            return resp;
+        //Guardar cambios
+        await Update (id, delta);
+       
         
-        idResp = resp as IdResp;
+        return Get(id);
+    }
+    
+    /**
+     * [id] es el id del ObjetoUnity en Mongo
+     * [form] es el FORM representado en un `QueryMap` del request
+     * [metadata] son los parametros query del request representados en un FileDb
+     * 
+     * [metadata] como minimo debe especificar el campo `system` con el sistema operativo corresponde
+     * al modelo. Ver [SystemType] para saber las opciones.
+     */
+    @app.Route ('/:id/model', methods: const [app.POST, app.PUT], allowMultipartRequest: true)
+    @Private()
+    @Encode()
+    Future<ObjetoUnity> NewOrUpdateModel (
+                                    String id, 
+                                    @app.Body(app.FORM) QueryMap form, 
+                                    @Decode(fromQueryParams: true) FileDb metadata) async {
         
-        await dbConn.update
+        if (metadata.system == null)
+            throw new Exception("No se especifico el sistema en el metadata. Ver SystemType");
+        
+        //Variables
+        FileDb modelFile;
+        
+        //Obtener objeto unity
+        ObjetoUnity obj = await Get (id);
+        
+        FileDb actualFile = getModel(obj, metadata.system);
+        
+        //Revisar si userFile existe
+        if (actualFile != null)
+        {
+            //Update
+            modelFile = await new FileServices().Update (actualFile.id, form);
+        }
+        else
+        {
+            //New
+            modelFile = await new FileServices().NewOrUpdate(form, metadata);
+        }
+        
+        //Crear cambios
+        ObjetoUnity delta = getDelta (modelFile.id, metadata.system);
+        
+        //Guardar cambios
+        await Update (id, delta);
+       
+        return Get(id);
+    }
+    
+    FileDb getModel (ObjetoUnity obj, String system)
+    {
+        switch (system)
+        {
+            case SystemType.ios:
+                return obj.ios;
+            case SystemType.osx:
+                return obj.osx;
+            case SystemType.android:
+                return obj.android;
+            case SystemType.windows:
+                return obj.windows;
+            default:
+                throw new Exception("Tipo de sistema incorrecto: $system");
+        }
+    }
+    
+    ObjetoUnity getDelta (String fileId, String system)
+    {
+        FileDb newFile = new FileDb()
+            ..id = fileId;
+        
+        switch (system)
+        {
+            case SystemType.ios:
+                return new ObjetoUnity()
+                ..ios = newFile
+                ..iosUpdated = true;
+            case SystemType.osx:
+                return new ObjetoUnity()
+                ..osx = newFile
+                ..osxUpdated = true;
+            case SystemType.android:
+                return new ObjetoUnity()
+                ..android = newFile
+                ..androidUpdated = true;
+            case SystemType.windows:
+                return new ObjetoUnity()
+                ..windows = newFile
+                ..windowsUpdated = true;
+            default:
+                throw new Exception("Tipo de sistema incorrecto: $system");
+        }
+    }
+    
+    @app.Route ('/:id/publish', methods: const [app.PUT])
+    @Private()
+    @Encode()
+    Future<ObjetoUnity> Publish (String id) async
+    {
+        //Obtener el objeto
+        ObjetoUnity obj = await Get (id);
+        
+        //Avisar error si el objeto no esta propiamente actualizado
+        if (! (obj.active && obj.updated))
+            throw new Exception("No se puede publicar ObjetoUnity. Estado Actual: ${encodeJson(obj)}");
+        
+        //Crear cambios
+        ObjetoUnity delta = new ObjetoUnity()
+            ..version += 1
+            ..updatePending = false;
+        
+        //Guardar
+        await db.update
         (
-            Col.objetoUnity,
-            where
-                .id (StringToId (id)),
-            modify
-                .set('userFileId', StringToId (idResp.id))
-                .set('updatePending', true)
+            collectionName,
+            where.id(StringToId(id)),
+            getModifierBuilder(delta)
         );
         
-        return idResp; 
-    }
-    catch (e, stacktrace)
-    {
-        return new Resp()
-            ..error = e.toString() + stacktrace.toString();
-    }
-}
-
-Future saveOrUpdateModelFile (MongoDb dbConn, Map form, ObjetoUnitySend obj, String system) async
-{
-    String fileId;
-    
-    if (system == 'android')
-    {
-        fileId = obj.modelIdAndroid;
-    }
-    else if (system == 'ios')
-    {
-        fileId = obj.modelIdIOS;
-    }
-    else if (system == 'windows')
-    {
-        fileId = obj.modelIdWindows;
-    }
-    else if (system == 'mac')
-    {
-        fileId = obj.modelIdMAC;
-    }
-    else
-    {
-        return new Resp()
-            ..error = "Invalid system path variable: ${system}";
-    }
-    
-    Resp resp;
-    IdResp idResp;
-    
-    if (fileId == null)
-    {
-        resp = await newFile (dbConn, form);
-    }
-    else
-    {
-        resp = await updateFile(dbConn, form, fileId);
-    }
-    
-    if (resp is IdResp && resp.success)
-    {
-        idResp = resp;
-    }
-    else
-    {
-        return resp;
-    }
-    
-    if (system == 'android')
-    {
-        obj.modelIdAndroid = idResp.id;
-        obj.updatedAndroid = true;
-    }
-    else if (system == 'ios')
-    {
-        obj.modelIdIOS = idResp.id;
-        obj.updatedIOS = true;
-    }
-    else if (system == 'windows')
-    {
-        obj.modelIdWindows = idResp.id;
-        obj.updatedWindows = true;
-    }
-    else if (system == 'mac')
-    {
-        obj.modelIdMAC = idResp.id;
-        obj.updatedMAC = true;
-    }
-    
-    return idResp;   
-}
-
-@app.Route('/private/objetounity/:id/modelfile/:system', methods: const [app.POST, app.PUT], allowMultipartRequest: true)
-@Encode()
-@Secure(ADMIN)
-Future newOrUpdateObjetoUnityModelFile (@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, String id, String system) async
-{
-    try
-    {
-        Resp objResp = await getObjetoUnity(dbConn, id);
-                
-        if (! objResp.success)
-            return objResp;
-        
-        ObjetoUnitySend obj = (objResp as ObjetoUnitySendResp).obj;
-        
-        Resp resp = await saveOrUpdateModelFile (dbConn, form, obj, system);
-        
-        if (! resp.success)
-            return resp;
-        
-        await dbConn.update
-        (
-            Col.objetoUnity,
-            where.id (StringToId (id)),
-            obj,
-            override: false
-        );
-        
-        return objResp;
-        
-    }
-    catch (e, stacktrace)
-    {
-        return new Resp()
-            ..error = e.toString() + stacktrace.toString();
+        //Retornar objeto modificado
+        return Get (id);
     }
 }
 

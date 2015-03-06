@@ -1,13 +1,13 @@
 part of aristadart.server;
 
 @app.Group ('/evento')
+@Catch()
 class EventoServices extends MongoDbService<Evento>
 {
     EventoServices () : super (Col.evento);
     
     @app.DefaultRoute (methods: const[app.POST])
     @Private()
-    @Catch()
     @Encode()
     Future<Evento> New () async
     {
@@ -30,7 +30,6 @@ class EventoServices extends MongoDbService<Evento>
     
     @app.Route ('/:id', methods: const[app.PUT])
     @Private()
-    @Catch()
     @Encode()
     Future<Evento> Update (String id, @Decode() Evento delta) async
     {
@@ -46,7 +45,6 @@ class EventoServices extends MongoDbService<Evento>
     }
     
     @app.Route ('/:id', methods: const[app.GET])
-    @Catch()
     @Encode()
     Future<Evento> Get (String id) async
     {
@@ -87,7 +85,6 @@ class EventoServices extends MongoDbService<Evento>
     }
     
     @app.Route('/:id/addVista/:vistaId', methods: const [app.POST, app.PUT])
-    @Catch()
     @Private()
     @Encode()
     Future<Evento> AddVista (String id, String vistaId) async
@@ -105,6 +102,34 @@ class EventoServices extends MongoDbService<Evento>
                 "vistas", 
                 cleanMap(db.encode(vista))
             )
+        );
+        
+        return Get (id);
+        
+    }
+    
+    @app.Route('/:id/removeVista/:vistaId', methods: const [app.POST, app.PUT])
+    @Private()
+    @Encode()
+    Future<Evento> RemoveVista (String id, String vistaId) async
+    {
+        
+        var vista = new Vista()
+            ..id = vistaId;
+        
+        await db.update
+        (
+            collectionName,
+            where.id(StringToId(id)),
+            {
+                r'$pull' : 
+                {
+                    'vistas' :
+                    {
+                        '_id' : StringToId (vistaId)
+                    }
+                }
+            }
         );
         
         return Get (id);
@@ -158,7 +183,6 @@ class EventoServices extends MongoDbService<Evento>
     
     @app.Route ('/all', methods: const[app.GET])
     @Private()
-    @Catch()
     @Encode()
     Future<ListEventoResp> All () async
     {
