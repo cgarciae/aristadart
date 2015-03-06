@@ -172,11 +172,7 @@ class EventoVista
     {
         event.stopImmediatePropagation();
         
-        deleteFromCollection ('vista', v.id)
-        .then(doIfSuccess((Resp resp)
-        {
-            return removeVista (v);
-        }));
+        evento.vistas.remove(v);
     }
     
     Future removeVista (Vista v)
@@ -307,6 +303,11 @@ class EventoVista
     
     seleccionarVistaEnModal (Vista vista)
     {
+        if(!evento.vistas.contains(vista)){
+            cargarVistasUsuario = false;
+            return print ("La vista ya esta contenida en el evento");
+        }
+      
         requestDecoded
         (
             Evento,
@@ -318,7 +319,7 @@ class EventoVista
             
         if (_evento.failed)
             return print (_evento.error);
-            
+        
         evento.vistas.add(vista);
         cargarVistasUsuario = false;
         });
