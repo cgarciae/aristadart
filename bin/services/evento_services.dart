@@ -122,7 +122,7 @@ class EventoServices extends MongoDbService<Evento>
             collectionName,
             where.id(StringToId(id)),
             {
-                r'$pull' : 
+                r'$pull' :
                 {
                     'vistas' :
                     {
