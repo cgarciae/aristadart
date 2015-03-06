@@ -99,25 +99,8 @@ class EventoVista
     }
     
       
-    save ()
-    {
-        saveInCollection('evento', evento)
-        .then(doIfSuccess((Resp resp)
-        {
-            print("Se guardo con exito");            
-            if(resp.failed){
-                return print(resp.error);
-            }  
-        }));       
-        
-    }
     
-    /*
-    void closeAlert(Map alert) {
-        alerts.remove(alert);
-    }
 
-     */
     
     nuevaVista ()
     {
@@ -140,50 +123,30 @@ class EventoVista
        
     }
     
-    Future<Resp> addVistaId  (String vistaID)
-    {
-        var eventoID = evento.id;
-        
-        return pushIDtoList ('evento', eventoID, 'viewIds', vistaID)
-        
-        .then (doIfSuccess ((resp)
-        {
-            var vista = new Vista()
-                ..id = vistaID
-                ..icon.texto = "Nueva Vista";
-            
-            return saveVista (vista);
-        }));
-    }
-    
-    saveVista (Vista vista)
-    {
-        return saveInCollection('vista', vista)
-                
-        .then (doIfSuccess ((_)
-        {
-            vistas.add (vista);
-            evento.viewIds.add (vista.id);
-        }));
-    }
     
     
     eliminar (Vista v, dom.MouseEvent event)
     {
         event.stopImmediatePropagation();
         
+        requestDecoded
+        (
+            Evento,
+            Method.POST,
+            'evento/${evento.id}/removeVista/${v.id}',
+            userId: userId
+        )
+        .then((Evento _evento){
+            
+        if (_evento.failed)
+            return print (_evento.error);
+        
         evento.vistas.remove(v);
+        });
+        
     }
     
-    Future removeVista (Vista v)
-    {
-        return pullIDfromList('evento', evento.id, 'viewIds', v.id)
-        .then(doIfSuccess ((Resp resp) 
-        {
-            vistas.remove (v);
-            evento.viewIds.remove (v.id);
-        }));
-    }
+    
     
     ver (Vista v)
     {
@@ -237,6 +200,27 @@ class EventoVista
     
     uploadTarget (dom.MouseEvent event)
     {
+        dom.FormElement form = getFormElement(event);
+        
+        if (evento.cloudTarget != null)
+        {
+            //Actualizar cloudTarget
+            formRequestDecoded
+            (
+                CloudTarget,
+                Method.PUT,
+                '${evento.cloudTarget.href}/updateFromImage',
+                form,
+                userId: userId
+            )
+            .then((CloudTarget _evento){
+                
+            if (_evento.failed)
+                return print (_evento.error);
+            
+            
+            });
+        }
         String url = 'private/vuforiaimage/${evento.id}';
         var method = '';
         
@@ -263,22 +247,6 @@ class EventoVista
         });
     }
     
-    setTargetImage ()
-    {
-        if (evento.cloudRecoTargetId != null)
-        {
-            requestDecoded
-            (
-                RecoTargetResp, 
-                Method.GET, 
-                'public/cloudreco/${evento.cloudRecoTargetId}'
-            )
-            .then (doIfSuccess ((RecoTargetResp resp)
-            {
-                targetImageUrl = 'public/file/${resp.recoTarget.imageId}';
-            }));
-        }
-    }
     
     
     iniciarCargaVistasUsuario()

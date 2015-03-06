@@ -1,7 +1,8 @@
 part of aristadart.server;
 
 @app.Group('/vista')
-class VistaServices extends MongoDbService<VistaTotal>
+@Catch()
+class VistaServices extends MongoDbService<Vista>
 {
     VistaServices () : super (Col.vista);
     
@@ -14,15 +15,13 @@ class VistaServices extends MongoDbService<VistaTotal>
         
         Vista vista = Vista.Factory (Vista.IndexToType[typeNumber])
             ..id = newId()
-            ..icon = (new TextureGUI()
-                ..texto = "Mi vista")
+            //..nombre = "Mi vista"
             ..owner = (new User()
                 ..id = userId);
         
         
-        await db.insert
+        await insert
         (
-            Col.vista,
             vista
         );
         
@@ -38,51 +37,34 @@ class VistaServices extends MongoDbService<VistaTotal>
     @Encode()
     Future<Vista> Get (String id) async
     {
-        try
-        {
-            VistaTotal vistaTotal = await db.findOne
-            (
-                Col.vista,
-                VistaTotal,
-                where.id (StringToId (id))
-            );
-            
-            if (vistaTotal == null)
-                return new Vista()
-                    ..error = "Vista not found";
-            
-            
-            return vistaTotal.vista;
-        }
-        catch (e, s)
-        {
-            return new Vista ()
-                ..error = "$e $s";
-        }
+        Vista vista = await collection.findOne
+        (
+            where.id (StringToId (id))
+        )
+        .then (MapToVista);
+        
+        if (vista == null)
+            throw new Exception("Vista not found");
+        
+        
+        return vista;
     }
     
     @app.Route('/:id', methods: const [app.PUT])
     @Private()
     @Encode()
-    Future<Vista> Update (String id, @Decode() VistaTotal vista) async
+    Future<Vista> Update (String id, 
+                        @app.Body (app.JSON) Map map) async
     {
-        try
-        {
-            
-            await db.update
-            (
-                Col.vista,
-                where.id (StringToId (id)),
-                getModifierBuilder(vista)
-            );
-            
-            return Get (id);
-        }
-        catch (e, s)
-        {
-            return new Vista ()
-                ..error = "$e $s";
-        }
+        Vista delta = MapToVista(map);
+        
+        await collection.update
+        (
+            where.id (StringToId (id)),
+            getModifierBuilder(delta)
+        );
+        
+        return Get (id);   
     }
     
     @app.Route('/:id', methods: const [app.DELETE])
@@ -90,22 +72,13 @@ class VistaServices extends MongoDbService<VistaTotal>
     @Encode()
     Future<DbObj> Delete (String id) async
     {
-        try
-        {
-            
-            await remove
-            (
-                where.id (StringToId (id))
-            );
-            
-            return new DbObj()
-                ..id = id;
-        }
-        catch (e, s)
-        {
-            return new DbObj ()
-                ..error = "$e $s";
-        }
+        await remove
+        (
+            where.id (StringToId (id))
+        );
+        
+        return new DbObj()
+            ..id = id;
     }
     
     
@@ -114,23 +87,42 @@ class VistaServices extends MongoDbService<VistaTotal>
     @Encode()
     Future<ListVistaResp> All () async
     {
-        try
+        List<Vista> vistas = await collection.find
+        (
+            where.eq("owner._id", StringToId(userId))
+        )
+        .stream.map (MapToVista).toList();
+        
+        
+        return new ListVistaResp()
+            ..vistas = vistas;
+    }
+    
+    @app.Route('/:id/setType', methods: const [app.PUT])
+    @Private()
+    @Encode()
+    Future<Vista> SetType (String id, @app.QueryParam("type") int type) async
+    {
+        Vista delta = Vista.Factory (Vista.IndexToType[type]);
+        
+        return Update(id, encode (delta));
+    }
+    
+    static Vista MapToVista (Map map)
+    {
+        var type = map['type__'];
+        Vista v;
+        switch (type)
         {
-            List<VistaTotal> vistasTotal = await find
-            (
-                where.eq("owner._id", StringToId(userId))
-            );
-            
-            List<Vista> vistas = vistasTotal.map((VistaTotal v) => v.vista).toList();
-            
-            return new ListVistaResp()
-                ..vistas = vistas;
+            case VistaType.construccionRA:
+                v = db.decode(map, ConstruccionRA);
+                break;
+            default:
+                v = db.decode(map, Vista);
+                break;
         }
-        catch (e, s)
-        {
-            return new ListVistaResp()
-                ..error = "$e $s";
-        }
+        
+        return v;
     }
     
 }

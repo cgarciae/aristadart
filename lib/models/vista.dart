@@ -6,7 +6,6 @@ class VistaTotal
     @Field() User owner;
     @Id() String id;
     @Field() String type__;
-    @Field() TextureGUI icon;
 
     //ConstruccionRA
     @Field() ObjetoUnity objetoUnity;
@@ -68,6 +67,7 @@ class Vista extends Ref
         
         return v;
     }
+    
     
     static const Map<int,String> IndexToType = const
     {
