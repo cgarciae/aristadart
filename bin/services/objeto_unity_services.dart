@@ -9,6 +9,116 @@ part of aristadart.server;
 //GET private/user/objetounitymodels () -> ObjetoUnitySendListResp
 
 
+@app.Group('/${Col.objetoUnity}')
+@Catch()
+class ObjetoUnityServices extends MongoDbService<ObjetoUnity>
+{
+    ObjetoUnityServices() : super (Col.objetoUnity);
+    
+    @app.DefaultRoute (methods: const [app.POST])
+    @Private()
+    @Encode()
+    Future<ObjetoUnity> New () async
+    {
+        ObjetoUnity obj = new ObjetoUnity()
+            ..name = "Nuevo Modelo"
+            ..version = 0
+            ..updatePending = false
+            ..updatedAndroid = false
+            ..updatedIOS = false
+            ..updatedWindows = false
+            ..updatedMAC= false
+            ..id = newId()     
+            ..owner = (new User()
+                ..id = userId);
+        
+        await insert(obj);
+        
+        return obj;
+    }
+    
+    @app.Route ('/:id', methods: const [app.GET])
+    @Encode()
+    Future<ObjetoUnity> Get (String id) async
+    {
+        ObjetoUnity obj = await findOne
+        (
+            where.id(StringToId(id))
+        );
+        
+        if (obj == null)
+            throw new Exception("Objecto Unity no encontrado");
+        
+        return obj;
+    }
+    
+    @app.Route ('/:id', methods: const [app.PUT])
+    @Private()
+    @Encode()
+    Future<ObjetoUnity> Update (String id, @Decode() ObjetoUnity delta) async
+    {
+        await db.update
+        (
+            collectionName,
+            where.id(StringToId(id)),
+            getModifierBuilder(delta)
+        );
+        
+        return Get(id);
+    }
+    
+    @app.Route ('/:id', methods: const [app.PUT])
+    @Private()
+    @Encode()
+    Future<DbObj> Delete (String id) async
+    {
+        await remove
+        (
+            where.id(StringToId(id))
+        );
+        
+        return new DbObj()
+            ..id = id;
+    }
+    
+    @app.Route ('/:id/userFile', methods: const [app.POST, app.PUT], allowMultipartRequest: true)
+    @Private()
+    @Encode()
+    Future<ObjetoUnity> NewOrUpdate (String id, @app.Body(app.FORM) QueryMap form, 
+                                    @Decode(fromQueryParams: true) FileDb metadata) async
+    {
+        //Variables
+        FileDb userFile;
+        
+        //Obtener objeto unity
+        ObjetoUnity obj = await Get (id);
+        
+        //Revisar si userFile existe
+        if (obj.userFile != null)
+        {
+            //Update
+            userFile = await new FileServices().Update (obj.userFile.id, form);
+        }
+        else
+        {
+            //New
+            userFile = await new FileServices().NewOrUpdate(form, metadata);
+        }
+        
+        //Crear cambios
+        ObjetoUnity delta = new ObjetoUnity()
+            ..updatePending = true
+            ..userFile = (new FileDb()
+                ..id = userFile.id);
+        
+        //Guardar cambios
+        await Update (id, delta);
+       
+        
+        return Get(id);
+    }
+}
+
 @app.Route('/private/objetounity', methods: const [app.POST])
 @Encode()
 newObjetoUnity (@app.Attr() MongoDb dbConn) async

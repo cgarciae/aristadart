@@ -3,12 +3,12 @@ part of aristadart.general;
 class ObjetoUnity extends Ref
 {
     @Field() String name;
-    @Field() String nameGameObject;
+    @Field() String get nameGameObject => "aristaGameObject";
     
     @Field() String get href => id != null ? "${localHost}public/objetounity/${id}" : null;
     
     @Field() User owner;
-    @Field() Ref userFileId;
+    @Field() FileDb userFile;
     
     bool get active => activeAndroid && activeIOS;
     bool get activeAll => activeAndroid && activeIOS && activeMAC && activeWindows;
@@ -35,13 +35,4 @@ class ObjetoUnity extends Ref
     @Field() bool get activeMAC => modelIdMAC != null && notNullOrEmpty (modelIdMAC.id);
     @Field() bool updatedMAC;
     
-    init(){
-      this.name = 'Nuevo Modelo';
-      this.version = 0;
-      this.updatePending = false;
-      this.updatedAndroid = false;
-      this.updatedIOS = false;
-      this.updatedWindows = false;
-      this.updatedMAC= false;
-    }
 }

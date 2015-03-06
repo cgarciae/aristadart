@@ -70,10 +70,9 @@ void AuthenticationPlugin(app.Manager manager) {
   }, includeGroups: true);
 }
 
-class Catch {
-  
-  const Catch();
-  
+class Catch 
+{  
+    const Catch();
 }
 
 
