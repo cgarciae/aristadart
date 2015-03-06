@@ -17,7 +17,7 @@ import 'package:redstone_mapper/mapper.dart';
 import 'package:shelf/shelf.dart' as shelf;
 import 'package:redstone_mapper/plugin.dart';
 import 'package:redstone/server.dart';
-import 'utils.dart';
+import 'utils/utils.dart';
 import 'package:fp/fp.dart' as F;
 
 part 'services/user_services.dart';
@@ -30,7 +30,7 @@ part 'services/local_target_services.dart';
 part 'services/test_services.dart';
 part 'services/cloud_target_services.dart';
 part 'services/vuforia_services.dart';
-part 'authorization.dart';
+part 'utils/authorization.dart';
 
 ObjectId StringToId (String id) => new ObjectId.fromHexString(id);
 String newId () => new ObjectId().toHexString();

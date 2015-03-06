@@ -1,17 +1,17 @@
 library tests;
 
-import 'package:unittest/unittest.dart';
+import 'packages/unittest/unittest.dart';
 
 
-import 'package:redstone/server.dart' as app;
-import 'package:redstone/mocks.dart';
-import 'package:aristadart/arista.dart';
+import 'packages/redstone/server.dart' as app;
+import 'packages/redstone/mocks.dart';
+import 'arista_server.dart';
 
 
 main() {
 
   //load handlers in 'services' library
-  setUp(() => app.setUp([#arista.server]));
+  setUp(() => app.setUp([#aristadart.server]));
 
   //remove all loaded handlers
   tearDown(() => app.tearDown());
