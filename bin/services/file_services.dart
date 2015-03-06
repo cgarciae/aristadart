@@ -29,8 +29,14 @@ class FileServices
             gridIn.id = StringToId(id);
         }
         
+        //Set new metadata
+        FileDb newMetadata;
+        if (metadata != null)
+            newMetadata = Clone (metadata);
+        else
+            newMetadata = new FileDb();
         
-        FileDb newMetadata = Clone (metadata);
+        
         
         newMetadata
             ..id = gridIn.id.toHexString()
@@ -39,19 +45,21 @@ class FileServices
             ..owner = (new User()
                 ..id = userId);
         
+        print ("Metadata es ${encode(newMetadata)}");
+        
         
         //Convert to map and clean null fields
         var metadataMap = cleanMap(db.encode(newMetadata));
         
         //Save metadata
         gridIn.metaData = metadataMap;
+        
+        print ("MetadataMap es ${metadataMap}");
                
         //Wait till save finishes
         await gridIn.save();
         
-        print ("1");
-        
-        return metadata;
+        return newMetadata;
     }
     
     @app.Route ('/:id', methods: const [app.GET])

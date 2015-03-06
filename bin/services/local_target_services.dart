@@ -209,7 +209,6 @@ Future saveOrUpdateImageFile (MongoDb dbConn, Map form, LocalImageTargetSend obj
 
 @app.Route('/private/localTarget/:id/targetfile/:extension', methods: const [app.POST, app.PUT], allowMultipartRequest: true)
 @Encode()
-@Secure(ADMIN)
 Future newOrUpdateLocalTargetImageFile (@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, String id, String extension) async
 {
     try
@@ -244,7 +243,6 @@ Future newOrUpdateLocalTargetImageFile (@app.Attr() MongoDb dbConn, @app.Body(ap
 
 @app.Route ('/private/localTarget/:id/publish', methods: const [app.GET])
 @Encode ()
-@Secure (ADMIN)
 Future publishLocalTarget (@app.Attr() MongoDb dbConn, String id) async
 {
     try
@@ -310,7 +308,6 @@ Future<LocalImageTargetSendListResp> userLocalTargets (@app.Attr() MongoDb dbCon
 
 @app.Route ('/private/localTarget/pending', methods: const [app.GET], allowMultipartRequest: true)
 @Encode ()
-@Secure (ADMIN)
 Future<LocalImageTargetSendListResp> getLocalTargetPending (@app.Attr() MongoDb dbConn) async
 {
     try

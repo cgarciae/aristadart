@@ -10,7 +10,7 @@ part of aristadart.server;
 
 
 @app.Group('/${Col.objetoUnity}')
-@Catch()
+//@Catch()
 class ObjetoUnityServices extends MongoDbService<ObjetoUnity>
 {
     ObjetoUnityServices() : super (Col.objetoUnity);
@@ -24,10 +24,10 @@ class ObjetoUnityServices extends MongoDbService<ObjetoUnity>
             ..name = "Nuevo Modelo"
             ..version = 0
             ..updatePending = false
-            ..updatedAndroid = false
-            ..updatedIOS = false
-            ..updatedWindows = false
-            ..updatedMAC= false
+            ..androidUpdated = false
+            ..iosUpdated = false
+            ..windowsUpdated = false
+            ..osxUpdated= false
             ..id = newId()     
             ..owner = (new User()
                 ..id = userId);
@@ -120,99 +120,6 @@ class ObjetoUnityServices extends MongoDbService<ObjetoUnity>
         return Get(id);
     }
     
-    /**
-     * [id] es el id del ObjetoUnity en Mongo
-     * [form] es el FORM representado en un `QueryMap` del request
-     * [metadata] son los parametros query del request representados en un FileDb
-     * 
-     * [metadata] como minimo debe especificar el campo `system` con el sistema operativo corresponde
-     * al modelo. Ver [SystemType] para saber las opciones.
-     */
-    @app.Route ('/:id/model', methods: const [app.POST, app.PUT], allowMultipartRequest: true)
-    @Private()
-    @Encode()
-    Future<ObjetoUnity> NewOrUpdateModel (
-                                    String id, 
-                                    @app.Body(app.FORM) QueryMap form, 
-                                    @Decode(fromQueryParams: true) FileDb metadata) async {
-        
-        if (metadata.system == null)
-            throw new Exception("No se especifico el sistema en el metadata. Ver SystemType");
-        
-        //Variables
-        FileDb modelFile;
-        
-        //Obtener objeto unity
-        ObjetoUnity obj = await Get (id);
-        
-        FileDb actualFile = getModel(obj, metadata.system);
-        
-        //Revisar si userFile existe
-        if (actualFile != null)
-        {
-            //Update
-            modelFile = await new FileServices().Update (actualFile.id, form);
-        }
-        else
-        {
-            //New
-            modelFile = await new FileServices().NewOrUpdate(form, metadata);
-        }
-        
-        //Crear cambios
-        ObjetoUnity delta = getDelta (modelFile.id, metadata.system);
-        
-        //Guardar cambios
-        await Update (id, delta);
-       
-        return Get(id);
-    }
-    
-    FileDb getModel (ObjetoUnity obj, String system)
-    {
-        switch (system)
-        {
-            case SystemType.ios:
-                return obj.ios;
-            case SystemType.osx:
-                return obj.osx;
-            case SystemType.android:
-                return obj.android;
-            case SystemType.windows:
-                return obj.windows;
-            default:
-                throw new Exception("Tipo de sistema incorrecto: $system");
-        }
-    }
-    
-    ObjetoUnity getDelta (String fileId, String system)
-    {
-        FileDb newFile = new FileDb()
-            ..id = fileId;
-        
-        switch (system)
-        {
-            case SystemType.ios:
-                return new ObjetoUnity()
-                ..ios = newFile
-                ..iosUpdated = true;
-            case SystemType.osx:
-                return new ObjetoUnity()
-                ..osx = newFile
-                ..osxUpdated = true;
-            case SystemType.android:
-                return new ObjetoUnity()
-                ..android = newFile
-                ..androidUpdated = true;
-            case SystemType.windows:
-                return new ObjetoUnity()
-                ..windows = newFile
-                ..windowsUpdated = true;
-            default:
-                throw new Exception("Tipo de sistema incorrecto: $system");
-        }
-    }
-    
     @app.Route ('/:id/publish', methods: const [app.PUT])
     @Private()
     @Encode()
@@ -227,8 +134,12 @@ class ObjetoUnityServices extends MongoDbService<ObjetoUnity>
         
         //Crear cambios
         ObjetoUnity delta = new ObjetoUnity()
-            ..version += 1
-            ..updatePending = false;
+            ..version = obj.version + 1
+            ..updatePending = false
+            ..androidUpdated = false
+            ..windowsUpdated = false
+            ..iosUpdated = false
+            ..osxUpdated = false;
         
         //Guardar
         await db.update
@@ -241,178 +152,177 @@ class ObjetoUnityServices extends MongoDbService<ObjetoUnity>
         //Retornar objeto modificado
         return Get (id);
     }
-}
-
-Future<IdResp> newOrUpdateScreenshot (MongoDb dbConn, Map form, ObjetoUnitySend obj) async
-{
-    try
+    
+    @app.Route ('/:id/models', methods: const [app.PUT], allowMultipartRequest: true)
+    @Private()
+    @Encode()
+    Future<ObjetoUnity> SaveAll (String id,
+                                @app.Body(app.FORM) QueryMap form) async
     {
-        Resp resp;
-        IdResp idResp;
+        //Definir cambio
+        ObjetoUnity delta = new ObjetoUnity();
         
-        if (notNullOrEmpty (obj.screenshotId))
+        //Objeto actual
+        ObjetoUnity obj = await Get (id);
+        
+        //Si se envio archivo para 'ios'
+        if (form.ios != null && form.ios is app.HttpBodyFileUpload)
         {
-            resp = await updateFile(dbConn, form, obj.screenshotId);
+            //Actualizar FileDb obj.ios
+            FileDb newFile = await actualizarModelo
+            (
+                obj.ios, SystemType.ios, form.ios
+            );
+            
+            //Guardar unicamente el [id] en delta
+            delta
+            ..ios = (new FileDb()
+                ..id = newFile.id)
+            ..iosUpdated = true;
         }
-        else
+        
+        //Si se envio archivo para 'android'
+        if (form.android != null && form.android is app.HttpBodyFileUpload)
         {
-            resp = await newFile(dbConn, form);
+            //Actualizar FileDb obj.android
+            FileDb newFile = await actualizarModelo
+            (
+                obj.android, SystemType.android, form.android
+            );
+          
+            //Guardar unicamente el [id] en delta
+            delta
+            ..android = (new FileDb()
+                ..id = newFile.id)
+            ..androidUpdated = true;
         }
         
-        idResp = resp as IdResp;
+        if (form.windows != null && form.windows is app.HttpBodyFileUpload)
+        {
+            //Actualizar FileDb obj.windows
+            FileDb newFile = await actualizarModelo
+            (
+                obj.windows, SystemType.windows, form.windows
+            );
+          
+            //Guardar unicamente el [id] en delta
+            delta
+            ..windows = (new FileDb()
+                ..id = newFile.id)
+            ..windowsUpdated = true;
+        }
         
-        if (idResp == null)
-            return resp;
+        if (form.osx != null && form.osx is app.HttpBodyFileUpload)
+        {
+            //Actualizar FileDb obj.osx
+            FileDb newFile = await actualizarModelo
+            (
+                obj.osx, SystemType.osx, form.osx
+            );
+          
+            //Guardar unicamente el [id] en delta
+            delta
+            ..osx = (new FileDb()
+                ..id = newFile.id)
+            ..osxUpdated = true;
+        }
         
-        obj.screenshotId =  idResp.id;
-        
-        await dbConn.update
-        (
-            Col.objetoUnity,
-            where.id (StringToId (obj.id)), 
-            modify.set ('screenshotId', StringToId (idResp.id))
-        );
-        
-        return idResp;
+        //Guardar cambios
+        return Update(id, delta);
     }
-    catch (e, stacktrace)
+    
+    @app.Route ('/all', methods: const [app.GET])
+    @Encode()
+    Future<ObjetoUnity> All (@app.QueryParam() bool updatePending) async
     {
-        return new IdResp()
-            ..error = e.toString() + stacktrace.toString();
+        return Find (updatePending, userId);
     }
-}
-
-@app.Route ('/private/objetounity/:id/screenshot', methods: const [app.POST, app.PUT], allowMultipartRequest: true)
-@Encode ()
-@Secure (ADMIN)
-Future<IdResp> newOrUpdateObjetoUnityScreenshot (@app.Attr() MongoDb dbConn, @app.Body(app.FORM) Map form, String id) async
-{
-    try
+    
+    @app.Route ('/deleteAll', methods: const [app.GET])
+    @Private(ADMIN)
+    @Encode()
+    Future<ListObjetoUnityResp> DeleteAll (@app.QueryParam() bool updatePending,
+                                           @app.QueryParam() String userId) async
     {
-        ObjetoUnitySendResp objResp = await getObjetoUnity(dbConn, id);
+        //Definir query object
+        Map query = {};
                 
-        if (! objResp.success)
-            return objResp;
+        //Buscar usuario
+        if  (userId != null)
+            query["owner._id"] = StringToId (userId);
         
-        //Updates screenshotId, return IdResp
-        return newOrUpdateScreenshot (dbConn, form, objResp.obj);
-    }
-    catch (e, stacktrace)
-    {
-        return new IdResp ()
-            ..error = e.toString() + stacktrace.toString();
-    }
-}
-
-@app.Route ('/private/objetounity/:id/publish', methods: const [app.GET])
-@Encode ()
-@Secure (ADMIN)
-Future publishObjetoUnity (@app.Attr() MongoDb dbConn, String id) async
-{
-    ObjetoUnitySendResp objResp;
-    
-    Resp resp = await getObjetoUnity(dbConn, id);
-    
-    if (! resp.success)
-        return resp;
-    
-    objResp = resp as ObjetoUnitySendResp;
-    
-    if (! objResp.obj.updatedAll)
-        return new Resp ()
-            ..error = "No se han actualizado todos los modelos del Objetos Unity";
-    
-    ObjetoUnitySend obj;
-    
-    await dbConn.update
-    (
-        Col.objetoUnity,
-        where.id(StringToId(id)),
-        modify
-            .set('updatePending', false)
-            .set('updatedIOS', false)
-            .set('updatedAndroid', false)
-            .set('updatedMAC', false)
-            .set('updatedWindows', false)
-            .inc('version', 1)
-    );
-    
-    return new Resp ();
-}
-
-
-
-
-
-@app.Route('/private/user/objetounitymodels', methods: const [app.GET])
-@Encode()
-userModels (@app.Attr() MongoDb dbConn) async
-{
-    try
-    {  
-        List<ObjetoUnitySend> objs = await dbConn.find
-        (
-            Col.objetoUnity,
-            ObjetoUnitySend,
-            where.eq('owner', userId)
-        );
-
-        return new ObjetoUnitySendListResp()
-            ..objs = objs;
-    }
-    catch (e, stacktrace)
-    {
-        return new Resp()
-            ..error = e.toString() + stacktrace.toString();
-    }
-}
-
-@app.Route ('/private/objetounity/pending', methods: const [app.GET], allowMultipartRequest: true)
-@Encode ()
-@Secure (ADMIN)
-Future getObjetoUnityPending (@app.Attr() MongoDb dbConn) async
-{
-    try
-    {
-        List<ObjetoUnitySend> objs = await dbConn.find
-        (
-            Col.objetoUnity,
-            ObjetoUnitySend,
-            where
-                .eq ('updatePending', true)
-        );
+        //Agregar pending
+        if (updatePending != null)
+            query["updatePending"] = updatePending;
         
-        return new ObjetoUnitySendListResp()
-            ..objs = objs;
-    }
-    catch (e, stacktrace)
-    {
-        return new ObjetoUnitySendListResp()
-            ..error = e.toString() + stacktrace.toString();
-    }
-}
-
-@app.Route('/private/objetounitysend/:id/guardarObjUnitySend', methods: const [app.PUT])
-@Encode()
-@Secure(ADMIN)
-putObjetoUnitySend (@app.Attr() MongoDb dbConn, @Decode() ObjetoUnitySend obj) async
-{
-    print (encodeJson(obj));
-    try 
-    {
-        await dbConn.update
-        (
-            Col.objetoUnity,
-            where.id (StringToId(obj.id)),
-            obj,
-            override: false
-        );
+        //Eliminar lista
+        await remove (query);
         
-        return new Resp();
+        //Responder
+        return Find(updatePending, userId);
     }
-    catch (e, stacktrace)
+                                 
+    
+    @app.Route ('/find', methods: const [app.GET])
+    @Private(ADMIN)
+    @Encode()
+    Future<ListObjetoUnityResp> Find (@app.QueryParam() bool updatePending,
+                                   @app.QueryParam() String userId) async
     {
-        return new Resp()
-            ..error = e.toString() + stacktrace.toString();
+        //Definir query object
+        Map query = {};
+        
+        //Buscar usuario
+        if  (userId != null)
+            query["owner._id"] = StringToId (userId);
+        
+        //Agregar pending
+        if (updatePending != null)
+            query["updatePending"] = updatePending;
+        
+        //Buscar lista
+        List<ObjetoUnity> list = await find (query);
+        
+        //Responder
+        return new ListObjetoUnityResp()
+            ..list = list;
+    }
+    
+    Future<FileDb> actualizarModelo (FileDb modelo, String system, app.HttpBodyFileUpload fileUpload) async
+    {
+        //Definir nuevo form
+          Map newForm = {system : fileUpload};
+          
+          //Resultado
+          FileDb file;
+          
+          print ("Actualizando $system");
+          
+          //Si ios ya existe
+          if (modelo != null && modelo.id != null)
+          {
+              print ("Modelo Existe en $system");
+              file = await new FileServices().Update
+              (
+                  modelo.id,
+                  newForm
+              );
+          }
+          else
+          {
+              var metadata = new FileDb()
+                ..system = system;
+              
+              print ("Modelo no existe en $system");
+              file = await new FileServices().NewOrUpdate
+              (
+                  new QueryMap (newForm),
+                  metadata
+              );
+          }
+          
+          print ("Finalizo Actualizacion en $system, el archivo es ${encodeJson(file)}");
+          
+          return file;
     }
 }

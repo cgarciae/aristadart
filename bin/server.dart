@@ -19,7 +19,6 @@ main() async
     var dbManager = new MongoDbManager("mongodb://${partialDBHost}/test", poolSize: 3);
     
     app.addPlugin(getMapperPlugin(dbManager));
-    app.addPlugin(AuthorizationPlugin);
     app.addPlugin(AuthenticationPlugin);
     app.addPlugin(ErrorCatchPlugin);
     

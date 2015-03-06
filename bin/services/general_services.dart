@@ -35,7 +35,6 @@ Future<Resp> pushIdToList(@app.Attr() MongoDb dbConn, String collection, String 
 }
 
 @app.Route('/private/query/:collection', methods: const [app.POST])
-@Secure(ADMIN)
 queryCollection (@app.Attr() MongoDb dbConn, @app.Body(app.JSON) Map query, String collection)
 {
     return dbConn.collection (collection)
@@ -44,7 +43,6 @@ queryCollection (@app.Attr() MongoDb dbConn, @app.Body(app.JSON) Map query, Stri
 }
 
 @app.Route('/private/modify/:collection/:id', methods: const [app.POST])
-@Secure(ADMIN)
 @Encode()
 modifyCollection (@app.Attr() MongoDb dbConn, @app.Body(app.JSON) Map mod, String collection, String id) async
 {
@@ -69,7 +67,6 @@ modifyCollection (@app.Attr() MongoDb dbConn, @app.Body(app.JSON) Map mod, Strin
 }
 
 @app.Route('/private/insert/:collection', methods: const [app.POST])
-@Secure(ADMIN)
 @Encode()
 insertCollection (@app.Attr() MongoDb dbConn, String collection, String id) async
 {

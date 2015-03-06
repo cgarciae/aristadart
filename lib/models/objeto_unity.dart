@@ -36,3 +36,8 @@ class ObjetoUnity extends Ref
     @Field() bool osxUpdated;
     
 }
+
+class ListObjetoUnityResp extends Resp
+{
+    @Field() List<ObjetoUnity> list;
+}

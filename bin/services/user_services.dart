@@ -138,7 +138,6 @@ class UserServives
 
 
 @app.Route ('/setadmin/:userid')
-@Secure(ADMIN)
 @Encode()
 setAdmin (@app.Attr() MongoDb dbConn, String userid) async
 {

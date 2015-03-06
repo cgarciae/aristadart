@@ -41,7 +41,7 @@ MongoDb get db => app.request.attributes.dbConn;
 GridFS get fs => new GridFS(db.innerConn);
 String get userId => app.request.headers.authorization;
 
-const String ADMIN = "ADMIN";
+const int ADMIN = 1;
 
 
 HttpBodyFileUpload FormToFileUpload (Map form)
