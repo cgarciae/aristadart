@@ -256,4 +256,8 @@ abstract class ErrCode
 bool notNullOrEmpty (String s) => ! (s == null || s == '');
 bool nullOrEmpty (String s) => ! notNullOrEmpty (s);
 
-const String missingImage = "images/webapp/missing_image.png";
+abstract class IconDir
+{
+    static const String missingImage = "images/webapp/missing_image.png";
+    static const String icon3D = "images/webapp/3D.png";
+}

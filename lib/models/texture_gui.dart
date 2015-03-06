@@ -8,9 +8,9 @@ class TextureGUI
     @Field() String get urlTextura
     {
         if (web)
-            return file != null ? file.href : missingImage;
+            return file != null ? file.href : IconDir.missingImage;
         else
-            return path != null ? path : missingImage;
+            return path != null ? path : IconDir.missingImage;
     }
 
     @Field() String texto = '';

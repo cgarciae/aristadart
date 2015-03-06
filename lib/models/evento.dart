@@ -6,7 +6,7 @@ class Evento extends Ref
     
     @Field() User owner;
     
-    @Field() TextureGUI imagenPreview;
+    @Field() FileDb imagenPreview;
     @Field () String nombre;
     @Field () String descripcion;
     @Field() bool active;

@@ -49,8 +49,9 @@ class Vista extends Ref
 {
     @Field() String get type__ => null;
     @Field() String get href => localHost + 'vista/$id';
-    @Field() TextureGUI icon;
     @Field() User owner;
+    
+    String get icon => IconDir.missingImage;
     
     static Vista Factory ([String type__])
     {
@@ -86,6 +87,8 @@ class ConstruccionRA extends Vista
     @Field() LocalImageTarget localTarget;
     @Field() List<ElementoConstruccion> cuartos;
     @Field() List<ElementoConstruccion> muebles;
+    
+    String get icon => IconDir.icon3D;
     
     Resp valid ()
     {
