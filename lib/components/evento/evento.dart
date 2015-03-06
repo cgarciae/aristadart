@@ -303,7 +303,7 @@ class EventoVista
     
     seleccionarVistaEnModal (Vista vista)
     {
-        if(!evento.vistas.contains(vista)){
+        if(evento.vistas.any((Vista v) => v.id == vista.id)){
             cargarVistasUsuario = false;
             return print ("La vista ya esta contenida en el evento");
         }
