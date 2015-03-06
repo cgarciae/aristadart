@@ -12,10 +12,10 @@
         <fieldset ng-click="seleccionarVistaEnModal(vistaUsuario)" class="boxes">
             <legend>
                 <div class="row">
-                    <div class="small-8 columns">{{vistaUsuario.icon.texto}}</div>
+                    <div class="small-8 columns">{{vistaUsuario.nombre}}</div>
                 </div>
             </legend>
-            <img alt="{{vistaUsuario.icon.urlTextura}}" ng-src="{{vistaUsuario.icon.urlTextura}}" class="gray-b">
+            <img alt="{{vistaUsuario.icon}}" ng-src="{{vistaUsuario.icon}}" class="gray-b">
          </fieldset>
     </div>    
   </div>
@@ -83,7 +83,7 @@
          <fieldset class="boxes">
             <legend>
                 <div class="row">
-                    <div class="small-8 columns">{{vista.icon.texto}}</div>
+                    <div class="small-8 columns">{{vista.nombre}}</div>
                     
                     <div class="small-2 columns">
                         <a class="button right" 
@@ -91,7 +91,7 @@
                     </div>
                 </div>
             </legend>
-            <img alt="{{vista.icon.urlTextura}}" ng-src="{{vista.icon.urlTextura}}" class="gray-b">
+            <img alt="{{vista.icon}}" ng-src="{{vista.icon}}" class="gray-b">
          </fieldset>
         </li>
     </ul>
