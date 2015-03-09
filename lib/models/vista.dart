@@ -76,6 +76,23 @@ class Vista extends Ref
         1 : VistaType.construccionRA
     };
     
+    static Vista MapToVista (decoder, Map map)
+    {
+        var type = map['type__'];
+        Vista v;
+        switch (type)
+        {
+            case VistaType.construccionRA:
+                v = decoder(map, ConstruccionRA);
+                break;
+            default:
+                v = decoder(map, Vista);
+                break;
+        }
+        
+        return v;
+    }
+    
     
     Resp valid () => new Resp()..error = "Vista sin type__";
 }

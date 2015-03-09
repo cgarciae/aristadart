@@ -107,19 +107,7 @@ class VistaServices extends MongoDbService<Vista>
     
     static Vista MapToVista (Map map)
     {
-        var type = map['type__'];
-        Vista v;
-        switch (type)
-        {
-            case VistaType.construccionRA:
-                v = db.decode(map, ConstruccionRA);
-                break;
-            default:
-                v = db.decode(map, Vista);
-                break;
-        }
-        
-        return v;
+        return Vista.MapToVista (db.decode, map);
     }
     
     Future<List<Vista>> Find (query)

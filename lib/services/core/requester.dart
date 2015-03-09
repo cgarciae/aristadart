@@ -35,6 +35,41 @@ abstract class Requester
         .then ((dom.HttpRequest r) => r.responseText);
     }
     
+    static Future<Map> map (String method, String path, {dynamic data, Map headers, 
+                                void onProgress (dom.ProgressEvent p), String userId, Map<String,String> params})
+    {
+        return string
+        (
+            method, path, data: data, headers: headers,
+            onProgress: onProgress, userId: userId,
+            params: params
+        ) 
+        .then (JSON.decode);
+    }
+    
+    static Future<Map> privateMap (String method, String path, {dynamic data, Map headers, 
+                                    void onProgress (dom.ProgressEvent p), Map<String,String> params})
+    {
+        return map
+        (
+            method, path, data: data, headers: headers,
+            onProgress: onProgress, userId: userId,
+            params: params
+        );
+    }
+    
+    static Future<Map> jsonMap (String method, String path, {Object data, Map headers, 
+                                    void onProgress (dom.ProgressEvent p), String userId, Map<String,String> params})
+    {
+        return map
+        (
+            method, path, data: encodeJson(data), headers: headers,
+            onProgress: onProgress, userId: userId,
+            params: params
+        );
+    }
+    
+    //TODO: privateJsonMap
 
     static Future<dynamic> decoded (Type type, String method, String path, {dynamic data, 
                                     Map headers, void onProgress (dom.ProgressEvent p), 

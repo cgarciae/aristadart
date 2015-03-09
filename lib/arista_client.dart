@@ -1,6 +1,7 @@
 library aristadart.client;
 
 //Dependencies
+import 'dart:convert';
 import 'package:aristadart/arista.dart';
 import 'dart:async';
 import 'package:redstone_mapper/mapper.dart';
