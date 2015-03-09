@@ -3,17 +3,30 @@ part of aristadart.client;
 @Component
 (
     selector : "vista",
-    templateUrl: 'components/vista/vista.html',
+    templateUrl: 'components/vista/vistaV2.html',
     useShadowDom: false
 )
 class VistaVista
 {
     Router router;
-    VistaExportable vista = new VistaExportable();
-    String eventoID;
+    Vista vista = new Vista();
+    String eventoId;
     String tituloVista='';
     AristaAlert alert = new AristaAlert();
+    ClientVistaServices vistaServices;
     
+    static Vista get vistaActual => ClientVistaServices.StringToVista (storage['vistaActual']);
+    static set vistaActual (Vista value)
+    {
+        if (value == null)
+        {
+            storage.remove('vistaActual');
+        }
+        else
+        {
+            storage['vistaActual'] = encodeJson(value);
+        }
+    }
     
     List<TipoDeVista> tiposDeVista = const 
     [
@@ -69,16 +82,43 @@ class VistaVista
     ];
     
     
+    
+    
     VistaVista (RouteProvider routeProvider, this.router)
     {
         initVista (routeProvider);
-        print("constructor vistaVista");
+        
+        var vistaId = routeProvider.parameters['vistaID'];
+        eventoId = routeProvider.parameters['eventoID'];
+        
+        vistaServices = new ClientVistaServices(new Vista()..id = vistaId);
+        
+        vistaServices.Get().then((_vista){
+            
+        if (_vista.failed)
+            return print (_vista.error);
+        
+        vista = _vista;
+        vistaActual = vista;
+        });
+    }
+    
+    setVistaType (int type)
+    {
+        vistaServices.SetType(type).then((_vista){
+           
+        if (_vista.failed)
+            print (_vista.error);
+        
+        vista = _vista;
+        vistaActual = vista;
+        });
     }
     
     initVista (RouteProvider routeProvider)
     {
         var id = routeProvider.parameters['vistaID'];
-        eventoID = routeProvider.parameters['eventoID'];
+        eventoId = routeProvider.parameters['eventoID'];
         
         if (id == null)
         {

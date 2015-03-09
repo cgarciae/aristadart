@@ -13,6 +13,8 @@ abstract class Requester
         if (params != null)
             path = appendRequestParams(path, params);
         
+        print (path);
+        
         return dom.HttpRequest.request
         (
             path,
@@ -32,7 +34,7 @@ abstract class Requester
             onProgress: onProgress, userId: userId,
             params: params
         ) 
-        .then ((dom.HttpRequest r) => r.responseText);
+        .then ((dom.HttpRequest r) { print (r.responseText); return r.responseText;});
     }
     
     static Future<Map> map (String method, String path, {dynamic data, Map headers, 

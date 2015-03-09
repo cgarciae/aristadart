@@ -1,0 +1,46 @@
+<div class="large-6 columns">
+    <fieldset>
+        <legend> 
+            <span  class = "active" ng-if="vista.objetoUnity == null"></span>
+            <span  class = "no-active" ng-if="vista.objetoUnity != null"></span>
+            Modelo
+            <img class="pd" ng-if="vista.objetoUnity != null" ng-src="https://cdn1.iconfinder.com/data/icons/outline-imperial-seo/128/SEO_C_100_09.12.14-3_Artboard_45-256.png">
+            <span ng-if="vista.objetoUnity != null">version {{vista.objetoUnity.version}}</span>
+        </legend>
+        Nombre <input type="text" ng-model="vista.objetoUnity.name">
+        <ul class="no-bullet">
+            <li class = "large-7 columns">
+                <!--FORM-->
+                <form enctype="multipart/form-data" method="POST">
+                
+                    <!--UPLOAD-->
+                     Choose a file to upload: <input name="file" type="file"><br>
+                    <button 
+                        class="button tiny"
+                        ng-click="uploadObjetoUnityUserFile ($event)">
+                            Upload
+                    </button>
+                     
+                    <!--DOWNLOAD-->
+                    <a class="button tiny"
+                        ng-if="vista.objetoUnity != null && vista.objetoUnity.userFileId != null && vista.objetoUnity.userFileId != ''" 
+                        ng-href = "{{'public/file/' + vista.objetoUnity.userFileId}}" 
+                        target="_blank">
+                            Download
+                    </a>
+                    
+                    <!--SCREENSHOT-->
+                    <a ng-if="vista.objetoUnity.screenshotId != null && vista.objetoUnity.screenshotId !=''"
+                        ng-href="{{'public/file/' + vista.objetoUnity.screenshotId}}"
+                        target="_blank">
+            
+                        <img alt="screenshoot Model" 
+                            ng-src="{{'public/file/' + vista.objetoUnity.screenshotId}}">
+                    </a>
+                    
+                </form>
+            </li>
+           <!-- <li><label>Versión:</label> <input type="number" ng-model="vista.modelo.version"></li> -->
+        </ul>
+    </fieldset>
+</div>
