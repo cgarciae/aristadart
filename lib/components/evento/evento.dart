@@ -151,15 +151,20 @@ class EventoVista
             });
         }else
         {
-            //Actualizar cloudTarget
+            
             new ClientCloudTargetServices().NewFromImage(form)
             .then((CloudTarget target){
                 
             if (target.failed)
                 return print (target.error);
             
-            evento.cloudTarget = target;
-            
+            var delta = new Evento()
+                ..cloudTarget = (new CloudTarget()
+                  ..id = target.id);
+            eventoServices.UpdateGeneric(delta).then((_){
+            evento.cloudTarget = target; 
+            });                     
+                      
             });
         }
     }
