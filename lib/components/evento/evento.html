@@ -62,7 +62,9 @@
         <div>          
             <div class="large-5">
                 <label>Nombre:</label>
-                <input type="text" ng-model="evento.nombre" ng-blur=saveNombre()>
+                <input type="text" ng-model="evento.nombre" 
+                                   ng-change="cambio=true"
+                                   ng-blur=saveNombre()>
             </div>
             <div class="small-10">
                 <label>Descripcion </label>
