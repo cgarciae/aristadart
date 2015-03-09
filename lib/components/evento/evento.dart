@@ -88,15 +88,7 @@ class EventoVista
     
     nuevaVista ()
     {
-        
-        requestDecoded
-        (
-            Vista,
-            Method.POST,
-            'vista',
-            params: {"eventoID" : evento.id}, 
-            userId: userId
-        )
+        new ClientVistaServices (new Vista()).New (1, evento.id)
         .then((Vista _vista){
         if(_vista.failed)
             return print(_vista.error);
@@ -113,13 +105,7 @@ class EventoVista
     {
         event.stopImmediatePropagation();
         
-        requestDecoded
-        (
-            Evento,
-            Method.POST,
-            'evento/${evento.id}/removeVista/${v.id}',
-            userId: userId
-        )
+        eventoServices.RemoveVista(v.id)
         .then((Evento _evento){
             
         if (_evento.failed)
