@@ -1,57 +1,28 @@
 part of aristadart.server;
 
 @app.Group ('/${Col.cloudTarget}')
-class CloudTargetServices
+@Catch()
+class CloudTargetServices extends AristaService<CloudTarget>
 {
+    CloudTargetServices () : super (Col.cloudTarget);
+    
     @app.DefaultRoute (methods: const[app.POST])
     @Private()
     @Encode()
     Future<CloudTarget> New () async
     {
-        try
-        {
-            var target = new CloudTarget()
-                ..id = newId();
-            
-            await db.insert
-            (
-                Col.cloudTarget,
-                target
-            );
-            
-            return target;
-        }
-        catch (e, s)
-        {
-            return new CloudTarget()
-                ..error = "$e $s";
-        }
+        var target = new CloudTarget()
+            ..id = newId();
+          
+        return NewGeneric(target);
+
     }
     
     @app.Route ('/:id', methods: const[app.GET])
     @Encode()
     Future<CloudTarget> Get (String id) async
     {
-        try
-        {
-            CloudTarget target = await db.findOne
-            (
-                Col.cloudTarget,
-                CloudTarget,
-                where.id(StringToId(id))
-            );
-            
-            if (target == null)
-                return new CloudTarget()
-                    ..error = "Target no fue encontrado";
-            
-            return target;
-        }
-        catch (e, s)
-        {
-            return new CloudTarget()
-                ..error = "$e $s";
-        }
+        return GetGeneric(id);
     }
     
     @app.Route ('/:id', methods: const[app.PUT])
@@ -59,24 +30,8 @@ class CloudTargetServices
     @Encode()
     Future<CloudTarget> Update (String id, @Decode() CloudTarget delta) async
     {
-        try
-        {
-            print (encodeJson(delta));
-            
-            await db.update
-            (
-                Col.cloudTarget,
-                where.id (StringToId (id)),
-                getModifierBuilder(delta)
-            );
-            
-            return Get (id);
-        }
-        catch (e, s)
-        {
-            return new CloudTarget()
-                ..error = "$e $s";
-        }
+        await UpdateGeneric(id, delta);
+        return Get (id);
     }
     
     @app.Route ('/:id', methods: const[app.PUT])
@@ -84,22 +39,7 @@ class CloudTargetServices
     @Encode()
     Future<CloudTarget> Delete (String id) async
     {
-        try
-        {
-            await db.remove
-            (
-                Col.cloudTarget,
-                where.id (StringToId (id))
-            );
-            
-            return new DbObj()
-                ..id = id;
-        }
-        catch (e, s)
-        {
-            return new CloudTarget()
-                ..error = "$e $s";
-        }
+        return DeleteGeneric(id);
     }
     
     @app.Route ('/newFromImage', methods: const[app.POST], allowMultipartRequest: true)
@@ -107,115 +47,68 @@ class CloudTargetServices
     @Encode()
     Future<CloudTarget> NewFromImage (@app.Body(app.FORM) Map form) async
     {
-        try
-        {
-            CloudTarget target = await New();
+        CloudTarget target = await New();
             
-            if (target.failed)
-                return target;
-            
-            HttpBodyFileUpload file = FormToFileUpload(form);
-            
-            VuforiaResponse response = await VuforiaServices.newImage
-            (
-                file.content, //Imagen
-                target.id //El id es metadata
-            );
-            
-            if (response.result_code != VuforiaResultCode.Success && response.result_code != VuforiaResultCode.TargetCreated)
-                return new CloudTarget()
-                    ..error = "Fracaso subir imagen a vuforia: ${response.result_code}";
-            
-                    
-            FileDb image = await new FileServices().NewOrUpdate (form, new FileDb());
-             
-            if (image.failed)
-                return new CloudTarget()
-                    ..error = "Fracaso guardar imagen en mongo: ${image.error}";
-            
-            return Update
-            (
-                target.id,
-                new CloudTarget()
-                    ..image = image
-                    ..target = (new VuforiaTargetRecord()
-                        ..target_id = response.target_id)
-            
-            );
-        }
-        catch (e, s)
-        {
-            return new CloudTarget()
-                ..error = "$e $s";
-        }
+        if (target.failed)
+            return target;
+        
+        //Get file
+        HttpBodyFileUpload file = FormToFileUpload(form);
+        
+        //Subir la imagen a vuforia
+        VuforiaResponse response = await VuforiaServices.newImage
+        (
+            file.content, //Imagen
+            target.id //El id es metadata
+        );
+        
+        //Si el upload fracaso
+        if (response.result_code != VuforiaResultCode.Success && response.result_code != VuforiaResultCode.TargetCreated)
+            throw new Exception("Fracaso subir imagen a vuforia: ${response.result_code}");
+        
+                
+        //Subir la imagen a Mongo
+        FileDb image = await new FileServices().NewOrUpdate (form, new FileDb());
+         
+        //Crear cambios
+        var delta = new CloudTarget()
+            ..image = image
+            ..target = (new VuforiaTargetRecord()
+                ..target_id = response.target_id);
+        
+        return Update(target.id, delta);
     }
     
     
-    @app.Route ('/:id/updateFromImage', methods: const[app.POST], allowMultipartRequest: true)
+    @app.Route ('/:id/updateFromImage', methods: const[app.PUT], allowMultipartRequest: true)
     @Private()
     @Encode()
     Future<CloudTarget> UpdateFromImage (String id, @app.Body(app.FORM) Map form) async
     {
-        try
-        {
-            CloudTarget target = await Get(id);
-            
-            if (target.failed)
-                return target;
-            
-            if (target.image == null || target.image.id == null)
-                return new CloudTarget()
-                    ..error = "Imagen no existe";
-            
-            if (target.target == null || target.target.id == null)
-                return new CloudTarget()
-                    ..error = "Target no existe";
-            
-            
-            HttpBodyFileUpload file = FormToFileUpload(form);
-            
-            //Crear una nueva imagen en mongo y vuforia simultaneamente
-            List futures = await Future.wait
-            ([
-                new FileServices ().Update(target.image.id, form),
-                VuforiaServices.updateImage
-                (
-                    target.target.id,
-                    file.content //Imagen
-                )
-            ]);
-            
-            FileDb image = futures[0];
-            VuforiaResponse response = futures[1];
-            
-            if (image.failed)
-                return new CloudTarget()
-                    ..error = "Fracaso guardar imagen en mongo";
-            
-            if (response.failed)
-                return new CloudTarget()
-                    ..error = "Fracaso subir imagen a vuforia";
-            
-            return target
-                ..image = image
-                ..target = response.target_record;
-        }
-        catch (e, s)
-        {
-            return new CloudTarget()
-                ..error = "$e $s";
-        }
-    }
-    
-    @app.Route ('/:id/vuforiaTargetRecord', methods: const[app.GET])
-    @Encode()
-    Future<VuforiaResponse> testGetVuforiaImage (String id) async
-    {
-        return VuforiaServices.makeVuforiaRequest
+        CloudTarget target = await Get(id);
+        
+        if (target.image == null || target.image.id == null)
+            throw new Exception("Imagen no existe");
+        
+        if (target.target == null || target.target.id == null)
+            throw new Exception("Target no existe");
+        
+        HttpBodyFileUpload file = FormToFileUpload(form);
+        
+        FileDb image = await new FileServices ().Update(target.image.id, form);
+        VuforiaResponse response = await VuforiaServices.updateImage
         (
-            Method.GET,
-            '/targets/$id'
+            target.target.id,
+            file.content //Imagen
         );
+        
+        //Crear cambios
+        var delta = new CloudTarget()
+            ..image = (new FileDb()
+                ..id = image.id)
+            ..target = response.target_record;
+        
+        return Update (id, delta);
     }
 }
 

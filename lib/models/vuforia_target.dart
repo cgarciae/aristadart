@@ -1,9 +1,11 @@
 part of aristadart.general;
 
-class VuforiaTargetRecord
+class VuforiaTargetRecord extends Ref
 {
     String get id => target_id;
     set (String id) => target_id = id;
+    
+    String get href => localHost + 'vuforiaTargetRecord/$id';
     
     @Field() String target_id;
     @Field() bool active_flag;

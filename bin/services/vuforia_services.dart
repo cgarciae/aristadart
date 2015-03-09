@@ -1,7 +1,10 @@
 part of aristadart.server;
 
+@app.Group ('/vuforiaTargetRecord')
+@Catch()
 class VuforiaServices
 {
+    @app.Route ('/:id')
     Future<VuforiaResponse> GetTarget (String id) async
     {
         return VuforiaServices.makeVuforiaRequest
