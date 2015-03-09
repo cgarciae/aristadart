@@ -12,9 +12,6 @@ class ClientEventoServices extends ClientService<Evento>
         );
     }
     
-    Future<Evento> AddVista (String vistaId)
-    {
-        return private (Method.POST, '$href/addVista/$vistaId');
-    }
+    
     
 }
