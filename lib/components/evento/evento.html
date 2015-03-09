@@ -1,23 +1,17 @@
 <div class="row large-10 small-centered colums">
 <div id="myModal" class="reveal-modal" data-reveal>
-  <a class="close-reveal-modal">&#215;</a>
   <h2>Vistas</h2>
-  
-  <div ng-if="!cargarVistasUsuario"> 
-      <button ng-click="iniciarCargaVistasUsuario()">Cargar Vistas</button>
-  </div>
-  <a ng-click='nuevaVista()' class="add close-reveal-modal"></a>
-  <div ng-if="cargarVistasUsuario">
-    <div ng-repeat="vistaUsuario in vistasUsuario">
-        <fieldset ng-click="seleccionarVistaEnModal(vistaUsuario)" class="boxes">
-            <legend>
-                <div class="row">
-                    <div class="small-8 columns">{{vistaUsuario.nombre}}</div>
-                </div>
-            </legend>
-            <img alt="{{vistaUsuario.icon}}" ng-src="{{vistaUsuario.icon}}" class="gray-b">
-         </fieldset>
-    </div>    
+  <a ng-click='nuevaVista()' class="close-reveal-modal add"></a>
+
+  <div ng-repeat="vistaUsuario in vistasUsuario">
+      <fieldset ng-click="seleccionarVistaEnModal(vistaUsuario)" class="boxes">
+          <legend>
+              <div class="row">
+                  <div class="small-8 columns">{{vistaUsuario.nombre}}</div>
+              </div>
+          </legend>
+          <img alt="{{vistaUsuario.icon}}" ng-src="{{vistaUsuario.icon}}" class="gray-b">
+       </fieldset>
   </div>
 </div>
 <fieldset>
@@ -77,7 +71,6 @@
     </div>
 </fieldset>
 <h2>Edita y crea tus vistas</h2>
-<a data-reveal-id="myModal" >Lista de vistas</a>
 <div class="row">
     <ul class="small-block-grid-2 medium-block-grid-3 large-block-grid-4">
         <li ng-repeat="vista in evento.vistas"
@@ -97,7 +90,7 @@
          </fieldset>
         </li>
     </ul>
-    <a data-reveal-id="myModal" class="add"></a>
+    <a ng-click="iniciarCargaVistasUsuario()" data-reveal-id="myModal" class="add"></a>
 </div>
 </div>
 
