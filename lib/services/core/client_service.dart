@@ -24,32 +24,46 @@ abstract class ClientService<T extends Ref>
         );
     }
     
-    Future<T> GetGeneric ()
+    Future<T> GetGeneric ({Map queryParams})
     {
         return private
         (
             Method.GET,
-            source.href
+            href,
+            params: queryParams
         );
     }
     
-    Future<T> UpdateGeneric (T delta)
+    Future<T> UpdateGeneric (T delta, {Map queryParams})
     {
         return privateJson
         (
             Method.PUT,
-            source.href,
-            delta
+            href,
+            delta,
+            params: queryParams
         );
     }
     
-    Future<DbObj> DeleteGeneric ()
+    Future<DbObj> DeleteGeneric ({Map queryParams})
     {
         return Requester.private
         (
             DbObj,
             Method.DELETE,
-            source.href
+            href,
+            params: queryParams
+        );
+    }
+    
+    Future AllGeneric (Type type, {Map queryParams})
+    {
+        return Requester.private
+        (
+            type,
+            Method.GET,
+            '$pathBase/all',
+            params: queryParams
         );
     }
     

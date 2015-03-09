@@ -104,36 +104,28 @@ class EventoServices extends AristaService<Evento>
     @Encode()
     Future<ListVistaResp> Vistas (String id) async
     {
-        try
-        {
-            Evento evento = await Get (id);
-            
-            if (evento.failed)
-                return new ListVistaResp ()
-                    ..error = evento.error;
-            
-            if (evento.vistas == null || evento.vistas.isEmpty)
-                return new ListVistaResp ()
-                    ..vistas = [];
-            
-            var vistasId = evento.vistas
-                    .map(F.getField(#id))
-                    .map(StringToId)
-                    .toList();
-            
-            List<Vista> vistas = await new VistaServices().Find
-            (
-                where.oneFrom("_id", vistasId)
-            );
-            
-            return new ListVistaResp()
-                ..vistas = vistas;
-        }
-        catch (e, s)
-        {
-            return new ListVistaResp()
-                ..error = "$e $s";
-        }
+        Evento evento = await Get (id);
+        
+        if (evento.failed)
+            return new ListVistaResp ()
+                ..error = evento.error;
+        
+        if (evento.vistas == null || evento.vistas.isEmpty)
+            return new ListVistaResp ()
+                ..vistas = [];
+        
+        var vistasId = evento.vistas
+                .map(F.getField(#id))
+                .map(StringToId)
+                .toList();
+        
+        List<Vista> vistas = await new VistaServices().Find
+        (
+            where.oneFrom("_id", vistasId)
+        );
+        
+        return new ListVistaResp()
+            ..vistas = vistas; 
     }
     
     @app.Route ('/all', methods: const[app.GET])
