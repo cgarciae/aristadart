@@ -51,6 +51,7 @@ class Vista extends Ref
     @Field() String get href => localHost + 'vista/$id';
     @Field() User owner;
     @Field() String nombre;
+    @Field() String descripcion;
     
     String get icon => IconDir.missingImage;
     
