@@ -29,12 +29,24 @@ abstract class AristaService<T extends DbObj> extends MongoDbService<T>
     {
         delta.id = null;
         
-        await update
-        (
-            where.id(StringToId(id)),
-            delta,
-            override: false
-        );
+        try
+        {
+            await update
+            (
+                where.id(StringToId(id)),
+                delta,
+                override: false
+            );
+        }
+        catch (e, s)
+        {
+            await db.update
+            (
+                collectionName,
+                where.id(StringToId(id)),
+                getModifierBuilder(delta)
+            );
+        }
     }
     
     Future<DbObj> DeleteGeneric (String id) async

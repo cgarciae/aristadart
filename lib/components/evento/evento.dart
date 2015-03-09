@@ -161,7 +161,9 @@ class EventoVista
             var delta = new Evento()
                 ..cloudTarget = (new CloudTarget()
                   ..id = target.id);
+            
             eventoServices.UpdateGeneric(delta).then((_){
+            
             evento.cloudTarget = target; 
             });                     
                       
@@ -169,7 +171,43 @@ class EventoVista
         }
     }
     
-    
+    uploadImagePreview (dom.MouseEvent event)
+    {
+        dom.FormElement form = getFormElement(event);
+                
+        if (evento.imagenPreview != null)
+        {
+            //Actualizar cloudTarget
+            new ClientFileServices(evento.imagenPreview).UpdateFile(form)
+            .then((FileDb file){
+                
+            if (file.failed)
+                return print (file.error);
+            
+            dom.window.location.reload();
+            });
+        }else
+        {
+            new ClientFileServices().NewOrUpdate(form)
+            .then((FileDb file){
+                
+            if (file.failed)
+                return print (file.error);
+            
+            var delta = new Evento()
+                ..imagenPreview = (new FileDb()
+                  ..id = file.id);
+            
+            eventoServices.UpdateGeneric(delta).then((resp){
+            
+            if (resp.failed)
+                return print (resp.error);
+            
+            evento.imagenPreview = file;
+            });      
+            });
+        }
+    }
     
     iniciarCargaVistasUsuario()
     {
