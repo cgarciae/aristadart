@@ -17,6 +17,7 @@ part 'components/widgets/loader/loader.dart';
 part 'components/widgets/dummy/dummy.dart';
 part 'components/widgets/alert/alert.dart';
 part 'components/vista/vista.dart';
+part 'components/vista/construccion_ra/construccion_ra.dart';
 part 'components/login/login.dart';
 part 'components/login/nuevo_usuario.dart';
 part 'components/home/home.dart';

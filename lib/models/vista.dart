@@ -48,6 +48,7 @@ class VistaTotal
 class Vista extends Ref
 {
     @Field() String get type__ => null;
+    @Field() int get typeNum => 0;
     @Field() String get href => localHost + 'vista/$id';
     @Field() User owner;
     @Field() String nombre;
@@ -102,6 +103,7 @@ class ConstruccionRA extends Vista
 {
     @Field() String get href => localHost + 'vista/$id';
     @Field() String get type__ => VistaType.construccionRA;
+    @Field() int get typeNum => 1;
     
     @Field() ObjetoUnity objetoUnity;
     @Field() LocalImageTarget localTarget;

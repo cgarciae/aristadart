@@ -21,7 +21,7 @@ class ClientVistaServices extends ClientService<Vista>
         .then(MapToVista);
     }
     
-    Future<Vista> Get (String id)
+    Future<Vista> Get ()
     {
         return Requester.map (Method.GET, href).then(MapToVista);
     }
@@ -31,10 +31,21 @@ class ClientVistaServices extends ClientService<Vista>
         return Requester.privateJsonMap (Method.PUT, href, delta).then(MapToVista);
     }
     
+    Future<Vista> SetType (int type)
+    {
+        return Requester.privateMap(Method.PUT, '$href/setType',params: {'type': type})
+                        .then(MapToVista);
+    }
+    
     //Delete => DeleteGeneric
     
     static Vista MapToVista (Map map)
     {
         return Vista.MapToVista (decode, map);
+    }
+    
+    static Vista StringToVista (String json)
+    {
+        return Vista.MapToVista (decode, JSON.decode(json));
     }
 }
