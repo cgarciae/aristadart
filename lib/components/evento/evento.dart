@@ -88,7 +88,7 @@ class EventoVista
     
     nuevaVista ()
     {
-        new ClientVistaServices (new Vista()).New (1, evento.id)
+        new ClientVistaServices (new Vista()).New (evento.id)
         .then((Vista _vista){
         if(_vista.failed)
             return print(_vista.error);
