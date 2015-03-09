@@ -7,7 +7,6 @@ class VistaServices extends MongoDbService<Vista>
     VistaServices () : super (Col.vista);
     
     @app.DefaultRoute(methods: const [app.POST])
-    @Catch()
     @Private()
     @Encode()
     Future<Vista> New (@app.QueryParam("type") int typeNumber, @app.QueryParam("eventoId") String eventoId) async

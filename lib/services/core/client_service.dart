@@ -14,12 +14,13 @@ abstract class ClientService<T extends Ref>
     //BASIC METHODS
     ////////////////
     
-    Future<T> NewGeneric ()
+    Future<T> NewGeneric ({Map queryParams})
     {
         return private
         (
             Method.POST,
-            pathBase
+            pathBase,
+            params: queryParams
         );
     }
     

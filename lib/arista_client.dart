@@ -28,6 +28,7 @@ part 'routing/router.dart';
 part 'services/client_file_services.dart';
 part 'services/client_user_services.dart';
 part 'services/client_evento_services.dart';
+part 'services/client_vista_services.dart';
 part 'services/core/client_service.dart';
 part 'services/core/requester.dart';
 
