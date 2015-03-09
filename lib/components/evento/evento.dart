@@ -20,40 +20,30 @@ class EventoVista
     //Variables dummy
     List<Vista> vistasUsuario = [];
     bool cargarVistasUsuario = false;
+    ClientEventoServices eventoServices;
 
     
     EventoVista (RouteProvider routeProvider, this.router) 
     {
         var eventoID = routeProvider.parameters['eventoID'];
-
-        //Cargar evento
-        requestDecoded
-        (
-            Evento,
-            Method.GET,
-            'evento/$eventoID',
-            userId: userId
-        )
-        .then((Evento _evento){
-        if(_evento.failed)
-            return print(_evento.error);            
+        
+        var eventoTemp = new Evento()
+            ..id = eventoID;
+        
+        new ClientEventoServices(eventoTemp).GetGeneric().then((_evento){
+            
+        if (_evento.failed)
+            return print (_evento.error);
         
         evento = _evento;
+        eventoServices = new ClientEventoServices(evento);
         
-        //Cargar vistas
-        requestDecoded
-        (
-            ListVistaResp,
-            Method.GET,
-            '${evento.href}/vistas',
-            userId: userId
-        )
-        .then((ListVistaResp listVistaResp){
-              
-        if(listVistaResp.failed)
-            return print(listVistaResp.error);
-          
-        evento.vistas =  listVistaResp.vistas;    
+        return eventoServices.Vistas().then((vistasResp){
+            
+        if (vistasResp.failed)
+            return print (vistasResp.error);
+        
+        evento.vistas = vistasResp.vistas;
         });
         });
     }
@@ -62,40 +52,34 @@ class EventoVista
     {
         if(!cambio)
           return;
-        jsonRequestDecoded
-        (
-            Evento,
-            Method.PUT,
-            evento.href,
-            new Evento()
-                ..descripcion = evento.descripcion,
-            userId: userId
-        )
-        .then((Evento evento){
+        
+        var delta = new Evento()
+            ..descripcion = evento.descripcion;
+        
+        eventoServices.UpdateGeneric (delta).then((Evento evento){
+            
         if(evento.failed)
             return print(evento.error);
+        
         cambio = false;
-        //alert.addAlert({'type': 'success','msg': 'La descripción ha sido guardada exitosamente'});
         });
     }
     
     saveNombre ()
     {
-        jsonRequestDecoded
-        (
-            Evento,
-            Method.PUT,
-            evento.href,
-            new Evento()
-                ..nombre = evento.nombre,
-            userId: userId
-        )
-        .then((Evento evento){
+        if(!cambio)
+          return;
+        
+        var delta = new Evento()
+            ..nombre = evento.nombre;
+        
+        eventoServices.UpdateGeneric (delta).then((Evento evento){
+            
         if(evento.failed)
             return print(evento.error);
-        //alert.addAlert({'type': 'success','msg': 'El nombre ha sido guardada exitosamente'});         
+        
+        cambio = false;
         });
-  
     }
     
       

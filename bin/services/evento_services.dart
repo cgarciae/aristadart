@@ -2,7 +2,7 @@ part of aristadart.server;
 
 @app.Group ('/evento')
 @Catch()
-class EventoServices extends MongoDbService<Evento>
+class EventoServices extends AristaService<Evento>
 {
     EventoServices () : super (Col.evento);
     
@@ -20,12 +20,7 @@ class EventoServices extends MongoDbService<Evento>
             ..owner = (new User()
                 ..id = userId);
         
-        await insert
-        (
-            evento
-        );
-        
-        return evento;
+        return NewGeneric (evento);
     }
     
     @app.Route ('/:id', methods: const[app.PUT])
@@ -33,32 +28,15 @@ class EventoServices extends MongoDbService<Evento>
     @Encode()
     Future<Evento> Update (String id, @Decode() Evento delta) async
     {
-        await db.update 
-        (   
-            Col.evento,
-            where.id (StringToId (id)),
-            getModifierBuilder (delta)
-        );
-            
+        await UpdateGeneric(id, delta);   
         return Get (id);
-
     }
     
     @app.Route ('/:id', methods: const[app.GET])
     @Encode()
     Future<Evento> Get (String id) async
     {
-        Evento evento = await db.findOne
-        (
-            Col.evento,
-            Evento,
-            where.id(StringToId(id))
-        );
-            
-        if (evento == null)
-            throw new Exception ("Evento no encontrado");
-          
-        return evento;
+        return GetGeneric(id);
     }
     
     @app.Route ('/:id', methods: const[app.DELETE])
@@ -66,22 +44,7 @@ class EventoServices extends MongoDbService<Evento>
     @Encode()
     Future<DbObj> Delete (String id) async
     {
-        try
-        {
-            await db.remove
-            (
-                Col.evento,
-                where.id(StringToId(id))
-            );
-            
-            return new DbObj()
-                ..id = id;
-        }
-        catch (e, s)
-        {
-            return new DbObj()
-                ..error = "$e $s";
-        }
+        return DeleteGeneric(id);
     }
     
     @app.Route('/:id/addVista/:vistaId', methods: const [app.POST, app.PUT])
@@ -158,18 +121,10 @@ class EventoServices extends MongoDbService<Evento>
                     .map(StringToId)
                     .toList();
             
-            List<VistaTotal> vistasTotal = await new VistaServices().find
+            List<Vista> vistas = await new VistaServices().Find
             (
                 where.oneFrom("_id", vistasId)
             );
-            
-            List<Vista> vistas = vistasTotal.map((VistaTotal v){
-                
-                Vista vista = v.vista;
-                
-                return vista;
-                
-            }).toList();
             
             return new ListVistaResp()
                 ..vistas = vistas;

@@ -15,78 +15,36 @@ class HomeVista
     String url = '';
     
     Router router;
+    ClientUserServices userServices;
     
     HomeVista (this.router)
     {
-        getUser();
+        userServices = new ClientUserServices(new User()
+                                                ..id = userId);
+        
+        userServices.GetGeneric().then (doIfSuccess((User _user){
+        
+        user = _user;
+        return userServices.Eventos().then(doIfSuccess((ListEventoResp _eventos){
+            
+        eventos = _eventos.eventos;
+        }));
+        }));
     }
     
     bool get isAdmin => loggedAdmin;
     
-    getUser ()
-    {
-        //Get el usuerio
-        requestDecoded
-        (
-            User,
-            Method.GET,
-            'user',
-            userId: userId
-        )
-        .then((User _user){
-        if(_user.success)
-            user = _user;
-        else
-            print(_user.error);
-        });
-        
-        //Get los eventos
-        
-        requestDecoded
-        (
-            ListEventoResp,
-            Method.GET,
-            'evento/all',
-            userId: userId
-        )
-        .then((ListEventoResp resp){
-        if(resp.success)
-            eventos = resp.eventos;
-        else
-            print(resp.error);    
-          
-        });
-        
-    }
+   
     
     nuevoEvento ()
     {
-        requestDecoded
-        (
-            Evento,
-            Method.POST,
-            'evento',
-            userId: userId
-        )
-        .then((Evento evento){
-        if(evento.success)
-            eventos.add(evento);
-        else
-            print(evento.error);    
-          
-        });
-    }
-    
-    Future<Resp> addEventId  (String eventID)
-    {
-        var evento = new Evento()
-                ..id = eventID
-                ..nombre = 'Nuevo Evento'
-                ..descripcion = 'Descripcion';
-        
-        eventos.add(evento);
+        new ClientEventoServices().NewGeneric().then((_evento){
             
-        return saveInCollection('evento', evento);
+        if (_evento.failed)
+            return print (_evento.error);
+            
+        eventos.add(_evento);
+        });
     }
     
     
@@ -100,19 +58,10 @@ class HomeVista
     {
         event.stopImmediatePropagation();
        
-        requestDecoded
-        (
-            DbObj,
-            Method.DELETE,
-            e.href,
-            userId: userId
-        )
-        .then((DbObj dbObj){
-        if(dbObj.success)
-            eventos.remove(e);
-        else
-            print(dbObj.error);    
-          
+        new ClientEventoServices(e).DeleteGeneric().then((resp){
+            
+        if (resp.success)
+            eventos.remove (e);
         });
     }
     

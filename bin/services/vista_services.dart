@@ -87,12 +87,10 @@ class VistaServices extends MongoDbService<Vista>
     @Encode()
     Future<ListVistaResp> All () async
     {
-        List<Vista> vistas = await collection.find
+        List<Vista> vistas = await Find
         (
             where.eq("owner._id", StringToId(userId))
-        )
-        .stream.map (MapToVista).toList();
-        
+        );
         
         return new ListVistaResp()
             ..vistas = vistas;
@@ -123,6 +121,11 @@ class VistaServices extends MongoDbService<Vista>
         }
         
         return v;
+    }
+    
+    Future<List<Vista>> Find (query)
+    {
+        return collection.find(query).stream.map (MapToVista).toList();
     }
     
 }

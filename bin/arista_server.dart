@@ -20,6 +20,7 @@ import 'package:redstone/server.dart';
 import 'utils/utils.dart';
 import 'package:fp/fp.dart' as F;
 
+part 'services/core/arista_service.dart';
 part 'services/user_services.dart';
 part 'services/evento_services.dart';
 part 'services/vista_services.dart';
@@ -40,6 +41,7 @@ HttpSession get session => app.request.session;
 MongoDb get db => app.request.attributes.dbConn;
 GridFS get fs => new GridFS(db.innerConn);
 String get userId => app.request.headers.authorization;
+set userId (String value) => app.request.headers.authorization = value;
 
 const int ADMIN = 1;
 

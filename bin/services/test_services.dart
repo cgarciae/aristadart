@@ -1,5 +1,51 @@
 part of aristadart.server;
 
+class TestClass extends Ref
+{
+    @Field() DateTime date;
+    get href => null;
+}
+
+@app.Route ('/testDatePost', methods: const [app.POST])
+@Encode()
+testDatePost (@Decode() TestClass t) async
+{
+    
+    print (app.request.body);
+    
+    return t;
+}
+
+@app.Route ('/testDateFind')
+@Encode()
+testDateFind () async
+{
+    
+    var t = await db.collection('test').findOne();
+    
+    print (t);
+    
+    return db.decode(t, TestClass);
+}
+
+@app.Route ('/testDate')
+@Encode()
+testDate () async
+{
+    var testClass = new TestClass()
+        ..date = new DateTime.now()
+        ..id = newId();
+    
+    await db.insert('test', testClass);
+    
+    return testClass;
+}
+
+
+@app.Route ('/testOptional/:mandatory')
+testOptional (String mandatory, {@app.QueryParam() String optional}) => "$mandatory $optional";
+
+
 @app.Route ('/testQuery')
 testQuery (@app.QueryParam('algo') String algo, @app.QueryParam('mas') String mas) => "$algo $mas";
 

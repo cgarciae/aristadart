@@ -22,36 +22,27 @@ class LoginVista extends ShadowRootAware
     }
     
     
-      onShadowRoot(dom.ShadowRoot root){}
+    onShadowRoot(dom.ShadowRoot root){}
       
     login2 ()
     {
-        return jsonRequestDecoded
-        (
-            User, 
-            Method.POST,
-            '/user',
-            user
-        )
-        .then((User dbUser){
+        var services = new ClientUserServices(user);
+        
+        services.NewOrLogin().then((User dbUser){
             
         if (dbUser.failed)
         {
             print (dbUser.error);
             return null;
         }
+        
         userId = dbUser.id;
+        services = new ClientUserServices(dbUser);
         print (encode(dbUser));
         
-        return requestDecoded
-        (
-            BoolResp, Method.GET, 'user/isAdmin', 
-            userId: dbUser.id
-        )
-        .then((BoolResp resp){
+        return services.IsAdmin().then((BoolResp resp){
             
         loggedAdmin = resp.success && resp.value;
-        
         router.go('home', {});
         });
         });
@@ -62,9 +53,6 @@ class LoginVista extends ShadowRootAware
         getClient().then((auth.AutoRefreshingAuthClient client){
             
         var oauthApi = new oauth.Oauth2Api(client);
-        
-        print ("aca");
-        
         oauthApi.userinfo.get().then((oauth.Userinfoplus info){
                     
         
@@ -73,34 +61,23 @@ class LoginVista extends ShadowRootAware
             ..nombre = info.name
             ..apellido = info.familyName;
         
-        return jsonRequestDecoded
-        (
-            User, 
-            Method.POST,
-            '/user',
-            googleUser
-        )
-        .then((User dbUser){
+        var services = new ClientUserServices(googleUser);
+        
+        return services.NewOrLogin().then((User dbUser){
             
         if (dbUser.failed)
         {
             print (dbUser.error);
             return null;
         }
+        
         userId = dbUser.id;
+        services = new ClientUserServices(dbUser);
         print (encode(dbUser));
         
-        return requestDecoded
-        (
-            BoolResp, Method.GET, '/user/isAdmin'
-        )
-        .then((BoolResp resp){
-            
-        if (resp.failed)
-            return print (resp.error);
+        return services.IsAdmin().then((BoolResp resp){
             
         loggedAdmin = resp.success && resp.value;
-        
         router.go('home', {});
         });
         });

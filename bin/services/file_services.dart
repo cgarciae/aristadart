@@ -8,7 +8,7 @@ class FileServices
     @Private()
     @Encode()
     Future<FileDb> NewOrUpdate (@app.Body(app.FORM) Map form, 
-                                @Decode(fromQueryParams: true) FileDb metadata,
+                                @Decode(fromQueryParams: true) FileDb queryMetadata,
                                 {String id, String ownerId}) async
     {
         HttpBodyFileUpload file = FormToFileUpload(form);
@@ -23,16 +23,11 @@ class FileServices
         var gridIn = fs.createFile(input, file.filename)
             ..contentType = file.contentType.value;
         
-        //Maybe set id
-        if (id != null)
-        {
-            
-        }
         
         //Set new metadata
         FileDb newMetadata;
-        if (metadata != null)
-            newMetadata = Clone (metadata);
+        if (queryMetadata != null)
+            newMetadata = Clone (queryMetadata);
         else
             newMetadata = new FileDb();
         
@@ -46,11 +41,11 @@ class FileServices
         if (id != null)
         {
             gridIn.id = StringToId(id);
-            metadata.id = id;
+            newMetadata.id = id;
         }
         else
         {
-            metadata.id = gridIn.id.toHexString();
+            newMetadata.id = gridIn.id.toHexString();
         }
         
         newMetadata
@@ -77,27 +72,19 @@ class FileServices
     @app.Route ('/:id', methods: const [app.GET])
     Future Get (String id) async
     {
-        try
-        {
-            GridOut gridOut = await fs.findOne
-            (
-                where.id (StringToId(id))
-            );
-            
-            if (gridOut == null)
-                return encodeJson (new Resp()
-                    ..error = "El archivo no existe");
-            
-            return new shelf.Response.ok
-            (
-                getData (gridOut), 
-                headers: { "Content-Type": gridOut.contentType }
-            );
-        }
-        catch (e, s)
-        {
-            return {"error" : "$e $s"};
-        }
+        GridOut gridOut = await fs.findOne
+        (
+            where.id (StringToId(id))
+        );
+        
+        if (gridOut == null)
+            throw new Exception("El archivo no existe");
+        
+        return new shelf.Response.ok
+        (
+            getData (gridOut), 
+            headers: { "Content-Type": gridOut.contentType }
+        );
     }
     
     @app.Route ('/:id/metadata', methods: const [app.GET])

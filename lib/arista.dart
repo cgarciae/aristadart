@@ -95,6 +95,27 @@ Map ObjectToMap (dynamic obj)
     return JSON.decode (encodeJson (obj));
 }
 
+Map addOrSet (Map headers, Map additions)
+{
+    
+    if (headers != null)
+        headers.addAll (additions);
+    else
+        headers = additions;
+    
+    
+    return headers;
+}
+
+Map maybeAdd (Map map, String field, Object value)
+{
+    
+    if (value != null)
+        map [field] = value;
+    
+    return map;
+}
+
 QueryMap NewQueryMap () => new QueryMap(new Map());
 QueryMap MapToQueryMap (Map map) => new QueryMap(map);
 
@@ -115,9 +136,9 @@ class DbObj extends Resp
     @Id() String id;
 }
 
-class Ref extends DbObj
+abstract class Ref extends DbObj
 {
-    @Field() String href;
+    @Field() String get href;
 }
 
 class ListEventoResp extends Resp
