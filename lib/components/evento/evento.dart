@@ -131,39 +131,6 @@ class EventoVista
         });
     }
     
-    
-    
-    upload (dom.MouseEvent event)
-    {
-        String url = '';
-        var method = '';
-        if(evento.imagenPreview.path == null || evento.imagenPreview.path == ""){
-            
-            url = 'private/file';
-            method = Method.POST;
-            print("no existe, new");
-        }else{
-            
-            url = "private/file/${evento.imagenPreview.path.split('/').last}";
-            method = Method.PUT;
-            print("actualizo");
-        }   
-
-        dom.FormElement form = (event.target as dom.ButtonElement).parent as dom.FormElement;
-        dom.FormData data = new dom.FormData (form);
-                    
-        requestDecoded(IdResp, method, url, data: data).then((IdResp resp)
-        {   
-            print (resp.success);
-            evento.imagenPreview.path = 'public/file/${resp.id}';
-            return saveInCollection('evento', evento);
-        }).then((Resp resp)
-        {
-            if(resp.success)
-                dom.window.location.reload(); 
-        });
-    }
-    
     uploadTarget (dom.MouseEvent event)
     {
         dom.FormElement form = getFormElement(event);
@@ -171,46 +138,30 @@ class EventoVista
         if (evento.cloudTarget != null)
         {
             //Actualizar cloudTarget
-            formRequestDecoded
-            (
-                CloudTarget,
-                Method.PUT,
-                '${evento.cloudTarget.href}/updateFromImage',
-                form,
-                userId: userId
-            )
-            .then((CloudTarget _evento){
+            new ClientCloudTargetServices(evento.cloudTarget).UpdateFromImage(form)
+            .then((CloudTarget target){
                 
-            if (_evento.failed)
-                return print (_evento.error);
+            if (target.failed)
+                return print (target.error);
             
+            evento.cloudTarget = target;
+            
+            dom.window.location.reload(); 
+            
+            });
+        }else
+        {
+            //Actualizar cloudTarget
+            new ClientCloudTargetServices().NewFromImage(form)
+            .then((CloudTarget target){
+                
+            if (target.failed)
+                return print (target.error);
+            
+            evento.cloudTarget = target;
             
             });
         }
-        String url = 'private/vuforiaimage/${evento.id}';
-        var method = '';
-        
-        if (targetImageUrl == null || targetImageUrl == "")
-        {
-            method = Method.POST;
-            print("new");
-        }
-        else
-        {
-            method = Method.PUT;
-            print("actualizar");
-        }   
-
-        dom.FormElement form = (event.target as dom.ButtonElement).parent as dom.FormElement;
-                    
-        formRequestDecoded (RecoTargetResp, method, url, form).then (doIfSuccess ((RecoTargetResp resp)
-        {   
-            targetImageUrl = 'private/file/${resp.recoTarget.imageId}';
-        }))
-        .then ((_)
-        {
-            dom.window.location.reload(); 
-        });
     }
     
     
@@ -219,13 +170,7 @@ class EventoVista
     {
         cargarVistasUsuario = true;
         
-        requestDecoded
-        (
-            ListVistaResp,
-            Method.GET,
-            'vista/all',
-            userId: userId
-        )
+        new ClientVistaServices().AllGeneric(ListVistaResp)
         .then((ListVistaResp resp){
             
         if (resp.failed)
@@ -242,13 +187,7 @@ class EventoVista
             return print ("La vista ya esta contenida en el evento");
         }
       
-        requestDecoded
-        (
-            Evento,
-            Method.POST,
-            'evento/${evento.id}/addVista/${vista.id}',
-            userId: userId
-        )
+        eventoServices.AddVista(vista.id)
         .then((Evento _evento){
             
         if (_evento.failed)
