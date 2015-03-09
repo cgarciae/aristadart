@@ -108,13 +108,7 @@ class EventoVista
     {
         event.stopImmediatePropagation();
         
-        requestDecoded
-        (
-            Evento,
-            Method.POST,
-            'evento/${evento.id}/removeVista/${v.id}',
-            userId: userId
-        )
+        eventoServices.RemoveVista(v.id)
         .then((Evento _evento){
             
         if (_evento.failed)
