@@ -38,6 +38,7 @@ class EventoVista
         evento = _evento;
         eventoServices = new ClientEventoServices(evento);
         
+        //Buscar vistas
         return eventoServices.Vistas().then((vistasResp){
             
         if (vistasResp.failed)
@@ -88,8 +89,10 @@ class EventoVista
     
     nuevaVista ()
     {
-        new ClientVistaServices (new Vista()).New (evento.id)
+        
+        new ClientVistaServices().NewGeneric (queryParams: {"eventoID" : evento.id})
         .then((Vista _vista){
+        
         if(_vista.failed)
             return print(_vista.error);
         

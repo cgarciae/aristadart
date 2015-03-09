@@ -2,7 +2,7 @@ part of aristadart.server;
 
 @app.Group('/vista')
 @Catch()
-class VistaServices extends MongoDbService<Vista>
+class VistaServices extends AristaService<Vista>
 {
     VistaServices () : super (Col.vista);
     
@@ -71,13 +71,7 @@ class VistaServices extends MongoDbService<Vista>
     @Encode()
     Future<DbObj> Delete (String id) async
     {
-        await remove
-        (
-            where.id (StringToId (id))
-        );
-        
-        return new DbObj()
-            ..id = id;
+        return DeleteGeneric(id);
     }
     
     

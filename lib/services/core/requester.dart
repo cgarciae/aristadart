@@ -58,12 +58,23 @@ abstract class Requester
         );
     }
     
-    static Future<Map> jsonMap (String method, String path, {Object data, Map headers, 
+    static Future<Map> jsonMap (String method, String path, Object obj, {Map headers, 
                                     void onProgress (dom.ProgressEvent p), String userId, Map<String,String> params})
     {
         return map
         (
-            method, path, data: encodeJson(data), headers: headers,
+            method, path, data: encodeJson(obj), headers: headers,
+            onProgress: onProgress, userId: userId,
+            params: params
+        );
+    }
+    
+    static Future<Map> privateJsonMap (String method, String path, Object obj, {Map headers, 
+                                    void onProgress (dom.ProgressEvent p), Map<String,String> params})
+    {
+        return jsonMap
+        (
+            method, path, obj, headers: headers,
             onProgress: onProgress, userId: userId,
             params: params
         );

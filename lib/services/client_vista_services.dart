@@ -18,6 +18,13 @@ class ClientVistaServices extends ClientService<Vista>
         return Requester.map (Method.GET, href).then(MapToVista);
     }
     
+    Future<Vista> Update (Vista delta)
+    {
+        return Requester.privateJsonMap (Method.PUT, href, delta).then(MapToVista);
+    }
+    
+    //Delete => DeleteGeneric
+    
     static Vista MapToVista (Map map)
     {
         return Vista.MapToVista (decode, map);
