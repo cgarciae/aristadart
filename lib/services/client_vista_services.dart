@@ -2,13 +2,22 @@ part of aristadart.client;
 
 class ClientVistaServices extends ClientService<Vista>
 {
-    ClientVistaServices ([Vista source]) : super (source, Col.evento);
+    ClientVistaServices ([Vista source]) : super (source, Col.vista);
     
-    Future<Vista> New (int typeNumber, String eventoId)
+    Future<Vista> New ({int typeNumber, String eventoId})
     {
+        Map params = {};
+        
+        if (typeNumber != null)
+            params["type"] = typeNumber;
+        
+        if (eventoId != null)
+            params["eventoId"] = eventoId;
+        
+        
         return Requester.privateMap
         (
-            Method.POST, pathBase, params: {"type": typeNumber, "eventoId": eventoId}
+            Method.POST, pathBase, params: params
         )
         .then(MapToVista);
     }

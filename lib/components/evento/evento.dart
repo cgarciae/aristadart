@@ -90,7 +90,7 @@ class EventoVista
     nuevaVista ()
     {
         
-        new ClientVistaServices().NewGeneric (queryParams: {"eventoID" : evento.id})
+        new ClientVistaServices().New (eventoId : evento.id)
         .then((Vista _vista){
         
         if(_vista.failed)
@@ -218,6 +218,8 @@ class EventoVista
             
         if (resp.failed)
             return print (resp.error);
+        
+        print (resp.vistas.length);
             
         vistasUsuario = resp.vistas;
         });
