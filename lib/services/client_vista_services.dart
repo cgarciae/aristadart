@@ -14,7 +14,6 @@ class ClientVistaServices extends ClientService<Vista>
         if (eventoId != null)
             params["eventoId"] = eventoId;
         
-        
         return Requester.privateMap
         (
             Method.POST, pathBase, params: params

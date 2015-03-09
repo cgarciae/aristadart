@@ -1,7 +1,5 @@
 part of aristadart.client;  
 
-
-
 @Component
 (
     selector : "evento",
