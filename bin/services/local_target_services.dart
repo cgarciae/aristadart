@@ -3,7 +3,7 @@ part of aristadart.server;
 
 @app.Group('/${Col.localTarget}')
 @Catch()
-class LocalImageTargetServices extends MongoDbService<LocalImageTarget>
+class LocalImageTargetServices extends AristaService<LocalImageTarget>
 {
     LocalImageTargetServices() : super (Col.localTarget);
     
@@ -22,24 +22,14 @@ class LocalImageTargetServices extends MongoDbService<LocalImageTarget>
             ..owner = (new User()
                 ..id = userId);
         
-        await insert(localTarget);
-        
-        return localTarget;
+       return NewGeneric(localTarget);
     }
     
     @app.Route ('/:id', methods: const [app.GET])
     @Encode()
     Future<LocalImageTarget> Get (String id) async
     {
-        LocalImageTarget localTarget = await findOne
-        (
-            where.id(StringToId(id))
-        );
-        
-        if (localTarget == null)
-            throw new app.ErrorResponse (400, "Local Image Target no encontrado");
-        
-        return localTarget;
+        return GetGeneric(id);
     }
     
     @app.Route ('/:id', methods: const [app.PUT])
@@ -47,14 +37,9 @@ class LocalImageTargetServices extends MongoDbService<LocalImageTarget>
     @Encode()
     Future<LocalImageTarget> Update (String id, @Decode() LocalImageTarget delta) async
     {
-        await db.update
-        (
-            collectionName,
-            where.id(StringToId(id)),
-            getModifierBuilder(delta)
-        );
+        await UpdateGeneric (id, delta);
         
-        return Get(id);
+        return Get (id);
     }
     
     @app.Route ('/:id', methods: const [app.DELETE])
@@ -62,13 +47,7 @@ class LocalImageTargetServices extends MongoDbService<LocalImageTarget>
     @Encode()
     Future<DbObj> Delete (String id) async
     {
-        await remove
-        (
-            where.id(StringToId(id))
-        );
-        
-        return new DbObj()
-            ..id = id;
+        return DeleteGeneric(id);
     }
     
     @app.Route ('/:id/image', methods: const [app.POST, app.PUT], allowMultipartRequest: true)
@@ -104,10 +83,7 @@ class LocalImageTargetServices extends MongoDbService<LocalImageTarget>
                 ..id = userFile.id);
         
         //Guardar cambios
-        await Update (id, delta);
-       
-        
-        return Get(id);
+        return Update (id, delta);
     }
     
     @app.Route ('/:id/publish', methods: const [app.PUT])
@@ -130,15 +106,7 @@ class LocalImageTargetServices extends MongoDbService<LocalImageTarget>
             ..xmlUpdated = false;
         
         //Guardar
-        await db.update
-        (
-            collectionName,
-            where.id(StringToId(id)),
-            getModifierBuilder(delta)
-        );
-        
-        //Retornar objeto modificado
-        return Get (id);
+        return Update(id, delta);
     }
     
     @app.Route ('/:id/files', methods: const [app.PUT], allowMultipartRequest: true)
@@ -194,33 +162,34 @@ class LocalImageTargetServices extends MongoDbService<LocalImageTarget>
     @app.Route ('/find', methods: const [app.GET])
     @Private(ADMIN)
     @Encode()
-    Future<ListLocalImageTargetResp> Find (@app.QueryParam() bool updatePending,
-           @app.QueryParam() String userId) async
+    Future<List<LocalImageTarget>> Find (
+                                        @app.QueryParam() bool updatePending,
+                                        @app.QueryParam() String userId,
+                                        @app.QueryParam() bool public) async
     {
         //Definir query object
         Map query = {};
         
         //Buscar usuario
         if  (userId != null)
-        query["owner._id"] = StringToId (userId);
+            query["owner._id"] = StringToId (userId);
         
         //Agregar pending
         if (updatePending != null)
-        query["updatePending"] = updatePending;
+            query["updatePending"] = updatePending;
+        
+        if (public != null)
+            query = {r'$or' : [query, {'public': public}]};
         
         //Buscar lista
-        List<LocalImageTarget> list = await find (query);
-        
-        //Responder
-        return new ListLocalImageTargetResp()
-        ..list = list;
+        return find (query);
     }
 
     @app.Route ('/all', methods: const [app.GET])
     @Encode()
-    Future<ListLocalImageTargetResp> All (@app.QueryParam() bool updatePending) async
+    Future<List<LocalImageTarget>> All (@app.QueryParam() bool updatePending, @app.QueryParam() bool public) async
     {
-        return Find (updatePending, userId);
+        return Find (updatePending, userId, public);
     }
     
     @app.Route ('/deleteAll', methods: const [app.GET])
@@ -244,7 +213,7 @@ class LocalImageTargetServices extends MongoDbService<LocalImageTarget>
         await remove (query);
         
         //Responder
-        return Find(updatePending, userId);
+        return Find(updatePending, userId, null);
     }
  
     Future<FileDb> actualizarArchivos (FileDb modelo, 

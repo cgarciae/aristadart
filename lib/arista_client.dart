@@ -32,6 +32,7 @@ part 'services/client_user_services.dart';
 part 'services/client_evento_services.dart';
 part 'services/client_objeto_unity_services.dart';
 part 'services/client_cloud_target_services.dart';
+part 'services/client_local_target_services.dart';
 part 'services/client_vista_services.dart';
 part 'services/core/client_service.dart';
 part 'services/core/requester.dart';
@@ -61,13 +62,11 @@ ifProgEvent (e) => e is dom.ProgressEvent;
 
 String appendRequestParams (String path, Map<String,dynamic> params)
 {
-    print (params);
     path += '?';
     for (String key in params.keys)
     {
         path += '${key}=${Uri.encodeQueryComponent(params[key].toString())}&';
     }
-    print (params);
     return path;
 }
 

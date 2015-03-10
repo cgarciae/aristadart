@@ -13,7 +13,15 @@ class VistaConstruccionRA
     ClientVistaServices vistaServices;
     Router router;
     List<ObjetoUnity> objetosUsuario = [];
+    List<LocalImageTarget> targetsUsuario = [];
+    
     ClientObjetoUnityServices objServices;
+    ClientLocalTargetServices targetServices;
+    
+    List<String> _tags = [];
+    List<String> get tags => vista.objetoUnity != null && vista.objetoUnity.tags != null ?
+                             vista.objetoUnity.tags :
+                             _tags;
     
     bool cambios = false;
      
@@ -25,8 +33,6 @@ class VistaConstruccionRA
         vistaServices = new ClientVistaServices(vista);
         
         vistaServices.Get().then((_vista){
-        
-        print (vista.runtimeType);
         
         vista = _vista;
         
@@ -44,7 +50,7 @@ class VistaConstruccionRA
         }
         else
         {
-            print ("aca");
+
             return objServices.GetGeneric().then((_obj){
                
             vista.objetoUnity = _obj;
@@ -52,8 +58,26 @@ class VistaConstruccionRA
         }
         })
         .then((_){//Continuar aca
-            
-        
+        //Si no existe objeto unity
+        return new Future ((){
+        targetServices = new ClientLocalTargetServices(vista.localTarget);
+      
+        if (vista.localTarget == null || vista.localTarget.id == null)
+        {
+          
+            return targetServices.All(public: true).then((list){
+              
+            targetsUsuario = list;
+            });
+        }
+        else
+        {
+            return targetServices.GetGeneric().then((_obj){
+             
+            vista.localTarget = _obj;
+            });
+        }
+        });
         });
         }).catchError(printReqError, test: ifProgEvent);
     }
@@ -72,6 +96,23 @@ class VistaConstruccionRA
         .catchError(printReqError, test: ifProgEvent);
     }
     
+    seleccionarTarget (obj)
+    {
+        var delta = new ConstruccionRA()
+            ..localTarget = (new LocalImageTarget()
+                ..id = obj.id);
+        
+        
+        vistaServices.Update(delta).then((_){
+            
+        
+        vista.localTarget = obj;
+        targetServices = new ClientLocalTargetServices (obj);
+        
+        })
+        .catchError(printReqError, test: ifProgEvent);
+    }
+    
     saveNombreObjetoUnity ()
     {
         if (cambios)
@@ -86,6 +127,20 @@ class VistaConstruccionRA
         }
     }
     
+    saveNombreLocalImageTarget ()
+    {
+        if (cambios)
+        {
+            cambios = false;
+            
+            var delta = new LocalImageTarget()
+                ..nombre = vista.localTarget.nombre;
+            
+            targetServices.UpdateGeneric(delta)
+            .catchError(printReqError, test: ifProgEvent);
+        }
+    }
+    
     uploadObjetoUnityUserFile (dom.MouseEvent event)
     {
         var form = getFormElement(event);
@@ -93,6 +148,18 @@ class VistaConstruccionRA
         objServices.NewOrUpdateUserFile(form).then((_obj){
            
         vista.objetoUnity = _obj;
+        
+        });
+    }
+    
+    uploadLocalTargetImageFile (dom.MouseEvent event)
+    {
+        var form = getFormElement(event);
+        
+        targetServices.NewOrUpdateUserFile(form).then((_obj){
+           
+        vista.localTarget = _obj;
+        dom.window.location.reload();
         });
     }
     
@@ -121,5 +188,84 @@ class VistaConstruccionRA
             ..nombre = vista.nombre;
             
         return update (delta);
+    }
+    
+    saveElementos()
+    {
+        if (cambios)
+        {
+            cambios = false;
+            
+            return uploadElements();
+        }
+    }
+    
+    Future uploadElements()
+    {
+        return new Future ((){//Delay
+        //Guardar vista
+        var delta = new ConstruccionRA()
+            ..elementosInteractivos = vista.elementosInteractivos;
+      
+        return vistaServices.Update(delta).then((_vista){
+            
+        });
+        })
+        .catchError(printReqError, test: ifProgEvent);
+    }
+    
+    agregarElemento ()
+    {
+        if (vista.elementosInteractivos == null)
+            vista.elementosInteractivos = [];
+        
+        var elemento = new ElementoInteractivo()
+            ..titulo = 'titulo'
+            ..texto = 'Descripcion';
+        
+        vista.elementosInteractivos.add(elemento);
+        
+        return uploadElements();
+    }
+    
+    borrarElemento (ElementoInteractivo elemento)
+    {
+        vista.elementosInteractivos.remove(elemento);
+        
+        return uploadElements();
+    }
+    
+    uploadImagenElemento (dom.MouseEvent event, ElementoInteractivo elemento)
+    {
+        var form = getFormElement(event);
+        var update = false;
+        new Future((){
+        if (elemento.image == null)
+        {
+            return new ClientFileServices().NewOrUpdate(form).then((_file){
+                
+            elemento.image = _file;
+            });
+        }
+        else
+        {
+            return new ClientFileServices(elemento.image).UpdateFile(form).then((_file){
+                            
+            elemento.image = _file;
+            update = true;
+            });
+        }
+        })
+        .then((_){
+        
+        if (update)
+        {
+            return uploadElements().then((_){
+                
+            dom.window.location.reload();
+            });
+        }
+        });
+        
     }
 }

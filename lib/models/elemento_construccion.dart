@@ -1,13 +1,13 @@
 part of aristadart.general;
 
 
-class ElementoConstruccion
+class ElementoInteractivo
 {
+    //tag busca el objecto en la escena
+    @Field() String tag;
+    
     @Field() String get type__ => "ElementoConstruccionJS, Assembly-CSharp";
-    @Field() String nombre = "";
     @Field() String titulo = "";
-    @ReferenceId() String imageId;
+    @Field() FileDb image;
     @Field() String texto = "";
-
-    @Field() String get urlImagen =>  notNullOrEmpty(imageId) ? localHost + 'public/file/$imageId' : '';
 }

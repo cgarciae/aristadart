@@ -10,63 +10,32 @@ class ModelVista{
     
     List<ModelAdminInfo> infoList = [];
     Router router;
+    List<ObjetoUnity> models;
+    ClientObjetoUnityServices services;
+    
+    //Set null para buscar todos
+    bool updatePending = true;
+    bool queryPending = true;
+    
+    bool get queryUpdatePending => queryPending ? updatePending : null;
     
     ModelVista(this.router)
     {
         setModels();
+        
+        services = new ClientObjetoUnityServices();
+        
     }
     
     setModels()
     {
-        requestDecoded
-        (
-            ObjetoUnitySendListResp,
-            Method.GET,
-            'private/objetounity/pending'
-        )
-        .then((ObjetoUnitySendListResp resp){
-        
-        if(! resp.success)
-        {
-            return print(resp.error);
-        }
-        
-        infoList.clear();
-        
-        for (ObjetoUnitySend obj in resp.objs)
-        {
-            ModelAdminInfo info = new ModelAdminInfo();
-            info.model = obj;
-            
-            if (! notNullOrEmpty(obj.owner))
-            {
-                print("Owner undefined");
-                continue;
-            }
-            
-            requestDecoded
-            (
-                UserResp,
-                Method.GET,
-                'user/${obj.owner}'
-            )
-            .then((UserResp userResp){
-            
-            if(! userResp.success)
-            {
-                print(userResp.error);
-                return;
-            }
-            
-            
-            info.user = userResp.user;
-            infoList.add(info);
-        });
-        }
+        services.Find(updatePending: updatePending, findOwners: true).then((list){
+                    
+        models = list;
         });
     }
     
-    uploadScreenshot (dom.MouseEvent event, ObjetoUnitySend obj)
+    uploadScreenshot (dom.MouseEvent event, ObjetoUnity obj)
     {
         dom.FormElement form = getFormElement(event);
         
@@ -87,45 +56,31 @@ class ModelVista{
         });
     }
     
-    uploadModel(ModelAdminInfo info, String system, dom.MouseEvent event)
+    uploadModel(ObjetoUnity model, dom.MouseEvent event)
     {
-        print ("Uploading to $system");
-        
         dom.FormElement form = getFormElement (event);
         
-        formRequestDecoded
-        (   
-            ObjetoUnitySendResp,
-            Method.PUT,
-            'private/objetounity/${info.model.id}/modelfile/${system}',
-            form
-        )
-        .then((ObjetoUnitySendResp resp){
-        
-        if(! resp.success)
-            return print (resp.error);
-        
-        info.model = resp.obj;
-        
+        new ClientObjetoUnityServices(model).UpdateModels(form).then((_model)
+        {
+            _model.owner = model.owner;
+            
+            var index = models.indexOf(model);
+            models.remove(model);
+            
+            models.insert(index, _model);
         });
     }
     
-    publish (ModelAdminInfo info)
+    publish (ObjetoUnity model)
     {
         
-        requestDecoded
-        (
-            Resp,
-            Method.GET,
-            'private/objetounity/${info.model.id}/publish'
-        )
-        .then((Resp resp){
-        
-        if (resp.success)
-            setModels();
-        else
-            print (resp.error);
-        
+        new ClientObjetoUnityServices(model).Publish().then((_modelo){
+            
+        //No es redundante, puede ser null
+        if (queryUpdatePending == true)
+        {
+            models.removeWhere((obj) => obj.id == _modelo.id);
+        }
         });
     }
     

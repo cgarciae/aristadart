@@ -61,13 +61,11 @@ class VistaServices extends AristaService<Vista>
         
         print (encode (delta));
         
-        await collection.update
-        (
-            where.id (StringToId (id)),
-            getModifierBuilder(delta)
-        );
+        await UpdateGeneric(id, delta);
         
-        return Get (id);   
+        print (encode (await Get(id)));
+        
+        return Get (id);
     }
     
     @app.Route('/:id', methods: const [app.DELETE])

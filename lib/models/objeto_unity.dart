@@ -9,6 +9,8 @@ class ObjetoUnity extends Ref
     @Field() String descripcion;
     @Field() bool public;
     
+    @Field() List<String> tags;
+    
     @Field() String get nameGameObject => "aristaGameObject";
     
     @Field() String get href => id != null ? localHost + Col.objetoUnity + '/$id' : null;

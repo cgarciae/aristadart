@@ -212,7 +212,8 @@ class ObjetoUnityServices extends AristaService<ObjetoUnity>
                         @app.QueryParam() bool updatePending,
                         @app.QueryParam() String userId,
                         @app.QueryParam() bool active,
-                        @app.QueryParam() bool public) async
+                        @app.QueryParam() bool public,
+                        {@app.QueryParam() bool findOwners}) async
     {
         //Definir query object
         Map query = {};
@@ -226,14 +227,24 @@ class ObjetoUnityServices extends AristaService<ObjetoUnity>
         query["updatePending"] = updatePending;
         
         //Agregar pending
-        if (updatePending != null)
+        if (active != null)
             query["active"] = active;
         
         if (public != null)
             query = {r'$or': [query, {'public' : public}]};
         
         //Buscar lista
-        return find (query);
+        List<ObjetoUnity> list = await find (query);
+        
+        if (findOwners == true)
+        {
+            for (ObjetoUnity obj in list)
+            {
+                obj.owner = await new UserServives().GetGeneric(obj.owner.id);
+            }
+        }
+        
+        return list;
     }
 
     /**

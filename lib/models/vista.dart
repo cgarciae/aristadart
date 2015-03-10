@@ -11,8 +11,8 @@ class VistaTotal
     //ConstruccionRA
     @Field() ObjetoUnity objetoUnity;
     @Field() LocalImageTarget localTarget;
-    @Field() List<ElementoConstruccion> cuartos;
-    @Field() List<ElementoConstruccion> muebles;
+    @Field() List<ElementoInteractivo> cuartos;
+    @Field() List<ElementoInteractivo> muebles;
     
     //InfoContacto
     @Field() List<ElementoContacto> elementosContacto;
@@ -62,7 +62,8 @@ class Vista extends Ref
         switch (type__)
         {
             case VistaType.construccionRA:
-                v = new ConstruccionRA();
+                v = new ConstruccionRA()
+                    ..elementosInteractivos = [];
                 break;
             default:
                 v = new EmptyVista();
@@ -114,8 +115,7 @@ class ConstruccionRA extends Vista
     
     @Field() ObjetoUnity objetoUnity;
     @Field() LocalImageTarget localTarget;
-    @Field() List<ElementoConstruccion> cuartos;
-    @Field() List<ElementoConstruccion> muebles;
+    @Field() List<ElementoInteractivo> elementosInteractivos;
     
     String get icon => IconDir.icon3D;
     

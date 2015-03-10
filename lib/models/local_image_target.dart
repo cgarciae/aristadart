@@ -2,6 +2,11 @@ part of aristadart.general;
 
 class LocalImageTarget extends Ref
 {
+    @Field() String get nombre => name;
+    set nombre (String value) => name = value;
+    
+    @Field() String get href => localHost + Col.localTarget + '/$id';
+    
     @Field() String name;
 
     @NotEmpty()

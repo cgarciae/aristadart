@@ -93,8 +93,6 @@ class VistaVista
         
         vistaServices.Get().then((_vista){
         
-        print (vista.runtimeType);
-        
         vista = _vista;
         vistaActual = vista;
         
