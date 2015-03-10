@@ -30,9 +30,7 @@ class MyAppModule extends Module
     MyAppModule()
     {
         bind (AristaLoader);
-        bind (AristaAlert);
         bind (LoginVista);
-        bind (Dummy);
         bind (HomeVista);
         bind (EventoVista);
         bind (VistaVista);
