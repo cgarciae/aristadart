@@ -3,7 +3,7 @@ part of aristadart.server;
 
 @app.Group('/${Col.objetoUnity}')
 @Catch()
-class ObjetoUnityServices extends MongoDbService<ObjetoUnity>
+class ObjetoUnityServices extends AristaService<ObjetoUnity>
 {
     ObjetoUnityServices() : super (Col.objetoUnity);
     
@@ -15,6 +15,7 @@ class ObjetoUnityServices extends MongoDbService<ObjetoUnity>
         ObjetoUnity obj = new ObjetoUnity()
             ..name = "Nuevo Modelo"
             ..version = 0
+            ..public = false
             ..updatePending = false
             ..androidUpdated = false
             ..iosUpdated = false
@@ -24,24 +25,14 @@ class ObjetoUnityServices extends MongoDbService<ObjetoUnity>
             ..owner = (new User()
                 ..id = userId);
         
-        await insert(obj);
-        
-        return obj;
+        return NewGeneric(obj);
     }
     
     @app.Route ('/:id', methods: const [app.GET])
     @Encode()
     Future<ObjetoUnity> Get (String id) async
     {
-        ObjetoUnity obj = await findOne
-        (
-            where.id(StringToId(id))
-        );
-        
-        if (obj == null)
-            throw new app.ErrorResponse (400, "Objecto Unity no encontrado");
-        
-        return obj;
+        return GetGeneric(id);
     }
     
     @app.Route ('/:id', methods: const [app.PUT])
@@ -49,12 +40,7 @@ class ObjetoUnityServices extends MongoDbService<ObjetoUnity>
     @Encode()
     Future<ObjetoUnity> Update (String id, @Decode() ObjetoUnity delta) async
     {
-        await db.update
-        (
-            collectionName,
-            where.id(StringToId(id)),
-            getModifierBuilder(delta)
-        );
+        await UpdateGeneric(id, delta);
         
         return Get(id);
     }
@@ -64,13 +50,7 @@ class ObjetoUnityServices extends MongoDbService<ObjetoUnity>
     @Encode()
     Future<DbObj> Delete (String id) async
     {
-        await remove
-        (
-            where.id(StringToId(id))
-        );
-        
-        return new DbObj()
-            ..id = id;
+        await DeleteGeneric(id);
     }
     
     @app.Route ('/:id/userFile', methods: const [app.POST, app.PUT], allowMultipartRequest: true)
@@ -163,7 +143,7 @@ class ObjetoUnityServices extends MongoDbService<ObjetoUnity>
         if (form.ios != null && form.ios is app.HttpBodyFileUpload)
         {
             //Actualizar FileDb obj.ios
-            FileDb newFile = await actualizarModelo
+            FileDb newFile = await ActualizarModelo
             (
                 obj.ios, SystemType.ios, form.ios, obj.owner.id
             );
@@ -179,7 +159,7 @@ class ObjetoUnityServices extends MongoDbService<ObjetoUnity>
         if (form.android != null && form.android is app.HttpBodyFileUpload)
         {
             //Actualizar FileDb obj.android
-            FileDb newFile = await actualizarModelo
+            FileDb newFile = await ActualizarModelo
             (
                 obj.android, SystemType.android, form.android, obj.owner.id
             );
@@ -194,7 +174,7 @@ class ObjetoUnityServices extends MongoDbService<ObjetoUnity>
         if (form.windows != null && form.windows is app.HttpBodyFileUpload)
         {
             //Actualizar FileDb obj.windows
-            FileDb newFile = await actualizarModelo
+            FileDb newFile = await ActualizarModelo
             (
                 obj.windows, SystemType.windows, form.windows, obj.owner.id
             );
@@ -209,7 +189,7 @@ class ObjetoUnityServices extends MongoDbService<ObjetoUnity>
         if (form.osx != null && form.osx is app.HttpBodyFileUpload)
         {
             //Actualizar FileDb obj.osx
-            FileDb newFile = await actualizarModelo
+            FileDb newFile = await ActualizarModelo
             (
                 obj.osx, SystemType.osx, form.osx, obj.owner.id
             );
@@ -228,8 +208,11 @@ class ObjetoUnityServices extends MongoDbService<ObjetoUnity>
     @app.Route ('/find', methods: const [app.GET])
     @Private(ADMIN)
     @Encode()
-    Future<ListObjetoUnityResp> Find (@app.QueryParam() bool updatePending,
-           @app.QueryParam() String userId) async
+    Future<List<ObjetoUnity>> Find (
+                        @app.QueryParam() bool updatePending,
+                        @app.QueryParam() String userId,
+                        @app.QueryParam() bool active,
+                        @app.QueryParam() bool public) async
     {
         //Definir query object
         Map query = {};
@@ -242,25 +225,38 @@ class ObjetoUnityServices extends MongoDbService<ObjetoUnity>
         if (updatePending != null)
         query["updatePending"] = updatePending;
         
-        //Buscar lista
-        List<ObjetoUnity> list = await find (query);
+        //Agregar pending
+        if (updatePending != null)
+            query["active"] = active;
         
-        //Responder
-        return new ListObjetoUnityResp()
-        ..list = list;
+        if (public != null)
+            query = {r'$or': [query, {'public' : public}]};
+        
+        //Buscar lista
+        return find (query);
     }
 
+    /**
+     * Si [public] es un parametro, adicionalmente busca todos los objetos donde
+     * [public] es verdadero.
+     */
     @app.Route ('/all', methods: const [app.GET])
     @Encode()
-    Future<ObjetoUnity> All (@app.QueryParam() bool updatePending) async
+    Future<List<ObjetoUnity>> All (@app.QueryParam() bool updatePending,
+                            @app.QueryParam() bool active,
+                            @app.QueryParam() bool public) async
     {
-        return Find (updatePending, userId);
+        //Evitar buscar los objeto privados
+        if (public != null)
+            public = true;
+        
+        return Find (updatePending, userId, active, public);
     }
     
     @app.Route ('/deleteAll', methods: const [app.GET])
     @Private(ADMIN)
     @Encode()
-    Future<ListObjetoUnityResp> DeleteAll (@app.QueryParam() bool updatePending,
+    Future<List<ObjetoUnity>> DeleteAll (@app.QueryParam() bool updatePending,
                                            @app.QueryParam() String userId) async
     {
         //Definir query object
@@ -278,10 +274,10 @@ class ObjetoUnityServices extends MongoDbService<ObjetoUnity>
         await remove (query);
         
         //Responder
-        return Find(updatePending, userId);
+        return Find(updatePending, userId, null, null);
     }
  
-    Future<FileDb> actualizarModelo (FileDb modelo, 
+    Future<FileDb> ActualizarModelo (FileDb modelo, 
                                     String system,
                                     app.HttpBodyFileUpload fileUpload,
                                     String ownerId) async

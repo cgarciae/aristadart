@@ -2,10 +2,16 @@ part of aristadart.general;
 
 class ObjetoUnity extends Ref
 {
+    @Field() String get nombre => name;
+    set nombre (String value) => name = value;
+    
     @Field() String name;
+    @Field() String descripcion;
+    @Field() bool public;
+    
     @Field() String get nameGameObject => "aristaGameObject";
     
-    @Field() String get href => id != null ? "${localHost}public/objetounity/${id}" : null;
+    @Field() String get href => id != null ? localHost + Col.objetoUnity + '/$id' : null;
     
     @Field() User owner;
     @Field() FileDb userFile;
@@ -16,7 +22,7 @@ class ObjetoUnity extends Ref
     bool get updatedAll => androidUpdated && iosUpdated && osxUpdated && windowsUpdated;
     
     @Field() int version;
-    @Field() FileDb screenshotId;
+    @Field() FileDb screenshot;
     @Field() bool updatePending;
     
     @Field() FileDb android;

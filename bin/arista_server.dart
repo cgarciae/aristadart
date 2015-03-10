@@ -188,13 +188,9 @@ ModifierBuilder getModifierBuilder (Object obj, [MongoDb dbConn])
     Map<String, dynamic> map = dbConn.encode(obj);
     
     map = cleanMap (map);
-    
-    print (map);
-    
+
     Map mod = {r'$set' : map};
-    
-    print (mod);
-    
+
     return new ModifierBuilder()
         ..map = mod;
 }

@@ -40,7 +40,7 @@ class VistaServices extends AristaService<Vista>
         (
             where.id (StringToId (id))
         )
-        .then (MapToVista);
+        .then (MongoMapToVista);
         
         if (vista == null)
             throw new app.ErrorResponse (400, "Vista not found");
@@ -55,7 +55,11 @@ class VistaServices extends AristaService<Vista>
     Future<Vista> Update (String id, 
                         @app.Body (app.JSON) Map map) async
     {
-        Vista delta = MapToVista(map);
+        print (map);
+        
+        Vista delta = Vista.MapToVista (decode, map);
+        
+        print (encode (delta));
         
         await collection.update
         (
@@ -99,14 +103,14 @@ class VistaServices extends AristaService<Vista>
         return Update(id, encode (delta));
     }
     
-    static Vista MapToVista (Map map)
+    static Vista MongoMapToVista (Map map)
     {
         return Vista.MapToVista (db.decode, map);
     }
     
     Future<List<Vista>> Find (query)
     {
-        return collection.find(query).stream.map (MapToVista).toList();
+        return collection.find(query).stream.map (MongoMapToVista).toList();
     }
     
 }

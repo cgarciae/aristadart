@@ -26,6 +26,7 @@ abstract class Requester
     static Future<String> string (String method, String path, {dynamic data, Map headers, 
                                     void onProgress (dom.ProgressEvent p), String userId, Map<String,dynamic> params})
     {
+        
         return make
         (
             method, path, data: data, headers: headers,
@@ -63,9 +64,13 @@ abstract class Requester
     {
         return map
         (
-            method, path, data: encodeJson(obj), headers: headers,
+            method, path, data: encodeJson(obj),
             onProgress: onProgress, userId: userId,
-            params: params
+            params: params, headers: addOrSet
+            (
+                headers,
+                {Header.contentType : ContType.applicationJson}
+            )
         );
     }
     

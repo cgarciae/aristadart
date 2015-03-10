@@ -20,7 +20,7 @@ abstract class AristaService<T extends DbObj> extends MongoDbService<T>
         );
         
         if (obj == null)
-            throw new Exception(errorMsg != null ? errorMsg : "$collectionName not found");
+            throw new app.ErrorResponse (400, errorMsg != null ? errorMsg : "$collectionName not found");
         
         return obj;
     }
