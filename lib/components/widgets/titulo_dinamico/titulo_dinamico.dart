@@ -14,6 +14,9 @@ class TituloDinamico
     @NgTwoWay('contenido')
     String contenido ='';
     
+    @NgAttr('tipoInput')
+    String tipoInput;
+    
     @NgAttr('label')
     String label;
     
