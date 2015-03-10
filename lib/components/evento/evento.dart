@@ -17,7 +17,6 @@ class EventoVista
     
     //Variables dummy
     List<Vista> vistasUsuario = [];
-    bool cargarVistasUsuario = false;
     ClientEventoServices eventoServices;
 
     
@@ -97,7 +96,7 @@ class EventoVista
         evento.vistas.add(_vista);
         
         }).catchError(printReqError, test: ifProgEvent);    
-       
+        
     }
     
     
@@ -117,7 +116,6 @@ class EventoVista
     
     ver (Vista v)
     {
-        //dom.window.alert("evento.id = ${evento.id}");
         router.go ('vista',
         {
             'eventoID' : evento.id,
@@ -189,7 +187,6 @@ class EventoVista
     
     iniciarCargaVistasUsuario()
     {
-        cargarVistasUsuario = true;
         
         new ClientVistaServices().AllGeneric(ListVistaResp)
         .then((ListVistaResp resp){
@@ -204,7 +201,6 @@ class EventoVista
     seleccionarVistaEnModal (Vista vista)
     {
         if(evento.vistas.any((Vista v) => v.id == vista.id)){
-            cargarVistasUsuario = false;
             return print ("La vista ya esta contenida en el evento");
         }
       
@@ -212,9 +208,14 @@ class EventoVista
         .then((Evento _evento){   
         
         evento.vistas.add(vista);
-        cargarVistasUsuario = false;
-        
+       
         }).catchError(printReqError, test: ifProgEvent);
+    }
+    
+    closeModalVistas ()
+    {
+      var myModalObj = dom.querySelector("#myModal");
+      myModalObj.classes.add("close-reveal-modal");
     }
 }
 

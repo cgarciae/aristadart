@@ -2,7 +2,12 @@
     <span ng-if="!editar" ng-click="editar=true">
         <label>{{label}}</label>{{contenido}}
     </span>
-    <input ng-if="editar" type="text"
+    <input ng-if="editar && tipoInput=='input'" type="text"
         ng-blur="editar=false"
         ng-model="contenido">
+    <textarea ng-if="editar && tipoInput=='textarea'"
+        ng-blur="editar=false"
+        ng-model="contenido">
+    </textarea>
+        
 </div>
