@@ -10,7 +10,7 @@ class ModelVista{
     
     List<ModelAdminInfo> infoList = [];
     Router router;
-    List<ObjetoUnity> models;
+    List<ObjetoUnity> models = [];
     ClientObjetoUnityServices services;
     
     //Set null para buscar todos
@@ -21,9 +21,8 @@ class ModelVista{
     
     ModelVista(this.router)
     {
-        setModels();
-        
         services = new ClientObjetoUnityServices();
+        setModels();
         
     }
     

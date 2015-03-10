@@ -53,7 +53,7 @@ class ClientObjetoUnityServices extends ClientService<ObjetoUnity>
             query["updatePending"] = updatePending;
     
         //Agregar pending
-        if (updatePending != null)
+        if (active != null)
             query["active"] = active;
         
         if (findOwners != null)

@@ -5,7 +5,7 @@
     <div class="row">
         <div ng-repeat="model in models">
          <fieldset>
-         Id {{info.model.id}}
+         Id {{model.id}}
          <div class="row medium-uncollapse large-collapse">
             <h3>
                 Nombre: {{model.name}}
@@ -65,14 +65,14 @@
                     iOS <input name="ios" type="file"><br>
                     
                     <button class="button tiny radius" 
-                        ng-click="uploadModel (info, 'ios', $event)">
+                        ng-click="uploadModel (model, $event)">
                             Upload
                     </button>
                 </form>
                 
                 <button class="button small right radius" 
-                    ng-if="info.model.updated"
-                    ng-click="publish (info)">
+                    ng-if="model.updated"
+                    ng-click="publish (model)">
                         Publicar
                 </button>
             </ul>

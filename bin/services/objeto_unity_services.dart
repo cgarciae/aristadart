@@ -215,6 +215,8 @@ class ObjetoUnityServices extends AristaService<ObjetoUnity>
                         @app.QueryParam() bool public,
                         {@app.QueryParam() bool findOwners}) async
     {
+        
+        print (app.request.requestedUri.toString());
         //Definir query object
         Map query = {};
         
