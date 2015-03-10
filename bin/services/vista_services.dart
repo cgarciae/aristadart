@@ -43,7 +43,7 @@ class VistaServices extends AristaService<Vista>
         .then (MapToVista);
         
         if (vista == null)
-            throw new Exception("Vista not found");
+            throw new app.ErrorResponse (400, "Vista not found");
         
         
         return vista;
@@ -112,8 +112,21 @@ class VistaServices extends AristaService<Vista>
 }
 
 
-Future<VistaExportable> buildVista (MongoDb dbConn, VistaExportable vista) async
+Future<Vista> buildVista (Vista vista) async
 {
+    if (vista == null)
+        throw new ArgumentError.notNull("vista");
+    
+    if (vista is ConstruccionRA)
+    {
+        //if (vista.objetoUnity != null)
+        Catch
+            
+    }
+    else
+    {
+        
+    }
     print("buildVista");
     switch (vista.type__)
     {

@@ -2,7 +2,7 @@ part of aristadart.client;
 
 @Component
 (
-    selector : "vista",
+    selector : "construccion-ra",
     templateUrl: 'components/vista/construccion_ra/construccion_ra.html',
     useShadowDom: false
 )

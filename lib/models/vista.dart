@@ -47,9 +47,9 @@ class VistaTotal
 
 class Vista extends Ref
 {
-    @Field() String get type__ => null;
-    @Field() int get typeNum => 0;
-    @Field() String get href => localHost + 'vista/$id';
+    String get href => null;
+    String get type__ => null;
+    int get typeNum => -1;
     @Field() User owner;
     @Field() String nombre;
     @Field() String descripcion;
@@ -65,7 +65,7 @@ class Vista extends Ref
                 v = new ConstruccionRA();
                 break;
             default:
-                v = new Vista();
+                v = new EmptyVista();
                 break;
         }
         
@@ -88,7 +88,7 @@ class Vista extends Ref
                 v = decoder(map, ConstruccionRA);
                 break;
             default:
-                v = decoder(map, Vista);
+                v = decoder(map, EmptyVista);
                 break;
         }
         
@@ -97,6 +97,13 @@ class Vista extends Ref
     
     
     Resp valid () => new Resp()..error = "Vista sin type__";
+}
+
+class EmptyVista extends Vista
+{
+    @Field() String get type__ => null;
+    @Field() int get typeNum => 0;
+    @Field() String get href => localHost + 'vista/$id';
 }
 
 class ConstruccionRA extends Vista

@@ -64,7 +64,7 @@ class CloudTargetServices extends AristaService<CloudTarget>
         
         //Si el upload fracaso
         if (response.result_code != VuforiaResultCode.Success && response.result_code != VuforiaResultCode.TargetCreated)
-            throw new Exception("Fracaso subir imagen a vuforia: ${response.result_code}");
+            throw new app.ErrorResponse(400, "Fracaso subir imagen a vuforia: ${response.result_code}");
         
                 
         //Subir la imagen a Mongo
@@ -88,10 +88,10 @@ class CloudTargetServices extends AristaService<CloudTarget>
         CloudTarget target = await Get(id);
         
         if (target.image == null || target.image.id == null)
-            throw new Exception("Imagen no existe");
+            throw new app.ErrorResponse(400, "Imagen no existe");
         
         if (target.target == null || target.target.id == null)
-            throw new Exception("Target no existe");
+            throw new app.ErrorResponse(400, "Target no existe");
         
         HttpBodyFileUpload file = FormToFileUpload(form);
         

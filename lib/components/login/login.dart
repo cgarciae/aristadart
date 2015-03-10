@@ -64,12 +64,6 @@ class LoginVista extends ShadowRootAware
         var services = new ClientUserServices(googleUser);
         
         return services.NewOrLogin().then((User dbUser){
-            
-        if (dbUser.failed)
-        {
-            print (dbUser.error);
-            return null;
-        }
         
         userId = dbUser.id;
         services = new ClientUserServices(dbUser);
@@ -82,7 +76,7 @@ class LoginVista extends ShadowRootAware
         });
         });
         });
-        });
+        }).catchError(printReqError, test: ifProgEvent);
     }
     
     Future<auth.AutoRefreshingAuthClient> getClient()

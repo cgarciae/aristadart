@@ -1,6 +1,6 @@
 part of aristadart.general;
 
-class VuforiaTargetRecord extends Ref
+class VuforiaTargetRecord
 {
     String get id => target_id;
     set (String id) => target_id = id;

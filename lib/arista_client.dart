@@ -55,14 +55,18 @@ logout ()
     storage.remove('admin');
 }
 
-String appendRequestParams (String path, Map<String,String> params)
+printReqError (e, s) => print ("${e.target.responseText}\n$s");
+ifProgEvent (e) => e is dom.ProgressEvent;
+
+String appendRequestParams (String path, Map<String,dynamic> params)
 {
+    print (params);
     path += '?';
     for (String key in params.keys)
     {
-        path += '${key}=${Uri.encodeQueryComponent(params[key])}&';
+        path += '${key}=${Uri.encodeQueryComponent(params[key].toString())}&';
     }
-    
+    print (params);
     return path;
 }
 

@@ -4,7 +4,7 @@ abstract class Requester
 {
     static Future<dom.HttpRequest> make (String method, String path, 
                                         {dynamic data, Map headers, void onProgress (dom.ProgressEvent p), 
-                                        String userId, Map<String,String> params})
+                                        String userId, Map<String,dynamic> params})
     {
         
         if (userId != null)
@@ -12,8 +12,6 @@ abstract class Requester
         
         if (params != null)
             path = appendRequestParams(path, params);
-        
-        print (path);
         
         return dom.HttpRequest.request
         (
@@ -26,7 +24,7 @@ abstract class Requester
     }
     
     static Future<String> string (String method, String path, {dynamic data, Map headers, 
-                                    void onProgress (dom.ProgressEvent p), String userId, Map<String,String> params})
+                                    void onProgress (dom.ProgressEvent p), String userId, Map<String,dynamic> params})
     {
         return make
         (
@@ -34,11 +32,11 @@ abstract class Requester
             onProgress: onProgress, userId: userId,
             params: params
         ) 
-        .then ((dom.HttpRequest r) { print (r.responseText); return r.responseText;});
+        .then ((dom.HttpRequest r) => r.responseText);
     }
     
     static Future<Map> map (String method, String path, {dynamic data, Map headers, 
-                                void onProgress (dom.ProgressEvent p), String userId, Map<String,String> params})
+                                void onProgress (dom.ProgressEvent p), String userId, Map<String,dynamic> params})
     {
         return string
         (
@@ -50,7 +48,7 @@ abstract class Requester
     }
     
     static Future<Map> privateMap (String method, String path, {dynamic data, Map headers, 
-                                    void onProgress (dom.ProgressEvent p), Map<String,String> params})
+                                    void onProgress (dom.ProgressEvent p), Map<String,dynamic> params})
     {
         return map
         (
@@ -61,7 +59,7 @@ abstract class Requester
     }
     
     static Future<Map> jsonMap (String method, String path, Object obj, {Map headers, 
-                                    void onProgress (dom.ProgressEvent p), String userId, Map<String,String> params})
+                                    void onProgress (dom.ProgressEvent p), String userId, Map<String,dynamic> params})
     {
         return map
         (
@@ -72,7 +70,7 @@ abstract class Requester
     }
     
     static Future<Map> privateJsonMap (String method, String path, Object obj, {Map headers, 
-                                    void onProgress (dom.ProgressEvent p), Map<String,String> params})
+                                    void onProgress (dom.ProgressEvent p), Map<String,dynamic> params})
     {
         return jsonMap
         (
@@ -86,7 +84,7 @@ abstract class Requester
 
     static Future<dynamic> decoded (Type type, String method, String path, {dynamic data, 
                                     Map headers, void onProgress (dom.ProgressEvent p), 
-                                    String userId, Map<String,String> params})
+                                    String userId, Map<String,dynamic> params})
     {
         return string
         (
@@ -99,7 +97,7 @@ abstract class Requester
     
     static Future<dynamic> private (Type type, String method, String path, {dynamic data, 
                                     Map headers, void onProgress (dom.ProgressEvent p), 
-                                    Map<String,String> params})
+                                    Map<String,dynamic> params})
     {
         return decoded
         (
@@ -113,7 +111,7 @@ abstract class Requester
 
     static Future<dynamic> form (Type type, String method, String path, dom.FormElement form, {Map headers, 
                                         void onProgress (dom.ProgressEvent p), String userId,
-                                        Map<String,String> params})
+                                        Map<String,dynamic> params})
     {
         return decoded
         (
@@ -126,7 +124,7 @@ abstract class Requester
     
     static Future<dynamic> privateForm (Type type, String method, String path, dom.FormElement form, {Map headers, 
                                     void onProgress (dom.ProgressEvent p),
-                                    Map<String,String> params})
+                                    Map<String,dynamic> params})
     {
         return Requester.form
         (
@@ -145,7 +143,7 @@ abstract class Requester
  */
     static Future<dynamic> json (Type type, String method, String path, Object obj, 
                                         {Map headers, void onProgress (dom.ProgressEvent p), 
-                                        String userId, Map<String,String> params})
+                                        String userId, Map<String,dynamic> params})
     {   
         return decoded
         (
@@ -167,7 +165,7 @@ abstract class Requester
      */
     static Future<dynamic> privateJson (Type type, String method, String path, Object obj, 
                                 {Map headers, void onProgress (dom.ProgressEvent p), 
-                                Map<String,String> params})
+                                Map<String,dynamic> params})
     {   
         return json
         (
