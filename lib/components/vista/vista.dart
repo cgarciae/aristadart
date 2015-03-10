@@ -12,7 +12,6 @@ class VistaVista
     Vista vista = new EmptyVista();
     String eventoId;
     String tituloVista='';
-    AristaAlert alert = new AristaAlert();
     ClientVistaServices vistaServices;
     
     static Vista get vistaActual => ClientVistaServices.StringToVista (storage['vistaActual']);
