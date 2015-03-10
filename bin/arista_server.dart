@@ -10,6 +10,7 @@ import 'package:redstone/server.dart' as app;
 import 'package:redstone/query_map.dart';
 import 'package:redstone_mapper_mongo/manager.dart';
 import 'package:redstone_mapper_mongo/service.dart';
+import 'package:stack_trace/stack_trace.dart' as stacktrace;
 
 import 'package:mongo_dart/mongo_dart.dart';
 import 'package:redstone_mapper/mapper.dart';

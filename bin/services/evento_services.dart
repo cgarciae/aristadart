@@ -53,7 +53,7 @@ class EventoServices extends AristaService<Evento>
     Future<Evento> AddVista (String id, String vistaId) async
     {
         
-        var vista = new Vista()
+        var vista = new EmptyVista()
             ..id = vistaId;
         
         await db.update
@@ -77,7 +77,7 @@ class EventoServices extends AristaService<Evento>
     Future<Evento> RemoveVista (String id, String vistaId) async
     {
         
-        var vista = new Vista()
+        var vista = new EmptyVista()
             ..id = vistaId;
         
         await db.update

@@ -14,10 +14,9 @@ import 'package:googleapis/oauth2/v2.dart' as oauth;
 part 'components/main_controller.dart';
 part 'components/evento/evento.dart';
 part 'components/widgets/loader/loader.dart';
-part 'components/widgets/dummy/dummy.dart';
-part 'components/widgets/alert/alert.dart';
+part 'components/widgets/acordeon/acordeon.dart';
+part 'components/widgets/titulo_dinamico/titulo_dinamico.dart';
 part 'components/vista/vista.dart';
-part 'components/vista/construccion_ra/construccion_ra.dart';
 part 'components/login/login.dart';
 part 'components/login/nuevo_usuario.dart';
 part 'components/home/home.dart';
@@ -55,14 +54,18 @@ logout ()
     storage.remove('admin');
 }
 
-String appendRequestParams (String path, Map<String,String> params)
+printReqError (e, s) => print ("${e.target.responseText}\n$s");
+ifProgEvent (e) => e is dom.ProgressEvent;
+
+String appendRequestParams (String path, Map<String,dynamic> params)
 {
+    print (params);
     path += '?';
     for (String key in params.keys)
     {
-        path += '${key}=${Uri.encodeQueryComponent(params[key])}&';
+        path += '${key}=${Uri.encodeQueryComponent(params[key].toString())}&';
     }
-    
+    print (params);
     return path;
 }
 

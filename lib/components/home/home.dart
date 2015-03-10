@@ -29,7 +29,7 @@ class HomeVista
             
         eventos = _eventos.eventos;
         }));
-        }));
+        })).catchError(printReqError, test: ifProgEvent);
     }
     
     bool get isAdmin => loggedAdmin;
@@ -40,11 +40,9 @@ class HomeVista
     {
         new ClientEventoServices().NewGeneric().then((_evento){
             
-        if (_evento.failed)
-            return print (_evento.error);
-            
         eventos.add(_evento);
-        });
+        })
+        .catchError(printReqError, test: ifProgEvent);
     }
     
     
@@ -60,9 +58,9 @@ class HomeVista
        
         new ClientEventoServices(e).DeleteGeneric().then((resp){
             
-        if (resp.success)
-            eventos.remove (e);
-        });
+        eventos.remove (e);
+        })
+        .catchError(printReqError, test: ifProgEvent);
     }
     
     go2Admin(){

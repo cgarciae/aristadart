@@ -28,22 +28,30 @@ class EventoVista
             ..id = eventoID;
         
         new ClientEventoServices(eventoTemp).GetGeneric().then((_evento){
-            
-        if (_evento.failed)
-            return print (_evento.error);
         
         evento = _evento;
         eventoServices = new ClientEventoServices(evento);
         
         //Buscar vistas
         return eventoServices.Vistas().then((vistasResp){
-            
-        if (vistasResp.failed)
-            return print (vistasResp.error);
         
         evento.vistas = vistasResp.vistas;
+        
+        //Si existe un cloud target
+        return new Future((){
+        if (evento.cloudTarget != null)
+        {
+            //Buscarlo para asignarlo
+            return new ClientCloudTargetServices(evento.cloudTarget).GetGeneric().then((target){
+            
+            evento.cloudTarget = target;
+            });
+        }            
+        }).then((_){
+            
         });
         });
+        }).catchError(printReqError, test: ifProgEvent);
     }
     
     saveDescripcion ()
@@ -55,12 +63,10 @@ class EventoVista
             ..descripcion = evento.descripcion;
         
         eventoServices.UpdateGeneric (delta).then((Evento evento){
-            
-        if(evento.failed)
-            return print(evento.error);
         
         cambio = false;
-        });
+        })
+        .catchError(printReqError, test: ifProgEvent);
     }
     
     saveNombre ()
@@ -72,12 +78,10 @@ class EventoVista
             ..nombre = evento.nombre;
         
         eventoServices.UpdateGeneric (delta).then((Evento evento){
-            
-        if(evento.failed)
-            return print(evento.error);
         
         cambio = false;
-        });
+        })
+        .catchError(printReqError, test: ifProgEvent);
     }
     
       
@@ -87,15 +91,11 @@ class EventoVista
     nuevaVista ()
     {
         
-        new ClientVistaServices().New (eventoId : evento.id)
-        .then((Vista _vista){
-        
-        if(_vista.failed)
-            return print(_vista.error);
+        new ClientVistaServices().New (eventoId : evento.id).then((Vista _vista){
         
         evento.vistas.add(_vista);
         
-        });    
+        }).catchError(printReqError, test: ifProgEvent);    
        
     }
     
@@ -105,14 +105,10 @@ class EventoVista
     {
         event.stopImmediatePropagation();
         
-        eventoServices.RemoveVista(v.id)
-        .then((Evento _evento){
-            
-        if (_evento.failed)
-            return print (_evento.error);
-        
+        eventoServices.RemoveVista(v.id).then((Evento _evento){
         evento.vistas.remove(v);
-        });
+        
+        }).catchError(printReqError, test: ifProgEvent);
         
     }
     
@@ -137,24 +133,17 @@ class EventoVista
             //Actualizar cloudTarget
             new ClientCloudTargetServices(evento.cloudTarget).UpdateFromImage(form)
             .then((CloudTarget target){
-                
-            if (target.failed)
-                return print (target.error);
-            
+
             evento.cloudTarget = target;
-            
             dom.window.location.reload(); 
             
-            });
+            }).catchError(printReqError, test: ifProgEvent);
         }else
         {
             
             new ClientCloudTargetServices().NewFromImage(form)
             .then((CloudTarget target){
                 
-            if (target.failed)
-                return print (target.error);
-            
             var delta = new Evento()
                 ..cloudTarget = (new CloudTarget()
                   ..id = target.id);
@@ -162,9 +151,8 @@ class EventoVista
             eventoServices.UpdateGeneric(delta).then((_){
             
             evento.cloudTarget = target; 
-            });                     
-                      
-            });
+            });                             
+            }).catchError(printReqError, test: ifProgEvent);
         }
     }
     
@@ -177,32 +165,24 @@ class EventoVista
             //Actualizar cloudTarget
             new ClientFileServices(evento.imagenPreview).UpdateFile(form)
             .then((FileDb file){
-                
-            if (file.failed)
-                return print (file.error);
             
             dom.window.location.reload();
-            });
+            
+            }).catchError(printReqError, test: ifProgEvent);
         }else
         {
             new ClientFileServices().NewOrUpdate(form)
             .then((FileDb file){
-                
-            if (file.failed)
-                return print (file.error);
-            
+
             var delta = new Evento()
                 ..imagenPreview = (new FileDb()
                   ..id = file.id);
             
             eventoServices.UpdateGeneric(delta).then((resp){
-            
-            if (resp.failed)
-                return print (resp.error);
-            
             evento.imagenPreview = file;
+            
             });      
-            });
+            }).catchError(printReqError, test: ifProgEvent);
         }
     }
     
@@ -211,14 +191,12 @@ class EventoVista
         
         new ClientVistaServices().AllGeneric(ListVistaResp)
         .then((ListVistaResp resp){
-            
-        if (resp.failed)
-            return print (resp.error);
         
         print (resp.vistas.length);
             
         vistasUsuario = resp.vistas;
-        });
+        
+        }).catchError(printReqError, test: ifProgEvent);
     }
     
     seleccionarVistaEnModal (Vista vista)
@@ -228,13 +206,11 @@ class EventoVista
         }
       
         eventoServices.AddVista(vista.id)
-        .then((Evento _evento){
-            
-        if (_evento.failed)
-            return print (_evento.error);
+        .then((Evento _evento){   
         
         evento.vistas.add(vista);
-        });
+       
+        }).catchError(printReqError, test: ifProgEvent);
     }
 }
 

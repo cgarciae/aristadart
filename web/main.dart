@@ -30,17 +30,16 @@ class MyAppModule extends Module
     MyAppModule()
     {
         bind (AristaLoader);
-        bind (AristaAlert);
         bind (LoginVista);
-        bind (Dummy);
         bind (HomeVista);
         bind (EventoVista);
         bind (VistaVista);
-        bind (VistaConstruccionRA);
         bind (NuevoUsuarioVista);
         bind (AdminVista);
         bind (ModelVista);
         bind (TargetVista);
+        bind (Acordeon);
+        bind (TituloDinamico);
         bind (RouteInitializerFn, toValue: recipeBookRouteInitializer);
         bind (NgRoutingUsePushState, toValue: new NgRoutingUsePushState.value(false));
     }

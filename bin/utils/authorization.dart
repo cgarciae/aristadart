@@ -75,8 +75,8 @@ void ErrorCatchPlugin(app.Manager manager) {
         }
         catch (e, s)
         {
-            return new Resp()
-                ..error = "$e     $s";
+            if (e is! app.ErrorResponse)
+                throw new app.ErrorResponse (400, "SERVER ERROR: $e  \n$s");
         }
     
   }, includeGroups: true);

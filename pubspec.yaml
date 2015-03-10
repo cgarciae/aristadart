@@ -16,6 +16,7 @@ dependencies:
   sass: '>=0.4.0 <0.5.0'
   script_inliner: '>=1.0.0 <2.0.0'
   shelf_static: any
+  stack_trace: any
   unittest: any
 transformers:
 - redstone_mapper
@@ -25,8 +26,7 @@ transformers:
     - lib/components/login/nuevo_usuario.html
     - lib/components/home/home.html
     - lib/components/evento/evento.html
-    - lib/components/vista/vistaV2.html
-    - lib/components/vista/construccion_ra/construccion_ra.html
+    - lib/components/vista/vista.html
     - lib/components/admin/admin.html
     - lib/components/admin/model.html
     - lib/components/admin/target.html

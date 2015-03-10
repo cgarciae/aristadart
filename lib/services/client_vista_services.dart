@@ -33,6 +33,7 @@ class ClientVistaServices extends ClientService<Vista>
     
     Future<Vista> SetType (int type)
     {
+        
         return Requester.privateMap(Method.PUT, '$href/setType',params: {'type': type})
                         .then(MapToVista);
     }

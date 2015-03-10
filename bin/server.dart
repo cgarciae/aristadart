@@ -30,8 +30,7 @@ main() async
     ));
      
     app.setupConsoleLog();
-    
-    await app.start(port: port);
+    await app.start(port: port); 
     
     MongoDb dbConn = await dbManager.getConnection();  
     

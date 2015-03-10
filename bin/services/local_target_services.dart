@@ -37,7 +37,7 @@ class LocalImageTargetServices extends MongoDbService<LocalImageTarget>
         );
         
         if (localTarget == null)
-            throw new Exception("Local Image Target no encontrado");
+            throw new app.ErrorResponse (400, "Local Image Target no encontrado");
         
         return localTarget;
     }
@@ -120,7 +120,7 @@ class LocalImageTargetServices extends MongoDbService<LocalImageTarget>
         
         //Avisar error si el objeto no esta propiamente actualizado
         if (! (obj.active && obj.updated))
-            throw new Exception("No se puede publicar LocalImageTarget. Estado Actual: ${encodeJson(obj)}");
+            throw new app.ErrorResponse (400, "No se puede publicar LocalImageTarget. Estado Actual: ${encodeJson(obj)}");
         
         //Crear cambios
         LocalImageTarget delta = new LocalImageTarget()
@@ -153,7 +153,7 @@ class LocalImageTargetServices extends MongoDbService<LocalImageTarget>
         //Objeto actual
         LocalImageTarget obj = await Get (id);
         
-        obj.owner = await new UserServives().GetUser(obj.owner.id);
+        obj.owner = await new UserServives().GetGeneric(obj.owner.id);
         
         //Si se envio archivo para 'xml'
         if (form.xml != null && form.xml is app.HttpBodyFileUpload)

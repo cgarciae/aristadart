@@ -1,3 +1,4 @@
+
 <fieldset class="large-4 columns" ng-if="vista.type__ != null && vista.type__ != ''">
     <div class="save right" ng-click='saveAndLeave()'></div>
     <div ng-if="alert.show" data-alert class="alert-box radius" ng-class="alert['type']" ng-repeat="alert in alert.alerts" >
@@ -11,12 +12,10 @@
         </div>
         <br>
         <div class="large-8 small-centered columns">
+        <titulo-dinamico label="Nombre" contenido=vista.icon.texto></titulo-dinamico>
         <h4>Icono</h4>
             <ul class="no-bullet">
                 <li><img alt="Icono" ng-src="{{urlIcono}}" class="gray-b">
-                <br>
-                <br>
-                <li><label>Nombre:</label> <input type="text" ng-model="vista.icon.texto"></li>
             </ul>
         </div>
     </div>
@@ -26,8 +25,8 @@
         <div class="large-6 columns">
             <fieldset>
                 <legend> 
-                    <span  class = "active" ng-if="vista.objetoUnity == null"></span>
-                    <span  class = "no-active" ng-if="vista.objetoUnity != null"></span>
+                    <span  class = "object-active" ng-if="vista.objetoUnity == null"></span>
+                    <span  class = "object-no-active" ng-if="vista.objetoUnity != null"></span>
                     Modelo
                     <img class="pd" ng-if="vista.objetoUnity != null" ng-src="https://cdn1.iconfinder.com/data/icons/outline-imperial-seo/128/SEO_C_100_09.12.14-3_Artboard_45-256.png">
                     <span ng-if="vista.objetoUnity != null">version {{vista.objetoUnity.version}}</span>
@@ -35,10 +34,10 @@
                 Nombre <input type="text" ng-model="vista.objetoUnity.name">
                 <ul class="no-bullet">
                     <li class = "large-7 columns">
-                        <!--FORM-->
+                        
                         <form enctype="multipart/form-data" method="POST">
                         
-                            <!--UPLOAD-->
+                            
                              Choose a file to upload: <input name="file" type="file"><br>
                             <button 
                                 class="button tiny"
@@ -46,7 +45,7 @@
                                     Upload
                             </button>
                              
-                            <!--DOWNLOAD-->
+                            
                             <a class="button tiny"
                                 ng-if="vista.objetoUnity != null && vista.objetoUnity.userFileId != null && vista.objetoUnity.userFileId != ''" 
                                 ng-href = "{{'public/file/' + vista.objetoUnity.userFileId}}" 
@@ -54,7 +53,7 @@
                                     Download
                             </a>
                             
-                            <!--SCREENSHOT-->
+                            
                             <a ng-if="vista.objetoUnity.screenshotId != null && vista.objetoUnity.screenshotId !=''"
                                 ng-href="{{'public/file/' + vista.objetoUnity.screenshotId}}"
                                 target="_blank">
@@ -65,7 +64,6 @@
                             
                         </form>
                     </li>
-                   <!-- <li><label>Versión:</label> <input type="number" ng-model="vista.modelo.version"></li> -->
                 </ul>
             </fieldset>
         </div>
@@ -96,30 +94,26 @@
                             
                         </form>
                     </li>
-                   <!-- <li class = "large-3 columns"><label>Versión:</label> <input type="number" ng-model="vista.target.version"></li> -->
                 </ul>
             </fieldset>
         </div>
         <hr>
-        <div class="large-12 columns">
-                <h2>{{vista.muebles.length}} Muebles</h2>
-                <br>
-                <a ng-click='NuevoMueble ()' class="add-I"></a>
-                <ul class="no-bullet">
-                    <li ng-repeat="elemento in vista.muebles"> 
-                        <ul class="large-3 columns no-bullet">
+        <!--Inicio sección Muebles-->
+        <h2>{{vista.muebles.length}} Muebles</h2>
+        <br>
+        <a ng-click='NuevoMueble ()' class="add-I"></a>
+        <div class="small-8 small-centered columns">
+            <span ng-repeat="elemento in vista.muebles">
+                <acordeon titulo="Mueble">
                         <fieldset>
-                            
-                             <a class="button right tiny" ng-click="EliminarElemento(elemento, vista.muebles)">x</a>
-                            
-                            <li><label>Nombre:</label> <input type="text" ng-model="elemento.nombre"></li>
-                            <li><label>Titulo:</label> <input type="text" ng-model="elemento.titulo"></li>
+                            <a class="button right tiny" ng-click="EliminarElemento(elemento, vista.muebles)">x</a>
+                            <br>
+                            <ul class="small-8 small-centered columns no-bullet">
                             <li>
-                                
                                 <form enctype="multipart/form-data" method="POST">
                                      Choose a file to upload: <input name="file" type="file"><br>
                                      
-                                     <!--UPLOAD-->
+                                     
                                     <button class="button tiny" 
                                         ng-click="uploadElementoConstruccion ($event, elemento)">
                                             Upload
@@ -158,7 +152,7 @@
                                 <form enctype="multipart/form-data" method="POST">
                                      Choose a file to upload: <input name="file" type="file"><br>
                                      
-                                     <!--UPLOAD-->
+                                    
                                     <button class="button tiny" 
                                         ng-click="uploadElementoConstruccion ($event, elemento)">
                                             Upload
@@ -227,11 +221,11 @@
                             </div>
                             <div ng-switch-when="ImagenInfoJS, Assembly-CSharp">
                                 <form enctype="multipart/form-data" method="POST">                                    
-                                    <!--UPLOAD FILE-->                                    
+                                                                     
                                     Choose a file to upload: <input name="file" type="file" accept="image/*"><br>
                                     <button class="button large" ng-click="uploadElementosInfoImageFile ($event, info)">Upload</button>
                                     
-                                    <!--SCREENSHOT-->
+                                    
                                     <div ng-switch="info.imageId != null && info.imageId !=''">  
                                         <a ng-switch-when="true"
                                             ng-href="{{'public/file/' + info.imageId}}"
@@ -276,7 +270,9 @@
     <div ng-switch-when="MultimediaJS, Assembly-CShar">
         <div class="large-8 columns">
             <div class="small-10 small-centered columns">
-                <fieldset ng-repeat="textura in vista.textures" >
+            <br>
+                <acordeon titulo="Textura" ng-repeat="textura in vista.textures" >
+                <fieldset>
                     <a class="button right" ng-click="EliminarElemento( textura, vista.textures)">X</a>
                     <br>
                     <ul class="no-bullet">
@@ -290,6 +286,7 @@
                         <li><label>Descripción:</label> <input type="text" ng-model="textura.texto"></li>
                     </ul>
                 </fieldset>
+                </acordeon>
                 <a ng-click='vista.NuevaTextura ()' class="add-I"></a>
             </div>
         </div>
@@ -310,19 +307,29 @@
     </div>
     <div ng-switch-default>
         <br>
-        <a class="button radius" data-dropdown="selectTipo"
-           aria-controls="selectTipo" data-options="align:right">
-            Escoge el Tipo de Vista &raquo;
-        </a>
-        <ul id="selectTipo" class="f-dropdown">
+        <h3>Escoge el tipo de vista que más necesites</h3>
+        <ul class="no-bullet">
           <li ng-repeat="tipo in tiposDeVista"
              ng-click="seleccionarTipoVista (tipo)"
-             {{tipo.nombre}}
-             class="panel boxes">
-                <b>{{tipo.nombre}}</b>
-                <br>   
-                <i>{{tipo.descripcion}}</i>
-                <br>
+             {{tipo.nombre}} class="boxes">
+            <fieldset style="height: 350px">
+                <legend>
+                    <b>{{tipo.nombre}}</b>
+                </legend>
+                <div class="row">
+                    <div class="large-12 columns">
+                        <div class="small-6 columns">
+                            <img alt="Textura" ng-src="images/webapp/missing_image.png" style="height: 250px">
+                        </div>
+                        <div class="small-5 columns">
+                            <i>{{tipo.descripcion}}</i>
+                        </div>
+                        <div class="small-1 columns">
+                            <a class="right">$ <i>free</i></a>
+                        </div>
+                    </div>
+                </div>
+             </fieldset>
            </li>
         </ul>
     </div>
