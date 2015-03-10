@@ -96,7 +96,7 @@ class EventoVista
         evento.vistas.add(_vista);
         
         }).catchError(printReqError, test: ifProgEvent);    
-       
+        
     }
     
     
@@ -116,7 +116,6 @@ class EventoVista
     
     ver (Vista v)
     {
-        //dom.window.alert("evento.id = ${evento.id}");
         router.go ('vista',
         {
             'eventoID' : evento.id,
@@ -211,6 +210,12 @@ class EventoVista
         evento.vistas.add(vista);
        
         }).catchError(printReqError, test: ifProgEvent);
+    }
+    
+    closeModalVistas ()
+    {
+      var myModalObj = dom.querySelector("#myModal");
+      myModalObj.classes.add("close-reveal-modal");
     }
 }
 
