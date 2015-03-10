@@ -86,10 +86,10 @@ class VistaVista
     VistaVista (RouteProvider routeProvider, this.router)
     {
         
-        var vistaId = routeProvider.parameters['vistaID'];
+        vista.id = routeProvider.parameters['vistaID'];
         eventoId = routeProvider.parameters['eventoID'];
         
-        vistaServices = new ClientVistaServices(new EmptyVista()..id = vistaId);
+        vistaServices = new ClientVistaServices(vista);
         
         vistaServices.Get().then((_vista){
         

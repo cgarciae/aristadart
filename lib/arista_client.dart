@@ -17,6 +17,7 @@ part 'components/widgets/loader/loader.dart';
 part 'components/widgets/acordeon/acordeon.dart';
 part 'components/widgets/titulo_dinamico/titulo_dinamico.dart';
 part 'components/vista/vista.dart';
+part 'components/vista/construccion_ra/construccion_ra.dart';
 part 'components/login/login.dart';
 part 'components/login/nuevo_usuario.dart';
 part 'components/home/home.dart';

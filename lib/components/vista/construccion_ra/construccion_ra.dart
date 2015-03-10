@@ -8,10 +8,25 @@ part of aristadart.client;
 )
 class VistaConstruccionRA
 {
-    ConstruccionRA vista;
     
-    VistaConstruccionRA ()
+    ConstruccionRA vista = new ConstruccionRA();
+    ClientVistaServices vistaServices;
+    Router router;
+     
+    VistaConstruccionRA (RouteProvider routeProvider, this.router)
     {
-        vista = VistaVista.vistaActual as ConstruccionRA;
+        
+        vista.id = routeProvider.parameters['vistaID'];
+        //eventoId = routeProvider.parameters['eventoID'];
+        
+        vistaServices = new ClientVistaServices(vista);
+        
+        vistaServices.Get().then((_vista){
+        
+        print (vista.runtimeType);
+        
+        vista = _vista;
+        
+        }).catchError(printReqError, test: ifProgEvent);
     }
 }
