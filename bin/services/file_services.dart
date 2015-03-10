@@ -14,7 +14,7 @@ class FileServices
         HttpBodyFileUpload file = FormToFileUpload(form);
             
         if (file == null || file.content == null || file.content.length == 0)
-            throw new Exception("File is null or empty");
+            throw new app.ErrorResponse (400, "File is null or empty");
         
         //Define input from uploaded file
         var input = new Stream.fromIterable([file.content]);
@@ -78,7 +78,7 @@ class FileServices
         );
         
         if (gridOut == null)
-            throw new Exception("El archivo no existe");
+            throw new app.ErrorResponse (400, "El archivo no existe");
         
         return new shelf.Response.ok
         (
@@ -93,7 +93,7 @@ class FileServices
     Future<FileDb> GetMetadata (String id) async
     {
         if (id == null)
-            throw new Exception("No se pudo obtener metadata: id null");
+            throw new app.ErrorResponse (400, "No se pudo obtener metadata: id null");
         
         GridOut gridOut = await fs.findOne
         (
@@ -102,7 +102,7 @@ class FileServices
         
         
         if (gridOut == null)
-            throw new Exception ("El archivo no existe");
+            throw new app.ErrorResponse(400, "El archivo no existe");
         
         return db.decode(gridOut.metaData, FileDb);
         

@@ -77,9 +77,7 @@ testOverride () async
     
     VuforiaResponse resp = new VuforiaResponse()
         ..result_code = "Success"
-        ..id = id
-        ..target_record = (new VuforiaTargetRecord()
-            ..name = "Garcia");
+        ..id = id;
     
     var col = 'testVuforia';
     
@@ -102,9 +100,8 @@ testOverride () async
 }
 
 @Encode()
-@app.Route ('/testErro1/:n')
 @Catch()
-@Private()
+@app.Route ('/testErro1/:n')
 testError1 (int n) async
 {
     print ("hola");

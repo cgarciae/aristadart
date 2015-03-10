@@ -19,7 +19,7 @@ class UserServives extends AristaService<User>
         if (nullOrEmpty(user.email) ||
             nullOrEmpty(user.nombre) ||
             nullOrEmpty(user.apellido))
-            throw new Exception("Error Registrando: nombre: ${user.nombre}," +
+            throw new app.ErrorResponse (400, "Error Registrando: nombre: ${user.nombre}," +
                                  "apellido: ${user.apellido}, email: ${user.email}");
         
         ProtectedUser newUser = Cast (ProtectedUser, user)
@@ -82,7 +82,7 @@ class UserServives extends AristaService<User>
         );
         
         if (user == null)
-            throw new Exception("User not found");
+            throw new app.ErrorResponse (400, "User not found");
         
         return new BoolResp()
             ..value = user.admin;
@@ -110,7 +110,7 @@ class UserServives extends AristaService<User>
         );
         
         if (user == null)
-            throw new Exception("Usuario no encontrado");
+            throw new app.ErrorResponse (400, "Usuario no encontrado");
         
         return user;
     }

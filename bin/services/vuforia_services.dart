@@ -110,6 +110,9 @@ class VuforiaServices
         if (body != null && body.length > 0)
             req.body = body;
         
+        print (req.headers);
+        print (req.body);
+        
         http.StreamedResponse resp = await req.send();
         
         return streamResponseDecoded (VuforiaResponse, resp);

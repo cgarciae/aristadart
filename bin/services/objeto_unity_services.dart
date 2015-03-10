@@ -39,7 +39,7 @@ class ObjetoUnityServices extends MongoDbService<ObjetoUnity>
         );
         
         if (obj == null)
-            throw new Exception("Objecto Unity no encontrado");
+            throw new app.ErrorResponse (400, "Objecto Unity no encontrado");
         
         return obj;
     }
@@ -122,7 +122,7 @@ class ObjetoUnityServices extends MongoDbService<ObjetoUnity>
         
         //Avisar error si el objeto no esta propiamente actualizado
         if (! (obj.active && obj.updated))
-            throw new Exception("No se puede publicar ObjetoUnity. Estado Actual: ${encodeJson(obj)}");
+            throw new app.ErrorResponse (400, "No se puede publicar ObjetoUnity. Estado Actual: ${encodeJson(obj)}");
         
         //Crear cambios
         ObjetoUnity delta = new ObjetoUnity()
@@ -157,7 +157,7 @@ class ObjetoUnityServices extends MongoDbService<ObjetoUnity>
         //Objeto actual
         ObjetoUnity obj = await Get (id);
         
-        obj.owner = await new UserServives().GetUser(obj.owner.id);
+        obj.owner = await new UserServives().GetGeneric(obj.owner.id);
         
         //Si se envio archivo para 'ios'
         if (form.ios != null && form.ios is app.HttpBodyFileUpload)
