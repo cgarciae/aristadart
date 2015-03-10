@@ -36,7 +36,6 @@ class MyAppModule extends Module
         bind (HomeVista);
         bind (EventoVista);
         bind (VistaVista);
-        bind (VistaConstruccionRA);
         bind (NuevoUsuarioVista);
         bind (AdminVista);
         bind (ModelVista);
