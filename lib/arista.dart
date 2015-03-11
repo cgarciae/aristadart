@@ -122,7 +122,7 @@ QueryMap MapToQueryMap (Map map) => new QueryMap(map);
 dynamic Cast (Type type, Object obj) => decode (encode(obj), type);
 dynamic Clone (Object obj) => decode (encode(obj), obj.runtimeType);
 
-class Resp
+class Resp extends Schema
 {
     bool get success => nullOrEmpty(error);
     bool get failed => ! success;

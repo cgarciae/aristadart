@@ -45,16 +45,14 @@ class VistaTotal
     }
 }
 
-class Vista extends Ref
+abstract class Vista extends Ref
 {
-    String get href => null;
-    String get type__ => null;
-    int get typeNum => -1;
-    @Field() User owner;
-    @Field() String nombre;
-    @Field() String descripcion;
-    
-    String get icon => IconDir.missingImage;
+    String get type__;
+    int get typeNum;
+    User owner;
+    String nombre;
+    String descripcion;
+    String get icon;
     
     static Vista Factory ([String type__])
     {
@@ -82,68 +80,48 @@ class Vista extends Ref
     static Vista MapToVista (decoder, Map map)
     {
         var type = map['type__'];
-        Vista v;
+
         switch (type)
         {
             case VistaType.construccionRA:
-                v = decoder(map, ConstruccionRA);
-                break;
+                ConstruccionRA vista = decoder(map, ConstruccionRA);
+                return vista;
             default:
-                v = decoder(map, EmptyVista);
-                break;
+                return decoder(map, EmptyVista);
         }
         
-        return v;
     }
     
-    
-    Resp valid () => new Resp()..error = "Vista sin type__";
 }
 
-class EmptyVista extends Vista
+class EmptyVista extends Ref implements Vista
 {
+    @Field() User owner;
+    @Field() String nombre;
+    @Field() String descripcion;
+        
     @Field() String get type__ => null;
     @Field() int get typeNum => 0;
     @Field() String get href => localHost + 'vista/$id';
+    @Field() String get icon => IconDir.missingImage;
 }
 
-class ConstruccionRA extends Vista
+class ConstruccionRA extends Ref implements Vista
 {
-    @Field() String get href => localHost + 'vista/$id';
     @Field() String get type__ => VistaType.construccionRA;
     @Field() int get typeNum => 1;
+    @Field() User owner;
+    @Field() String nombre;
+    @Field() String descripcion;
+    @Field() String get icon => IconDir.icon3D;
+    @Field() String get href => localHost + 'vista/$id';
     
     @Field() ObjetoUnity objetoUnity;
+    
     @Field() LocalImageTarget localTarget;
+    
     @Field() List<ElementoInteractivo> elementosInteractivos;
-    
-    String get icon => IconDir.icon3D;
-    
-    Resp valid ()
-    {
-        Resp resp = super.valid();
-        
-        if (resp.failed)
-            return resp;
-        
-        if (objetoUnity == null)
-            return new Resp()
-                ..error = "modeloId undefined.";
-        
-        if (objetoUnity.active == null || objetoUnity.active == false)
-            return new Resp()
-                ..error = "El objetoUnity no esta activo.";
-        
-        if (localTarget == null)
-            return new Resp()
-                ..error = "localTarget undefined.";   
-        
-        if (localTarget.active == null || localTarget.active == false)
-             return new Resp()
-                ..error = "El localTarget no esta activo.";
-        
-        return new Resp();
-    }
+
 }
 
 abstract class VistaType

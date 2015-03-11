@@ -6,6 +6,17 @@ class TestClass extends Ref
     get href => null;
 }
 
+@app.Route ('/valid')
+testValid ()
+{
+    var vista = new ConstruccionRA ();
+    
+    var validator = new Validator(ConstruccionRA, true);
+    ValidationError err = vista.validate();
+    
+    print (err);
+}
+
 @app.Route ('/testDatePost', methods: const [app.POST])
 @Encode()
 testDatePost (@Decode() TestClass t) async
@@ -179,29 +190,5 @@ testEsteban (@app.Attr() MongoDb dbConn, @Decode() User usuario) async
         ..id = usuario.id;
 }
 
-@app.Route("/testH")
-@Encode()
-Future testH(@app.Attr() MongoDb dbConn) async
-{
-     var a = new TA()
-        ..nombre = "A"
-        ..id = new ObjectId().toHexString();
-     
-     var b = new TA()
-             ..nombre = "B"
-             ..id = new ObjectId().toHexString();
-     
-     a.ref = new TA()
-                ..id = b.id;
-     
-     await dbConn.insertAll("TA", [a, b]);
-     
-     TA a2 = await dbConn.findOne("TA", TA, where.id(StringToId(a.id)));
-     
-     print (encodeJson(a2));
-     
-     a2.ref = await dbConn.findOne("TA", TA, where.id(StringToId(a2.ref.id)));
-     return a2;
-}
 
 
