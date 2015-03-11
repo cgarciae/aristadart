@@ -1,5 +1,6 @@
 
 <div class="large-6 columns">
+    
     <fieldset>         
         <titulo-dinamico label="Nombre Vista" contenido=vista.nombre tipoInput="input"
                          ng-change="cambios = true; saveVistaNombre()" >
@@ -8,6 +9,7 @@
     </fieldset>
     <fieldset>
         <div ng-if="vista.objetoUnity == null || vista.objetoUnity.id == null">
+            <a ng-click="crearObjetoUnity()">Crear ObjetoUnity</a>
             <h3>Objetos</h3>
             <div ng-repeat="obj in objetosUsuario"
                  ng-click="seleccionarObjeto (obj)">
@@ -15,7 +17,9 @@
                 <label>{{obj.descripcion}}</label>
             </div>
         </div>
+        
         <div ng-if="vista.objetoUnity != null && vista.objetoUnity.id != null">
+            <button ng-click="cambiarObjetoUnity()">Cambiar</button>
             <legend>
                 <span  class = "active" ng-if="vista.objetoUnity == null"></span>
                 <span  class = "no-active" ng-if="vista.objetoUnity != null"></span>
@@ -23,10 +27,10 @@
                 <img class="pd" ng-if="vista.objetoUnity.updatePending" ng-src="https://cdn1.iconfinder.com/data/icons/outline-imperial-seo/128/SEO_C_100_09.12.14-3_Artboard_45-256.png">
                 <span ng-if="vista.objetoUnity != null && vista.objetoUnity.id != null">version {{vista.objetoUnity.version}}</span>
             </legend>
-            Nombre <input type="text"
-                          ng-model="vista.objetoUnity.nombre"
-                          ng-change="cambios = true"
-                          ng-blur="saveNombreObjetoUnity ()">
+            
+            <titulo-dinamico label="Nombre Modelo" contenido=vista.objetoUnity.nombre tipoInput="input"
+                              ng-change="cambios = true; saveNombreObjetoUnity()" >
+            </titulo-dinamico>
             Id : {{vista.objetoUnity.id}}
             <ul class="no-bullet">
                 <li class = "large-7 columns">
@@ -125,11 +129,10 @@
                                     ng-value="tag">{{tag}}</option>
                         </select>
                     </li>
-                    <li><label>Titulo:</label>
-                        <input type="text"
-                            ng-model="elemento.titulo"
-                            ng-change="cambios = true"
-                            ng-blur="saveElementos ()">
+                    <li>
+                        <titulo-dinamico label="Titulo:" contenido=elemento.titulo tipoInput="input"
+                                         ng-change="cambios = true; saveElementos ()" >
+                        </titulo-dinamico>
                     </li>
                     <li>
                         
@@ -151,7 +154,11 @@
                             </a>
                         </form>
                     </li>
-                    <li><label>Texto:</label> <textarea type="text" ng-model="elemento.texto"></textarea></li>
+                    <li>
+                        <titulo-dinamico label="Texto:" contenido=elemento.texto tipoInput="textarea"
+                                         ng-change="cambios = true; saveElementos ()" >
+                        </titulo-dinamico>
+                    </li>
                 </fieldset>
                 </ul>
             </li>   

@@ -115,9 +115,14 @@ class VistaConstruccionRA
     }
     
     saveNombreObjetoUnity ()
-    {
+    {       
+      
         if (cambios)
         {
+            if(vista.objetoUnity.public){
+                return print("El modelo es público");
+            }
+          
             cambios = false;
             
             var delta = new ObjetoUnity()
@@ -269,5 +274,17 @@ class VistaConstruccionRA
         }
         });
         
+    }
+    
+    crearObjetoUnity()
+    {
+        objServices.NewGeneric().then((_objUnity){
+        vista.objetoUnity = _objUnity;
+        });
+    }
+    
+    cambiarObjetoUnity()
+    {
+        vista.objetoUnity.id = null;
     }
 }
