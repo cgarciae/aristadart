@@ -183,7 +183,6 @@ class LocalImageTargetServices extends AristaService<LocalImageTarget>
         if (public != null)
             query = {r'$or' : [query, {'public': public}]};
         
-        print ("ACA");
         //Buscar lista
         List<LocalImageTarget> list = await find (query);
         
@@ -192,7 +191,6 @@ class LocalImageTargetServices extends AristaService<LocalImageTarget>
         {
             for (LocalImageTarget target in list)
             {
-                print ("Owner id ${target.owner.id}");
                 target.owner = await new UserServives().GetGeneric(target.owner.id);
             }
         }
