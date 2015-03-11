@@ -8,7 +8,7 @@ part of aristadart.client;
 )
 class TargetVista{
     
-    bool updatePending;
+    bool updatePending = true;
     bool get queryPending => updatePending ? true : null;
     Router router;
     List<LocalImageTarget> targets = [];
