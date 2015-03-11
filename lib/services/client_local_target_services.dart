@@ -9,7 +9,7 @@ class ClientLocalTargetServices extends ClientService<LocalImageTarget>
         return privateForm(Method.PUT, '$href/image', form);
     }
     
-    Future<LocalImageTarget> Publish (String id)
+    Future<LocalImageTarget> Publish ()
     {
         return private (Method.PUT, '$href/publish');
     }
@@ -32,5 +32,26 @@ class ClientLocalTargetServices extends ClientService<LocalImageTarget>
         return Requester.private (LocalImageTarget, Method.GET, '$pathBase/all', params: query);
     }
     
-    
+    Future<List<LocalImageTarget>> Find ({bool updatePending,
+                                          String userId,
+                                          bool public,
+                                          bool findOwners})
+    {
+        Map query = {};
+                        
+        if (updatePending != null)
+            query['updatePending'] = updatePending;
+        
+        if (public != null)
+            query['public'] = public;
+        
+        if (userId != null)
+            query['userId'] = userId;
+
+        if (findOwners != null)
+            query['findOwners'] = findOwners;
+        
+        return Requester.private (LocalImageTarget, Method.GET, 
+                                  '$pathBase/find', params: query);
+    }
 }

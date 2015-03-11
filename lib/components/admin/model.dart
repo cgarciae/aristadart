@@ -25,13 +25,13 @@ class ModelVista{
         
     }
     
-    setModels() 
+    setModels()
     {
         services.Find(updatePending: queryPending, findOwners: true).then((list){
                     
         models = list;
         })
-        .catchError(printReqError, test: ifProgEvent);;
+        .catchError(printReqError, test: ifProgEvent);
     }
     
     uploadScreenshot (dom.MouseEvent event, ObjetoUnity obj)
@@ -54,6 +54,13 @@ class ModelVista{
             obj.screenshot = _file;
             });
         }
+        })
+        .then((_){
+        var delta = new ObjetoUnity()
+            ..screenshot = (new FileDb()
+                ..id = obj.screenshot.id);
+        
+        return new ClientObjetoUnityServices(obj).UpdateGeneric(delta);
         })
         .catchError(printReqError, test: ifProgEvent);;
     }
@@ -79,13 +86,23 @@ class ModelVista{
         
         new ClientObjetoUnityServices(model).Publish().then((_modelo){
             
-        //No es redundante, puede ser null
-        if (queryPending == true)
+        if (! _modelo.updatePending && queryPending == true)
         {
             models.removeWhere((obj) => obj.id == _modelo.id);
         }
         })
         .catchError(printReqError, test: ifProgEvent);
+    }
+    
+    setPublic (ObjetoUnity model)
+    {
+        var delta = new ObjetoUnity()
+            ..public = model.public;
+        
+        new ClientObjetoUnityServices(model).UpdateGeneric(delta).then((_obj){
+            
+        model.public = _obj.public;
+        });
     }
     
     nuevoTag (ObjetoUnity obj)
@@ -118,7 +135,7 @@ class ModelVista{
             
             new ClientObjetoUnityServices(obj).UpdateGeneric (delta).then((_obj){
                
-            print (encodeJson(_obj));
+            obj.tags = _obj.tags;
             })
             .catchError(printReqError, test: ifProgEvent);
         }

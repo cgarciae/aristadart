@@ -97,7 +97,6 @@ class VistaConstruccionRA
     }
     
     
-    
     seleccionarTarget (obj)
     {
         var delta = new ConstruccionRA()

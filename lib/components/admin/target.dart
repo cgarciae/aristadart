@@ -8,109 +8,62 @@ part of aristadart.client;
 )
 class TargetVista{
     
-    List<LocalTargetAdminInfo> infoList = [];
+    bool updatePending;
+    bool get queryPending => updatePending ? true : null;
     Router router;
+    List<LocalImageTarget> targets = [];
     
     TargetVista(this.router)
     {
-        setModels();
+        setTargets();
     }
     
-    setModels()
+    setTargets()
     {
-        requestDecoded
-        (
-            LocalImageTargetSendListResp,
-            Method.GET,
-            'private/${Col.localTarget}/pending'
-        )
-        .then((LocalImageTargetSendListResp resp){
-        
-        if(resp.failed)
-        {
-            return print(resp.error);
-        }
-        
-        infoList.clear();
-        
-        for (LocalImageTargetSend obj in resp.objs)
-        {
-            LocalTargetAdminInfo info = new LocalTargetAdminInfo();
-            info.target = obj;
-            
-            if (nullOrEmpty (obj.owner))
-            {
-                print("Owner undefined");
-                continue;
-            }
-            
-            requestDecoded
-            (
-                UserResp,
-                Method.GET,
-                'user/${obj.owner}'
-            ).then((UserResp userResp){
-            
-            if (userResp.failed)
-            {
-                print(userResp.error);
-                return;
-            }
-            
-            info.user = userResp.user;
-            infoList.add (info);
-            
-            });
-        }
-        });
+        new ClientLocalTargetServices()
+        .Find (updatePending: queryPending, findOwners: true)
+        .then((list){
+           
+        targets = list;
+        })
+        .catchError(printReqError, test: ifProgEvent);
     }
     
-    uploadModel (LocalTargetAdminInfo info, String extension, dom.MouseEvent event)
+    uploadModel(LocalImageTarget target, dom.MouseEvent event)
     {
-        print ("Uploading to $extension");
-        
         dom.FormElement form = getFormElement (event);
         
-        formRequestDecoded
-        (   
-            LocalImageTargetSendResp,
-            Method.PUT,
-            'private/${Col.localTarget}/${info.target.id}/targetfile/${extension}',
-            form
-        )
-        .then((LocalImageTargetSendResp resp){
-        
-        if(resp.failed)
-            return print (resp.error);
-        
-        
-        info.target = resp.obj;
-        
-        });
+        new ClientLocalTargetServices(target).UpdateFiles(form).then((_target)
+        {
+            _target.owner = target.owner;
+            var index = targets.indexOf (target);
+            targets.remove (target);
+            targets.insert (index, _target);
+        })
+        .catchError(printReqError, test: ifProgEvent);
     }
     
-    publish (LocalTargetAdminInfo info)
+    publish (LocalImageTarget target)
     {
         
-        requestDecoded
-        (
-            Resp,
-            Method.GET,
-            'private/${Col.localTarget}/${info.target.id}/publish'
-        )
-        .then((Resp resp){
+        new ClientLocalTargetServices(target).Publish().then((_target){
+            
+        if (! _target.updatePending && queryPending == true)
+        {
+            targets.removeWhere((obj) => obj.id == _target.id);
+        }
+        })
+        .catchError(printReqError, test: ifProgEvent);
+    }
+    
+    setPublic (LocalImageTarget target)
+    {
+        var delta = new LocalImageTarget()
+            ..public = target.public;
         
-        if (resp.success)
-            setModels();
-        else
-            print (resp.error);
-        
+        new ClientLocalTargetServices(target).UpdateGeneric(delta).then((_target){
+            
+        target.public = _target.public;
         });
     }
-}
-
-class LocalTargetAdminInfo
-{
-    LocalImageTargetSend target;
-    User user;
 }
