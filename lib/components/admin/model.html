@@ -1,11 +1,12 @@
 <div class="large-10 small-centered columns">
-    Query Peding<input type="checkbox" ng-model="queryPending">
-    Update Peding Status of Query<input type="checkbox" ng-model="updatePending">
+    Update Pending<input type="checkbox" ng-model="updatePending"
+                                                        ng-click="setModels()">
     <h1>Edición modelos 3D</h1>
     <div class="row">
         <div ng-repeat="model in models">
          <fieldset>
          Id {{model.id}}
+         <label>Update Pending: {{model.updatePending}}</label>
          <div class="row medium-uncollapse large-collapse">
             <h3>
                 Nombre: {{model.name}}
@@ -76,6 +77,14 @@
                         Publicar
                 </button>
             </ul>
+        </fieldset>
+        <fieldset>
+            <h3>Tags</h3>
+            <h5 ng-click="nuevoTag (model)">Nuevo Tag</h5>
+            <div ng-repeat="tag in model.tags">
+                <input type="text" ng-model="tag">
+                <button ng-click="eliminarTag (model, tag)">x</button>
+            </div>
         </fieldset>
         <br>
        </div>

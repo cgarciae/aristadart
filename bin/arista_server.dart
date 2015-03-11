@@ -108,23 +108,9 @@ Future<List<dynamic>> deleteFile (String id)
 
 Stream<List<int>> getData (GridOut gridOut)
 {
-
-    StreamController<List<int>> controller = new StreamController<List<int>>();
-    var n = 0;
-          
-    gridOut.fs.chunks.find(where.eq("files_id", gridOut.id).sortBy('n'))
-    .forEach((Map chunk)
-    {
-        BsonBinary data = chunk["data"];
-        controller.add (data.byteList);
-        n++;
-    })
-    .then((_)
-    {
-        print ("$n Chunks!");
-        controller.close();
-    });
-    
+    var controller = new StreamController<List<int>>();
+    var sink = new IOSink (controller);
+    gridOut.writeTo(sink).then((n) => sink.close());
     return controller.stream;
 }
 
