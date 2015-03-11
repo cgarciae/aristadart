@@ -53,14 +53,11 @@ class VistaServices extends AristaService<Vista>
     @Private()
     @Encode()
     Future Update (String id, 
-                        @app.Body (app.JSON) Map map) async
+                    @app.Body (app.JSON) Map map) async
     {
-        print (map);
-        
         var delta = Vista.MapToVista (decode, map);
         
-        await UpdateGeneric(id, delta);
-        
+        await UpdateGeneric (id, delta);
         
         return Get (id);
     }
