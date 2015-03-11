@@ -14,11 +14,12 @@ class LocalImageTargetServices extends AristaService<LocalImageTarget>
     {
         LocalImageTarget localTarget = new LocalImageTarget()
             ..name = "Nuevo Target"
+            ..public = false
             ..version = 0
             ..updatePending = false
             ..datUpdated = false
             ..xmlUpdated = false
-            ..id = newId()     
+            ..id = newId()
             ..owner = (new User()
                 ..id = userId);
         
@@ -165,7 +166,8 @@ class LocalImageTargetServices extends AristaService<LocalImageTarget>
     Future<List<LocalImageTarget>> Find (
                                         @app.QueryParam() bool updatePending,
                                         @app.QueryParam() String userId,
-                                        @app.QueryParam() bool public) async
+                                        @app.QueryParam() bool public,
+                                        {@app.QueryParam() bool findOwners}) async
     {
         //Definir query object
         Map query = {};
@@ -181,8 +183,31 @@ class LocalImageTargetServices extends AristaService<LocalImageTarget>
         if (public != null)
             query = {r'$or' : [query, {'public': public}]};
         
+        print ("ACA");
         //Buscar lista
-        return find (query);
+        List<LocalImageTarget> list = await find (query);
+        
+        //Depronto agregar usuarios
+        if (findOwners == true)
+        {
+            for (LocalImageTarget target in list)
+            {
+                print ("Owner id ${target.owner.id}");
+                target.owner = await new UserServives().GetGeneric(target.owner.id);
+            }
+        }
+        
+        
+        return list;
+    }
+    
+
+
+    @app.Route ('/find/allraw', methods: const [app.GET])
+    @Private(ADMIN)
+    Future FindAllRaw()
+    {
+        return collection.find().toList();
     }
 
     @app.Route ('/all', methods: const [app.GET])

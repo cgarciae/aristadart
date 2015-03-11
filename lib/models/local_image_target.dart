@@ -8,6 +8,7 @@ class LocalImageTarget extends Ref
     @Field() String get href => localHost + Col.localTarget + '/$id';
     
     @Field() String name;
+    @Field() bool public;
 
     @NotEmpty()
     @Field() User owner;

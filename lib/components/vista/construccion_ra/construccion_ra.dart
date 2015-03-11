@@ -96,6 +96,7 @@ class VistaConstruccionRA
         .catchError(printReqError, test: ifProgEvent);
     }
     
+    
     seleccionarTarget (obj)
     {
         var delta = new ConstruccionRA()
@@ -149,6 +150,7 @@ class VistaConstruccionRA
     uploadObjetoUnityUserFile (dom.MouseEvent event)
     {
         var form = getFormElement(event);
+        
         
         objServices.NewOrUpdateUserFile(form).then((_obj){
            
