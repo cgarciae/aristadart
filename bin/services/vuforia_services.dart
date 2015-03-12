@@ -27,6 +27,20 @@ class VuforiaServices
         );
     }
     
+    static Future<VuforiaResponse> updateMetadata (String targetId, String metadata)
+    {
+        return makeVuforiaRequest
+        (
+            Method.PUT,
+            '/targets/$targetId',
+            element: encryptElement
+            (
+                new VuforiaTargetRecord(), 
+                metadata: metadata
+            )
+        );
+    }
+    
     static Future<VuforiaResponse> newImage (List<int> imageData, String metadata)
     {
         VuforiaTargetRecord obj = new VuforiaTargetRecord()

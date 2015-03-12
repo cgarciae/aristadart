@@ -120,5 +120,29 @@ class CloudTargetServices extends AristaService<CloudTarget>
         
         return Update (id, delta);
     }
+    
+    @app.Route ('/:id/metadata', methods: const[app.GET])
+    @Private(ADMIN)
+    @Encode()
+    Future<VuforiaResponse> GetMetadata (String id) async
+    {
+        CloudTarget target = await Get (id);
+        
+        VuforiaResponse resp = await new VuforiaServices().GetTarget(target.target.target_id);
+        
+        return resp;
+    }
+    
+    @app.Route ('/:id/metadata', methods: const[app.PUT])
+    @Private(ADMIN)
+    @Encode()
+    Future<CloudTarget> UpdateMetadata (String id, @app.QueryParam() String metadata) async
+    {
+        CloudTarget target = await Get (id);
+        
+        VuforiaResponse resp = await VuforiaServices.updateMetadata(target.target.target_id, metadata);
+        
+        return target;
+    }
 }
 

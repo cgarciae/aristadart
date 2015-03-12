@@ -17,7 +17,7 @@ class VuforiaTargetRecord
     @Field() String application_metadata;
 }
 
-class VuforiaResponse extends Resp
+class VuforiaResponse
 {
     @Id() String id;
     @Field() String target_id;

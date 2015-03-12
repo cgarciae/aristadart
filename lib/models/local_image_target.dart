@@ -12,13 +12,10 @@ class LocalImageTarget extends Ref
 
     @Field() User owner;
     
-    @NotEmpty()
     @Field() FileDb image;
-    
-    @NotEmpty()
+
     @Field() bool updatePending;
-    
-    @Range(min: 1)
+
     @Field () int version = 0;
     
     @Field () bool get active => activeDat && activeXml;
