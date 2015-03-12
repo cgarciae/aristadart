@@ -142,7 +142,7 @@ class EventoVista
         }else
         {
             
-            new ClientCloudTargetServices().NewFromImage(form)
+            new ClientCloudTargetServices().NewFromImage(form, evento.id)
             .then((CloudTarget target){
                 
             var delta = new Evento()

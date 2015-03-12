@@ -19,8 +19,12 @@ abstract class AristaService<T extends DbObj> extends MongoDbService<T>
             where.id(StringToId(id)) 
         );
         
+        print ("11");
+        
         if (obj == null)
             throw new app.ErrorResponse (400, errorMsg != null ? errorMsg : "$collectionName not found");
+        
+        print ("12");
         
         return obj;
     }

@@ -24,7 +24,7 @@ part 'models/file.dart';
 part 'models/panel_info.dart';
 part 'models/validation_rules/truth.dart';
 
-const int tipoBuild = TipoBuild.jsTesting;
+const int tipoBuild = TipoBuild.desarrollo;
 
 int get port => 9090;
 

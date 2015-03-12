@@ -139,13 +139,20 @@ class EventoServices extends AristaService<Evento>
     }
     
     @app.Route ('/:id/export', methods: const[app.GET])
-    @Private()
     @Encode()
     Future<Evento> Export (String id, @app.QueryParam() bool checkValid) async
     {
+        print (app.request.url);
+        
+        print (1);
+        
         Evento evento = await Get (id);
         
+        print (2);
+        
         evento.vistas = await Vistas(id);
+        
+        print (3);
         
         List<Vista> vistas = [];
         
@@ -162,67 +169,18 @@ class EventoServices extends AristaService<Evento>
                 vistas.add (vista);
         }
         
+        print (4);
+        
         evento.vistas = vistas;
         
         if (checkValid != null && checkValid && !evento.valid)
             throw new app.ErrorResponse (400, "Evento invalido");
         
+        print (5);
+        
+        print (evento.nombre);
+        
         return evento;
     }
 }
 
-@app.Route('/export/evento/:id')
-@Encode()
-exportEvento(@app.Attr() MongoDb dbConn, String id) async
-{
-    EventoExportable evento = await dbConn.findOne
-    (
-        Col.evento,
-        EventoExportable, 
-        where.id (StringToId (id))
-    );
-    
-    
-    if (evento == null)
-        return new EventoExportableResp()
-            ..error = "Evento no found"
-            ..errCode = ErrCode.NOTFOUND;
-
-    print ("EE 1");
-    await BuildEvento(dbConn, evento);
-    
-    print ("EE 2");
-    Resp resp = evento.valid();
-    
-    if (resp.success)
-    {
-        return new EventoExportableResp()
-            ..evento = evento;
-    }
-    else
-    {
-        return new EventoExportableResp()
-            ..error = "Evento Invalido: ${resp.error}";
-    }
-}
-
-Future<EventoExportable> BuildEvento(MongoDb dbConn, EventoExportable evento) async
-{
-    print ("BE 1");
-    var objIDs = evento.viewIds.map (StringToId).toList();
-
-    evento.vistas = await dbConn.find
-    (
-        Col.vista, 
-        VistaExportable, 
-        where
-            .oneFrom('_id', objIDs)
-    );
-
-    var futures = evento.vistas.map((VistaExportable vista) 
-            => buildVista(dbConn, vista)).toList();
-    
-    await Future.wait (futures);
-    
-    return evento;
-}

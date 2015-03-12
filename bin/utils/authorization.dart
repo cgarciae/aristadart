@@ -19,7 +19,7 @@ void AuthenticationPlugin(app.Manager manager) {
         
         //print("Private");       
         if (id == null)
-            return new Resp()..error = "Authentication Error: Authorization header expected";
+            throw new app.ErrorResponse (400, "Authentication Error: Authorization header expected");
         
         ProtectedUser user;
         try
@@ -33,18 +33,18 @@ void AuthenticationPlugin(app.Manager manager) {
         }
         on ArgumentError catch (e)
         {
-            return new Resp()..error = "Authentication Error: ID length must be 24";
+            throw new app.ErrorResponse (400, "Authentication Error: ID length must be 24");
         }
         catch (e)
         {
-            return new Resp()..error = "Authentication Error Desconocido: $e";
+            throw new app.ErrorResponse (400, "Authentication Error Desconocido: $e");
         }
         
         if (user == null)
-            return new Resp()..error = "Authentication Error: User does not exist";
+            throw new app.ErrorResponse (400, "Authentication Error: User does not exist");
         
         if ((metadata as Private).securityLevel > 0 && ! user.admin)
-            return new Resp()..error = "Error de Autorizacion: No se tiene permisos para este recurso";
+            throw new app.ErrorResponse (400, "Error de Autorizacion: No se tiene permisos para este recurso");
         
         return route(pathSegments, injector, request);
     
@@ -76,7 +76,14 @@ void ErrorCatchPlugin(app.Manager manager) {
         catch (e, s)
         {
             if (e is! app.ErrorResponse)
+            {
+                print (e);
                 throw new app.ErrorResponse (400, "SERVER ERROR: $e  \n$s");
+            }
+            else
+            {
+                throw e;
+            }
         }
     
   }, includeGroups: true);

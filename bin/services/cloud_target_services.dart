@@ -9,10 +9,12 @@ class CloudTargetServices extends AristaService<CloudTarget>
     @app.DefaultRoute (methods: const[app.POST])
     @Private()
     @Encode()
-    Future<CloudTarget> New () async
+    Future<CloudTarget> New (@app.QueryParam() String eventoId) async
     {
         var target = new CloudTarget()
-            ..id = newId();
+            ..id = newId()
+            ..evento = (new Evento()
+                ..id = eventoId);
           
         return NewGeneric(target);
 
@@ -45,9 +47,17 @@ class CloudTargetServices extends AristaService<CloudTarget>
     @app.Route ('/newFromImage', methods: const[app.POST], allowMultipartRequest: true)
     @Private()
     @Encode()
-    Future<CloudTarget> NewFromImage (@app.Body(app.FORM) Map form) async
+    Future<CloudTarget> NewFromImage (@app.Body(app.FORM) Map form,
+                                      @app.QueryParam() String eventoId) async
     {
-        CloudTarget target = await New();
+        if (eventoId == null)
+            throw new app.ErrorResponse (400, "Query Parm eventoId requerido");
+        
+        //Verificar existencia: lanza error si no existe
+        await new EventoServices().Get(eventoId);
+            
+        
+        CloudTarget target = await New(eventoId);
             
         if (target.failed)
             return target;
@@ -59,7 +69,7 @@ class CloudTargetServices extends AristaService<CloudTarget>
         VuforiaResponse response = await VuforiaServices.newImage
         (
             file.content, //Imagen
-            target.id //El id es metadata
+            eventoId //El id es metadata
         );
         
         //Si el upload fracaso
