@@ -37,7 +37,7 @@
                     
                     <form enctype="multipart/form-data" method="POST">
                     
-                        <div ng-if="!vista.objetoUnity.public || vista.owner.id == userId">
+                        
                              Choose a file to upload: <input name="file" type="file"><br>
                             <button 
                                 class="button tiny"
@@ -54,7 +54,7 @@
                                 target="_blank">
                                     Download
                             </a>
-                        </div>
+                        
                         
                         
                         <a ng-if="vista.objetoUnity.screenshot != null"
@@ -78,6 +78,7 @@
 <div class="row large-6 columns ">
     <fieldset>
         <div ng-if="vista.localTarget == null || vista.localTarget.id == null">
+            <a ng-click="crearLocalTarget()">Crear LocalTarget</a>
             <h3>Objetos</h3>
             <div ng-repeat="target in targetsUsuario"
                  ng-click="seleccionarTarget (target)">
@@ -87,19 +88,19 @@
         <div ng-if="vista.localTarget != null && vista.localTarget.id != null">
             <legend>
             Target
-                --<span ng-if="vista.objetoUnity != null">active {{vista.localTarget.active}}</span>
-                --<span ng-if="vista.objetoUnity != null">pending {{vista.localTarget.updatePending}}</span>
-                --<span ng-if="vista.objetoUnity != null">version {{vista.localTarget.version}}</span>
+                --<span ng-if="vista.localTarget != null">active {{vista.localTarget.active}}</span>
+                --<span ng-if="vista.localTarget != null">pending {{vista.localTarget.updatePending}}</span>
+                --<span ng-if="vista.localTarget != null">version {{vista.localTarget.version}}</span>
             </legend>
+            <button ng-click="cambiarLocalTargets()">Cambiar</button>
             <ul class="no-bullet">
                 <li class = "large-7 columns">
                     <form enctype="multipart/form-data" method="POST">
-                        <div ng-if="!vista.localTarget.public || vista.owner.id == userId">
+                        
                            Choose a file to upload: <input name="file" type="file"><br>
                            
                            <button class="button tiny" ng-click="uploadLocalTargetImageFile ($event)">Upload</button>
-                         </div>
-                       
+                                                
                          
                         <a class="tiny"
                             ng-if="vista.localTarget != null && vista.localTarget.image != null && vista.localTarget.image != ''" 
