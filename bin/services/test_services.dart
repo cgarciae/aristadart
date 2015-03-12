@@ -1,9 +1,42 @@
 part of aristadart.server;
 
-class TestClass extends Ref
+
+
+abstract class Vista2 extends Ref
 {
-    @Field() DateTime date;
-    get href => null;
+    String get icon;
+}
+
+class Const2 extends Ref implements Vista2
+{
+    @Field() String get icon => "algo";
+    @Field() String get href => "someHost/$id"; 
+}
+
+
+
+@app.Route ('/poly')
+@Encode()
+testPoly ()
+{
+    var inst = new Const2()
+        ..id = "some id";
+    
+    return inst;
+}
+
+@app.Route ('/valid')
+testValid ()
+{
+    var vista = new ConstruccionRA ()
+        ..id = "hola"
+        ..objetoUnity = (new ObjetoUnity()
+            ..id = "chao")
+        ..localTarget = (new LocalImageTarget()
+            ..id = "chao");
+    
+    
+    return err.toString();
 }
 
 @app.Route ('/testDatePost', methods: const [app.POST])
@@ -179,29 +212,5 @@ testEsteban (@app.Attr() MongoDb dbConn, @Decode() User usuario) async
         ..id = usuario.id;
 }
 
-@app.Route("/testH")
-@Encode()
-Future testH(@app.Attr() MongoDb dbConn) async
-{
-     var a = new TA()
-        ..nombre = "A"
-        ..id = new ObjectId().toHexString();
-     
-     var b = new TA()
-             ..nombre = "B"
-             ..id = new ObjectId().toHexString();
-     
-     a.ref = new TA()
-                ..id = b.id;
-     
-     await dbConn.insertAll("TA", [a, b]);
-     
-     TA a2 = await dbConn.findOne("TA", TA, where.id(StringToId(a.id)));
-     
-     print (encodeJson(a2));
-     
-     a2.ref = await dbConn.findOne("TA", TA, where.id(StringToId(a2.ref.id)));
-     return a2;
-}
 
 

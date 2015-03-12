@@ -18,6 +18,7 @@ class ObjetoUnity extends Ref
     @Field() User owner;
     @Field() FileDb userFile;
     
+    @Field() @Truth (true)
     bool get active => activeAndroid && activeIOS;
     bool get activeAll => activeAndroid && activeIOS && activeMAC && activeWindows;
     bool get updated => androidUpdated && iosUpdated;

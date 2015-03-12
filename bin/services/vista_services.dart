@@ -12,7 +12,7 @@ class VistaServices extends AristaService<Vista>
     Future<Vista> New (@app.QueryParam("type") int typeNumber, @app.QueryParam("eventoId") String eventoId) async
     {
         
-        Vista vista = Vista.Factory (Vista.IndexToType[typeNumber])
+        Vista vista = new Vista (Vista.IndexToType[typeNumber])
             ..id = newId()
             ..nombre = "Mi vista"
             ..owner = (new User()
@@ -36,7 +36,7 @@ class VistaServices extends AristaService<Vista>
     @Encode()
     Future<Vista> Get (String id) async
     {
-        Vista vista = await collection.findOne
+        var vista = await collection.findOne
         (
             where.id (StringToId (id))
         )
@@ -45,6 +45,9 @@ class VistaServices extends AristaService<Vista>
         if (vista == null)
             throw new app.ErrorResponse (400, "Vista not found");
         
+        print (vista.id);
+        
+        print (encode (vista));
         
         return vista;
     }
@@ -52,18 +55,12 @@ class VistaServices extends AristaService<Vista>
     @app.Route('/:id', methods: const [app.PUT])
     @Private()
     @Encode()
-    Future<Vista> Update (String id, 
-                        @app.Body (app.JSON) Map map) async
+    Future Update (String id, 
+                    @app.Body (app.JSON) Map map) async
     {
-        print (map);
+        var delta = Vista.MapToVista (decode, map);
         
-        Vista delta = Vista.MapToVista (decode, map);
-        
-        print (encode (delta));
-        
-        await UpdateGeneric(id, delta);
-        
-        print (encode (await Get(id)));
+        await UpdateGeneric (id, delta);
         
         return Get (id);
     }
@@ -101,6 +98,45 @@ class VistaServices extends AristaService<Vista>
         return Update(id, encode (delta));
     }
     
+    @app.Route('/:id/export', methods: const [app.GET])
+    @Private()
+    @Encode()
+    Future<Vista> Export (String id, {@app.QueryParam() bool owner,
+                          @app.QueryParam() bool objetoUnity,
+                          @app.QueryParam() bool localTarget}) async
+    {
+        Vista vista = await Get (id);
+        
+        if (owner != null && owner && vista.owner != null)
+                    vista.owner = await new UserServives ().GetGeneric(vista.owner.id);
+                
+        if (vista is ConstruccionRA)
+        {
+            if (objetoUnity != null && objetoUnity && vista.objetoUnity != null)
+                vista.objetoUnity = await new ObjetoUnityServices().Get(vista.objetoUnity.id);
+            
+            if (localTarget != null && localTarget && vista.localTarget != null) 
+                vista.localTarget = await new LocalImageTargetServices().Get(vista.localTarget.id);
+            
+        }       
+        else
+        {
+            
+        }
+        
+        return vista;
+    }
+    
+    @app.Route('/:id/isValid', methods: const [app.GET])
+    @Private()
+    @Encode()
+    Future<String> IsValid (String id) async
+    {
+        Vista vista = await Export(id, objetoUnity: true, localTarget: true);
+        return vista.valid;
+    }
+    
+    
     static Vista MongoMapToVista (Map map)
     {
         return Vista.MapToVista (db.decode, map);
@@ -111,83 +147,32 @@ class VistaServices extends AristaService<Vista>
         return collection.find(query).stream.map (MongoMapToVista).toList();
     }
     
-}
-
-
-Future<Vista> buildVista (Vista vista) async
-{
-    if (vista == null)
-        throw new ArgumentError.notNull("vista");
-    
-    if (vista is ConstruccionRA)
+    Future<Vista> buildVista (Vista vista, {bool owner, bool objetoUnity,
+                              bool localTarget}) async
     {
-        //if (vista.objetoUnity != null)
-        Catch
-            
-    }
-    else
-    {
+        if (vista == null)
+            throw new ArgumentError.notNull("vista");
         
-    }
-    print("buildVista");
-    switch (vista.type__)
-    {
-        case 'ConstruccionRAJS, Assembly-CSharp':
-            if (notNullOrEmpty(vista.objetoUnityId))
-            {
-                vista.objetoUnity = await dbConn.findOne
-                (
-                    Col.objetoUnity,
-                    ObjetoUnitySend,
-                    where.id (StringToId (vista.objetoUnityId))
-                );                
-                
-            }
+        if (owner && vista.owner != null)
+            vista.owner = await new UserServives ().GetGeneric(vista.owner.id);
+        
+        if (vista is ConstruccionRA)
+        {
+            if (objetoUnity != null && objetoUnity && vista.objetoUnity != null)
+                vista.objetoUnity = await new ObjetoUnityServices().Get(vista.objetoUnity.id);
             
-            if (notNullOrEmpty(vista.localTargetId))
-            {
-                vista.localTarget = await dbConn.findOne
-                (
-                    Col.localTarget,
-                    LocalImageTargetSend,
-                    where.id(StringToId (vista.localTargetId))                    
-                );
-            }
+            if (localTarget != null && localTarget && vista.localTarget != null) 
+                vista.localTarget = await new LocalImageTargetServices().Get(vista.localTarget.id);
             
-            break;
-
-        default:
-            break;
+        }       
+        else
+        {
+            
+        }
+        
+        return vista;
     }
     
-    return vista;
 }
 
-Resp validVista (VistaExportable vista)
-{
-    if (vista.type__ == null || vista.type__ == "")
-        return new Resp()
-            ..error = "type__ undefined.";
-    
-    switch (vista.type__)
-    {
-        case 'ConstruccionRAJS, Assembly-CSharp':
-            
-            if (vista.objetoUnity == null)
-                return new Resp()
-                    ..error = "modeloId undefined.";
-            if (vista.objetoUnity.active == null || vista.objetoUnity.active == false)
-                return new Resp()
-                    ..error = "El objetoUnity no esta activo.";
-            if (vista.localTarget == null)
-                return new Resp()
-                    ..error = "localTarget undefined.";            
-            if (vista.localTarget.active == null || vista.localTarget.active == false)
-                 return new Resp()
-                    ..error = "El localTarget no esta activo.";            
-            
-            break;
-    }
-    
-    return new Resp();
-}
+

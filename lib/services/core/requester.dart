@@ -40,7 +40,7 @@ abstract class Requester
         });
     }
     
-    static Future<Map> map (String method, String path, {dynamic data, Map headers, 
+    static Future map (String method, String path, {dynamic data, Map headers, 
                                 void onProgress (dom.ProgressEvent p), String userId, Map<String,dynamic> params})
     {
         return string
@@ -52,7 +52,7 @@ abstract class Requester
         .then (JSON.decode);
     }
     
-    static Future<Map> privateMap (String method, String path, {dynamic data, Map headers, 
+    static Future privateMap (String method, String path, {dynamic data, Map headers, 
                                     void onProgress (dom.ProgressEvent p), Map<String,dynamic> params})
     {
         return map
@@ -63,7 +63,7 @@ abstract class Requester
         );
     }
     
-    static Future<Map> jsonMap (String method, String path, Object obj, {Map headers, 
+    static Future jsonMap (String method, String path, Object obj, {Map headers, 
                                     void onProgress (dom.ProgressEvent p), String userId, Map<String,dynamic> params})
     {
         return map
@@ -78,7 +78,7 @@ abstract class Requester
         );
     }
     
-    static Future<Map> privateJsonMap (String method, String path, Object obj, {Map headers, 
+    static Future privateJsonMap (String method, String path, Object obj, {Map headers, 
                                     void onProgress (dom.ProgressEvent p), Map<String,dynamic> params})
     {
         return jsonMap

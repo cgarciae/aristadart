@@ -16,33 +16,20 @@ class Evento extends Ref
     @Field() List<Vista> vistas;
     @Field() CloudTarget cloudTarget;
     
-    Resp valid ()
+    bool get valid
     {
         if (id == null || id == "")
-            return new Resp()
-                ..error = "Id de Evento Invalida";
+            return false;
         
         if (active == null || ! active)
-            return new Resp()
-                ..error = "Evento inactivo";
+            return false;
         
         if (cloudTarget == null || cloudTarget.id == null)
-            return new Resp()
-                ..error = "Target ID Invalida";
-        
-        
-        vistas = vistas.where((Vista vista){
-            
-            Resp resp = vista.valid();
-            
-            return resp.success;
-            
-        }).toList();
+            return false;
         
         if (vistas.length == 0)
-            return new Resp()
-                ..error = "Ninguna vista valida disponible";
+            return false;
         
-        return new Resp();
+        return true;
     }
 }

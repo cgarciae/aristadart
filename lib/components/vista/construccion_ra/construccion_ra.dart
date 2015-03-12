@@ -43,10 +43,7 @@ class VistaConstruccionRA
         if (vista.objetoUnity == null || vista.objetoUnity.id == null)
         {
             
-            return objServices.All(public: true).then((list){
-                
-            objetosUsuario = list;
-            });
+            return getAllObjets();
         }
         else
         {
@@ -65,10 +62,7 @@ class VistaConstruccionRA
         if (vista.localTarget == null || vista.localTarget.id == null)
         {
           
-            return targetServices.All(public: true).then((list){
-              
-            targetsUsuario = list;
-            });
+            return getAllTargets();
         }
         else
         {
@@ -80,6 +74,22 @@ class VistaConstruccionRA
         });
         });
         }).catchError(printReqError, test: ifProgEvent);
+    }
+    
+    Future getAllObjets()
+    {
+        return objServices.All(public: true).then((list){
+                        
+        objetosUsuario = list;
+        });
+    }
+    
+    Future getAllTargets()
+    {
+        return targetServices.All(public: true).then((list){
+                      
+        targetsUsuario = list;
+        });
     }
     
     seleccionarObjeto (ObjetoUnity obj)
@@ -290,5 +300,6 @@ class VistaConstruccionRA
     cambiarObjetoUnity()
     {
         vista.objetoUnity.id = null;
+        return getAllObjets();
     }
 }

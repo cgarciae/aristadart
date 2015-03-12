@@ -45,32 +45,34 @@ class VistaTotal
     }
 }
 
-class Vista extends Ref
+abstract class Vista extends Ref
 {
-    String get href => null;
+    
     String get type__ => null;
     int get typeNum => -1;
-    @Field() User owner;
-    @Field() String nombre;
-    @Field() String descripcion;
+    User owner;
+    String nombre;
+    String descripcion;
+    String get icon => null;
+    String get href => null;
+    bool get valid => false;
     
-    String get icon => IconDir.missingImage;
+    factory Vista([String type__])
+    {
+        if (type__ == VistaType.construccionRA)
+            return new ConstruccionRA()
+                ..elementosInteractivos = [];
+        
+        return new EmptyVista();
+    }
     
+    /**
+     * Usar new Vista([String type__])
+     */
+    @deprecated
     static Vista Factory ([String type__])
     {
-        Vista v;
-        switch (type__)
-        {
-            case VistaType.construccionRA:
-                v = new ConstruccionRA()
-                    ..elementosInteractivos = [];
-                break;
-            default:
-                v = new EmptyVista();
-                break;
-        }
-        
-        return v;
+        return new Vista (type__);
     }
     
     
@@ -81,69 +83,58 @@ class Vista extends Ref
     
     static Vista MapToVista (decoder, Map map)
     {
-        var type = map['type__'];
-        Vista v;
-        switch (type)
-        {
-            case VistaType.construccionRA:
-                v = decoder(map, ConstruccionRA);
-                break;
-            default:
-                v = decoder(map, EmptyVista);
-                break;
-        }
         
-        return v;
+        var type = map['type__'];
+        
+        if (type == VistaType.construccionRA)
+            return decoder(map, ConstruccionRA);
+        
+        return decoder(map, EmptyVista);
     }
     
-    
-    Resp valid () => new Resp()..error = "Vista sin type__";
 }
 
-class EmptyVista extends Vista
+class EmptyVista extends Ref implements Vista
 {
+    @Field() User owner;
+    @Field() String nombre;
+    @Field() String descripcion;
+        
     @Field() String get type__ => null;
     @Field() int get typeNum => 0;
     @Field() String get href => localHost + 'vista/$id';
+    @Field() String get icon => IconDir.missingImage;
+    
+    bool get valid => false;
 }
 
-class ConstruccionRA extends Vista
+class ConstruccionRA extends Ref implements Vista
 {
-    @Field() String get href => localHost + 'vista/$id';
     @Field() String get type__ => VistaType.construccionRA;
     @Field() int get typeNum => 1;
+    @Field() User owner;
+    @Field() String nombre;
+    @Field() String descripcion;
+    @Field() String get icon => IconDir.icon3D;
+    @Field() String get href => localHost + 'vista/$id';
+    
     
     @Field() ObjetoUnity objetoUnity;
     @Field() LocalImageTarget localTarget;
     @Field() List<ElementoInteractivo> elementosInteractivos;
     
-    String get icon => IconDir.icon3D;
     
-    Resp valid ()
+    @Field() bool get valid
     {
-        Resp resp = super.valid();
+        if (objetoUnity == null || ! objetoUnity.active)
+            return false;
         
-        if (resp.failed)
-            return resp;
+        if (localTarget == null || ! localTarget.active)
+            return false;
         
-        if (objetoUnity == null)
-            return new Resp()
-                ..error = "modeloId undefined.";
-        
-        if (objetoUnity.active == null || objetoUnity.active == false)
-            return new Resp()
-                ..error = "El objetoUnity no esta activo.";
-        
-        if (localTarget == null)
-            return new Resp()
-                ..error = "localTarget undefined.";   
-        
-        if (localTarget.active == null || localTarget.active == false)
-             return new Resp()
-                ..error = "El localTarget no esta activo.";
-        
-        return new Resp();
-    }
+        return true;
+    } 
+
 }
 
 abstract class VistaType

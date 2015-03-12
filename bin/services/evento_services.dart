@@ -102,17 +102,12 @@ class EventoServices extends AristaService<Evento>
     @app.Route ('/:id/vistas', methods: const[app.GET])
     @Private()
     @Encode()
-    Future<ListVistaResp> Vistas (String id) async
+    Future<List<Vista>> Vistas (String id) async
     {
         Evento evento = await Get (id);
         
-        if (evento.failed)
-            return new ListVistaResp ()
-                ..error = evento.error;
-        
         if (evento.vistas == null || evento.vistas.isEmpty)
-            return new ListVistaResp ()
-                ..vistas = [];
+            return [];
         
         var vistasId = evento.vistas
                 .map(F.getField(#id))
@@ -124,8 +119,9 @@ class EventoServices extends AristaService<Evento>
             where.oneFrom("_id", vistasId)
         );
         
-        return new ListVistaResp()
-            ..vistas = vistas; 
+        print (encode(vistas));
+        
+        return vistas; 
     }
     
     @app.Route ('/all', methods: const[app.GET])
@@ -140,6 +136,38 @@ class EventoServices extends AristaService<Evento>
         
         return new ListEventoResp()
             ..eventos = eventos;
+    }
+    
+    @app.Route ('/:id/export', methods: const[app.GET])
+    @Private()
+    @Encode()
+    Future<Evento> Export (String id, @app.QueryParam() bool checkValid) async
+    {
+        Evento evento = await Get (id);
+        
+        evento.vistas = await Vistas(id);
+        
+        List<Vista> vistas = [];
+        
+        for (Vista _vista in evento.vistas)
+        {
+            Vista vista = await new VistaServices().Export
+            (
+                    _vista.id,
+                    objetoUnity: true,
+                    localTarget: true
+            );
+            
+            if (checkValid == null || !checkValid || vista.valid)
+                vistas.add (vista);
+        }
+        
+        evento.vistas = vistas;
+        
+        if (checkValid != null && checkValid && !evento.valid)
+            throw new app.ErrorResponse (400, "Evento invalido");
+        
+        return evento;
     }
 }
 

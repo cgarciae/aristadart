@@ -7,6 +7,6 @@ class Truth extends ValidationRule {
     const Truth([this.truth]) : super("truth");
 
     @override
-    bool validate (value)
-        => value is bool && value == truth;
+    bool validate (bool value)
+        => value == truth;
 }
