@@ -302,4 +302,17 @@ class VistaConstruccionRA
         vista.objetoUnity.id = null;
         return getAllObjets();
     }
+    
+    crearLocalTarget()
+    {
+        targetServices.NewGeneric().then((_objLocalTarget){
+        vista.localTarget = _objLocalTarget;         
+        });
+    }
+    
+    cambiarLocalTarget()
+    {
+        vista.localTarget = null;
+        return getAllObjets();
+    }
 }
