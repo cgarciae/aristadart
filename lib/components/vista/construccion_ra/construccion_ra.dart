@@ -129,7 +129,7 @@ class VistaConstruccionRA
       
         if (cambios)
         {
-            if(vista.objetoUnity.public){
+            if(vista.objetoUnity.public && vista.owner.id != userId){
                 return print("El modelo es público");
             }
           
@@ -147,6 +147,10 @@ class VistaConstruccionRA
     {
         if (cambios)
         {
+            if(vista.localTarget.public && vista.owner.id != userId){
+                return print("El modelo es público");
+            }
+                      
             cambios = false;
             
             var delta = new LocalImageTarget()
