@@ -37,22 +37,24 @@
                     
                     <form enctype="multipart/form-data" method="POST">
                     
+                        <div ng-if="!vista.objetoUnity.public || vista.owner.id == userId">
+                             Choose a file to upload: <input name="file" type="file"><br>
+                            <button 
+                                class="button tiny"
+                                ng-click="uploadObjetoUnityUserFile ($event)">
+                                    Upload
+                            </button>
                         
-                         Choose a file to upload: <input name="file" type="file"><br>
-                        <button 
-                            class="button tiny"
-                            ng-click="uploadObjetoUnityUserFile ($event)">
-                                Upload
-                        </button>
                          
                         
                        
-                        <a class="button tiny"
-                            ng-if="vista.objetoUnity.userFile != null" 
-                            ng-href = "{{vista.objetoUnity.userFile.href}}" 
-                            target="_blank">
-                                Download
-                        </a>
+                            <a class="button tiny"
+                                ng-if="vista.objetoUnity.userFile != null" 
+                                ng-href = "{{vista.objetoUnity.userFile.href}}" 
+                                target="_blank">
+                                    Download
+                            </a>
+                        </div>
                         
                         
                         <a ng-if="vista.objetoUnity.screenshot != null"
@@ -92,9 +94,12 @@
             <ul class="no-bullet">
                 <li class = "large-7 columns">
                     <form enctype="multipart/form-data" method="POST">
-                         Choose a file to upload: <input name="file" type="file"><br>
-                         
-                         <button class="button tiny" ng-click="uploadLocalTargetImageFile ($event)">Upload</button>
+                        <div ng-if="!vista.localTarget.public || vista.owner.id == userId">
+                           Choose a file to upload: <input name="file" type="file"><br>
+                           
+                           <button class="button tiny" ng-click="uploadLocalTargetImageFile ($event)">Upload</button>
+                         </div>
+                       
                          
                         <a class="tiny"
                             ng-if="vista.localTarget != null && vista.localTarget.image != null && vista.localTarget.image != ''" 
