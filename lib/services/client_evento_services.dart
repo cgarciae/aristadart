@@ -4,12 +4,16 @@ class ClientEventoServices extends ClientService<Evento>
 {
     ClientEventoServices ([Evento source]) : super (source, Col.evento);
     
-    Future<ListVistaResp> Vistas ()
+    Future<List<Vista>> Vistas ()
     {
-        return Requester.private
+        return Requester.privateMap
         (
-            ListVistaResp, Method.GET, '$href/vistas'
-        );
+            Method.GET, '$href/vistas'
+        )
+        .then ((List<Map> list) {
+            print (list);
+            return list.map(ClientVistaServices.MapToVista).toList();
+            });
     }
     
     Future<Evento> AddVista (String vistaId)

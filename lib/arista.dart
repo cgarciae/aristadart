@@ -24,7 +24,7 @@ part 'models/file.dart';
 part 'models/panel_info.dart';
 part 'models/validation_rules/truth.dart';
 
-const int tipoBuild = TipoBuild.desarrollo;
+const int tipoBuild = TipoBuild.jsTesting;
 
 int get port => 9090;
 
@@ -122,7 +122,7 @@ QueryMap MapToQueryMap (Map map) => new QueryMap(map);
 dynamic Cast (Type type, Object obj) => decode (encode(obj), type);
 dynamic Clone (Object obj) => decode (encode(obj), obj.runtimeType);
 
-class Resp extends Schema
+class Resp
 {
     bool get success => nullOrEmpty(error);
     bool get failed => ! success;
@@ -138,7 +138,7 @@ class DbObj extends Resp
 
 abstract class Ref extends DbObj
 {
-    @Field() String get href;
+    String get href;
 }
 
 class ListEventoResp extends Resp

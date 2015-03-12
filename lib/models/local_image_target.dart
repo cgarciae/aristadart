@@ -10,7 +10,6 @@ class LocalImageTarget extends Ref
     @Field() String name;
     @Field() bool public;
 
-    @NotEmpty()
     @Field() User owner;
     
     @NotEmpty()
@@ -19,7 +18,7 @@ class LocalImageTarget extends Ref
     @NotEmpty()
     @Field() bool updatePending;
     
-    @Range(min: 0)
+    @Range(min: 1)
     @Field () int version = 0;
     
     @Field () bool get active => activeDat && activeXml;

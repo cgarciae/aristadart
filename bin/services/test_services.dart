@@ -1,20 +1,42 @@
 part of aristadart.server;
 
-class TestClass extends Ref
+
+
+abstract class Vista2 extends Ref
 {
-    @Field() DateTime date;
-    get href => null;
+    String get icon;
+}
+
+class Const2 extends Ref implements Vista2
+{
+    @Field() String get icon => "algo";
+    @Field() String get href => "someHost/$id"; 
+}
+
+
+
+@app.Route ('/poly')
+@Encode()
+testPoly ()
+{
+    var inst = new Const2()
+        ..id = "some id";
+    
+    return inst;
 }
 
 @app.Route ('/valid')
 testValid ()
 {
-    var vista = new ConstruccionRA ();
+    var vista = new ConstruccionRA ()
+        ..id = "hola"
+        ..objetoUnity = (new ObjetoUnity()
+            ..id = "chao")
+        ..localTarget = (new LocalImageTarget()
+            ..id = "chao");
     
-    var validator = new Validator(ConstruccionRA, true);
-    ValidationError err = vista.validate();
     
-    print (err);
+    return err.toString();
 }
 
 @app.Route ('/testDatePost', methods: const [app.POST])

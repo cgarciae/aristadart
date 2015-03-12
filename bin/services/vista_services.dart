@@ -12,7 +12,7 @@ class VistaServices extends AristaService<Vista>
     Future<Vista> New (@app.QueryParam("type") int typeNumber, @app.QueryParam("eventoId") String eventoId) async
     {
         
-        Vista vista = Vista.Factory (Vista.IndexToType[typeNumber])
+        Vista vista = new Vista (Vista.IndexToType[typeNumber])
             ..id = newId()
             ..nombre = "Mi vista"
             ..owner = (new User()
@@ -45,6 +45,9 @@ class VistaServices extends AristaService<Vista>
         if (vista == null)
             throw new app.ErrorResponse (400, "Vista not found");
         
+        print (vista.id);
+        
+        print (encode (vista));
         
         return vista;
     }
@@ -95,7 +98,7 @@ class VistaServices extends AristaService<Vista>
         return Update(id, encode (delta));
     }
     
-    @app.Route('/:id/export', methods: const [app.PUT])
+    @app.Route('/:id/export', methods: const [app.GET])
     @Private()
     @Encode()
     Future<Vista> Export (String id, {@app.QueryParam() bool owner,
@@ -104,7 +107,7 @@ class VistaServices extends AristaService<Vista>
     {
         Vista vista = await Get (id);
         
-        if (owner && vista.owner != null)
+        if (owner != null && owner && vista.owner != null)
                     vista.owner = await new UserServives ().GetGeneric(vista.owner.id);
                 
         if (vista is ConstruccionRA)
@@ -122,6 +125,15 @@ class VistaServices extends AristaService<Vista>
         }
         
         return vista;
+    }
+    
+    @app.Route('/:id/isValid', methods: const [app.GET])
+    @Private()
+    @Encode()
+    Future<String> IsValid (String id) async
+    {
+        Vista vista = await Export(id, objetoUnity: true, localTarget: true);
+        return vista.valid;
     }
     
     

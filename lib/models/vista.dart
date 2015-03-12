@@ -47,28 +47,32 @@ class VistaTotal
 
 abstract class Vista extends Ref
 {
-    String get type__;
-    int get typeNum;
+    
+    String get type__ => null;
+    int get typeNum => -1;
     User owner;
     String nombre;
     String descripcion;
-    String get icon;
+    String get icon => null;
+    String get href => null;
+    bool get valid => false;
     
+    factory Vista([String type__])
+    {
+        if (type__ == VistaType.construccionRA)
+            return new ConstruccionRA()
+                ..elementosInteractivos = [];
+        
+        return new EmptyVista();
+    }
+    
+    /**
+     * Usar new Vista([String type__])
+     */
+    @deprecated
     static Vista Factory ([String type__])
     {
-        Vista v;
-        switch (type__)
-        {
-            case VistaType.construccionRA:
-                v = new ConstruccionRA()
-                    ..elementosInteractivos = [];
-                break;
-            default:
-                v = new EmptyVista();
-                break;
-        }
-        
-        return v;
+        return new Vista (type__);
     }
     
     
@@ -79,17 +83,13 @@ abstract class Vista extends Ref
     
     static Vista MapToVista (decoder, Map map)
     {
-        var type = map['type__'];
-
-        switch (type)
-        {
-            case VistaType.construccionRA:
-                ConstruccionRA vista = decoder(map, ConstruccionRA);
-                return vista;
-            default:
-                return decoder(map, EmptyVista);
-        }
         
+        var type = map['type__'];
+        
+        if (type == VistaType.construccionRA)
+            return decoder(map, ConstruccionRA);
+        
+        return decoder(map, EmptyVista);
     }
     
 }
@@ -104,6 +104,8 @@ class EmptyVista extends Ref implements Vista
     @Field() int get typeNum => 0;
     @Field() String get href => localHost + 'vista/$id';
     @Field() String get icon => IconDir.missingImage;
+    
+    bool get valid => false;
 }
 
 class ConstruccionRA extends Ref implements Vista
@@ -116,11 +118,22 @@ class ConstruccionRA extends Ref implements Vista
     @Field() String get icon => IconDir.icon3D;
     @Field() String get href => localHost + 'vista/$id';
     
+    
     @Field() ObjetoUnity objetoUnity;
-    
     @Field() LocalImageTarget localTarget;
-    
     @Field() List<ElementoInteractivo> elementosInteractivos;
+    
+    
+    @Field() bool get valid
+    {
+        if (objetoUnity == null || ! objetoUnity.active)
+            return false;
+        
+        if (localTarget == null || ! localTarget.active)
+            return false;
+        
+        return true;
+    } 
 
 }
 

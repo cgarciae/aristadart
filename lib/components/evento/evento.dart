@@ -33,9 +33,11 @@ class EventoVista
         eventoServices = new ClientEventoServices(evento);
         
         //Buscar vistas
-        return eventoServices.Vistas().then((vistasResp){
+        return eventoServices.Vistas().then((_vistas){
         
-        evento.vistas = vistasResp.vistas;
+        evento.vistas = _vistas;
+        
+        evento.vistas.forEach((v) => print (encode(v)));
         
         //Si existe un cloud target
         return new Future((){
