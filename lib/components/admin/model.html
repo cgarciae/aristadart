@@ -88,9 +88,15 @@
             <h3>Tags</h3>
             <a ng-click="nuevoTag (model)">Nuevo Tag</a>
             <div ng-repeat="tag in model.tags">
-                <input type="text" ng-model="tag">
+                <input type="text" ng-model="tag"
+                        ng-change="cambiarTag (model, tag, $index)"
+                        ng-blur="guardarTags (model)">
                 <button ng-click="eliminarTag (model, tag)">x</button>
             </div>
+            <div ng-repeat="tag in model.tags">
+                {{tag}}
+            </div>
+            
         </fieldset>
         <br>
        </div>

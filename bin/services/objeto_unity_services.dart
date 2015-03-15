@@ -140,8 +140,13 @@ class ObjetoUnityServices extends AristaService<ObjetoUnity>
         obj.owner = await new UserServives().GetGeneric(obj.owner.id);
         
         //Si se envio archivo para 'ios'
-        if (form.ios != null && form.ios is app.HttpBodyFileUpload)
+        if (form.ios != null && form.ios is app.HttpBodyFileUpload
+            && form.ios.content is List && form.ios.content.isNotEmpty)
         {
+            print ("ios");
+            print (form.ios);
+            print (form.ios.content);
+            
             //Actualizar FileDb obj.ios
             FileDb newFile = await ActualizarModelo
             (
@@ -156,8 +161,10 @@ class ObjetoUnityServices extends AristaService<ObjetoUnity>
         }
         
         //Si se envio archivo para 'android'
-        if (form.android != null && form.android is app.HttpBodyFileUpload)
+        if (form.android != null && form.android is app.HttpBodyFileUpload
+            && form.android.content is List && form.android.content.isNotEmpty)
         {
+            print ("android");
             //Actualizar FileDb obj.android
             FileDb newFile = await ActualizarModelo
             (
@@ -171,8 +178,10 @@ class ObjetoUnityServices extends AristaService<ObjetoUnity>
             ..androidUpdated = true;
         }
         
-        if (form.windows != null && form.windows is app.HttpBodyFileUpload)
+        if (form.windows != null && form.windows is app.HttpBodyFileUpload
+            && form.windows.content is List && form.windows.content.isNotEmpty)
         {
+            print ("windows");
             //Actualizar FileDb obj.windows
             FileDb newFile = await ActualizarModelo
             (
@@ -186,8 +195,10 @@ class ObjetoUnityServices extends AristaService<ObjetoUnity>
             ..windowsUpdated = true;
         }
         
-        if (form.osx != null && form.osx is app.HttpBodyFileUpload)
+        if (form.osx != null && form.osx is app.HttpBodyFileUpload
+            && form.osx.content is List && form.osx.content.isNotEmpty)
         {
+            print ("osx");
             //Actualizar FileDb obj.osx
             FileDb newFile = await ActualizarModelo
             (
@@ -202,7 +213,7 @@ class ObjetoUnityServices extends AristaService<ObjetoUnity>
         }
         
         //Guardar cambios
-        return Update(id, delta);
+        return Update (id, delta);
     }
     
     @app.Route ('/find', methods: const [app.GET])

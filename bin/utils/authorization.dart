@@ -33,18 +33,22 @@ void AuthenticationPlugin(app.Manager manager) {
         }
         on ArgumentError catch (e)
         {
-            throw new app.ErrorResponse (400, "Authentication Error: ID length must be 24");
+            return new app.ErrorResponse (400, "Authentication Error: ID length must be 24");
         }
         catch (e)
         {
-            throw new app.ErrorResponse (400, "Authentication Error Desconocido: $e");
+            return new app.ErrorResponse (400, "Authentication Error Desconocido: $e");
         }
         
+        
         if (user == null)
-            throw new app.ErrorResponse (400, "Authentication Error: User does not exist");
+        {
+            return new app.ErrorResponse (400, "Authentication Error: User does not exist");
+        }
+        
         
         if ((metadata as Private).securityLevel > 0 && ! user.admin)
-            throw new app.ErrorResponse (400, "Error de Autorizacion: No se tiene permisos para este recurso");
+            return new app.ErrorResponse (400, "Error de Autorizacion: No se tiene permisos para este recurso");
         
         return route(pathSegments, injector, request);
     

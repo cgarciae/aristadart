@@ -11,3 +11,4 @@ class ElementoInteractivo
     @Field() FileDb image;
     @Field() String texto = "";
 }
+

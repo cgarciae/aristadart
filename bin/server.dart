@@ -15,8 +15,11 @@ import 'dart:async';
 
 main() async
 {
+    var con = "mongodb://${partialDBHost}/test";
     
-    var dbManager = new MongoDbManager("mongodb://${partialDBHost}/test", poolSize: 3);
+    print (con);
+    
+    var dbManager = new MongoDbManager(con, poolSize: 3);
     
     app.addPlugin(getMapperPlugin(dbManager));
     app.addPlugin(AuthenticationPlugin);
@@ -49,10 +52,9 @@ main() async
         print ("Creando nuevo admin");
         if (tipoBuild == TipoBuild.deploy)
         {
-            var newUser = new UserComplete()
+            var newUser = new ProtectedUser()
                 ..nombre = "Arista"
                 ..apellido = "Dev"
-                ..password = encryptPassword ("TransformandoElMundo!")
                 ..email = "info@aristadev.com"
                 ..money = 1000000000
                 ..admin = true;
@@ -65,10 +67,9 @@ main() async
         }
         else
         {
-            var newUser = new UserComplete()
+            var newUser = new ProtectedUser()
                 ..nombre = "Arista"
                 ..apellido = "Dev"
-                ..password = encryptPassword("a")
                 ..email = "a"
                 ..money = 1000000000
                 ..admin = true;

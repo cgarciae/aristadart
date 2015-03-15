@@ -119,8 +119,6 @@ class EventoServices extends AristaService<Evento>
             where.oneFrom("_id", vistasId)
         );
         
-        print (encode(vistas));
-        
         return vistas; 
     }
     
@@ -140,19 +138,11 @@ class EventoServices extends AristaService<Evento>
     
     @app.Route ('/:id/export', methods: const[app.GET])
     @Encode()
-    Future<Evento> Export (String id, @app.QueryParam() bool checkValid) async
+    Future<Evento> Export (String id, {@app.QueryParam() bool checkValid : true}) async
     {
-        print (app.request.url);
-        
-        print (1);
-        
         Evento evento = await Get (id);
         
-        print (2);
-        
-        evento.vistas = await Vistas(id);
-        
-        print (3);
+        evento.vistas = await Vistas (id);
         
         List<Vista> vistas = [];
         
@@ -169,16 +159,10 @@ class EventoServices extends AristaService<Evento>
                 vistas.add (vista);
         }
         
-        print (4);
-        
         evento.vistas = vistas;
         
         if (checkValid != null && checkValid && !evento.valid)
             throw new app.ErrorResponse (400, "Evento invalido");
-        
-        print (5);
-        
-        print (evento.nombre);
         
         return evento;
     }

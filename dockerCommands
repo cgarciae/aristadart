@@ -27,3 +27,7 @@ docker run -it --name data cgarciae/data:latest
 cd "/c/Users/Cristian Garcia/Documents/GitHub/aristadart/dockerFiles/data"
 docker build -t cgarciae/data:0.0.1 .
 docker tag cgarciae/data:0.0.1 cgarciae/data:latest
+
+## DATA TEST##
+docker stop datatest && docker rm datatest
+docker run -it --name datatest -v "/c/Users/Cristian Garcia/b2d/data":/data/db cgarciae/data:latest

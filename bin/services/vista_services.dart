@@ -45,10 +45,6 @@ class VistaServices extends AristaService<Vista>
         if (vista == null)
             throw new app.ErrorResponse (400, "Vista not found");
         
-        print (vista.id);
-        
-        print (encode (vista));
-        
         return vista;
     }
     

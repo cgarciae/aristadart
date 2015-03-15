@@ -69,7 +69,7 @@ abstract class Vista extends Ref
     /**
      * Usar new Vista([String type__])
      */
-    @deprecated
+
     static Vista Factory ([String type__])
     {
         return new Vista (type__);

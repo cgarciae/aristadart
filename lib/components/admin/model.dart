@@ -124,6 +124,12 @@ class ModelVista{
         guardarTags (obj);
     }
     
+    cambiarTag (ObjetoUnity obj, String tag, int index)
+    {
+        obj.tags[index] = tag;
+        cambios = true;
+    }
+    
     guardarTags (ObjetoUnity obj)
     {
         if (cambios)
@@ -132,6 +138,8 @@ class ModelVista{
             
             var delta = new ObjetoUnity()
                 ..tags = obj.tags;
+            
+            print (encode(delta));
             
             new ClientObjetoUnityServices(obj).UpdateGeneric (delta).then((_obj){
                

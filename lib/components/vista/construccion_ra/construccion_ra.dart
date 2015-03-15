@@ -132,6 +132,8 @@ class VistaConstruccionRA
             if(vista.objetoUnity.public && vista.owner.id != userId){
                 return print("El modelo es público");
             }
+            
+            print (vista.objetoUnity.id);
           
             cambios = false;
             
