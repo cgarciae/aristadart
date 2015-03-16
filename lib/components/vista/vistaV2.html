@@ -1,10 +1,10 @@
-<div ng-switch="vista.typeNum">
-    <div ng-switch-when="0">
+<div ng-switch="vista.type__">
+    <div ng-switch-when="ConstruccionRAJS, Assembly-CSharp">
+         <construccion-ra></construccion-ra>
+    </div>
+    <div ng-switch-default>
          <label ng-click="setVistaType (1)">
             ConstruccionRA
          </label>
-    </div>
-    <div ng-switch-when="1">
-         <construccion-ra></construccion-ra>
     </div>
 </div>

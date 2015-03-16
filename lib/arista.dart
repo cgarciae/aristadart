@@ -135,9 +135,9 @@ class DbObj extends Resp
     @Id() String id;
 }
 
-abstract class Ref extends DbObj
+class Ref extends DbObj
 {
-    String get href;
+    String get href => "IMPLEMENTATION MISSING";
 }
 
 class ListEventoResp extends Resp

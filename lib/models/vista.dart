@@ -82,11 +82,10 @@ class Vista extends Ref
             return decoder(map, ConstruccionRA);
         
         return decoder(map, EmptyVista);
-    }
-    
+    }    
 }
 
-class EmptyVista extends Ref implements Vista
+class EmptyVista extends Vista
 {
     @Field() User owner;
     @Field() String nombre;
@@ -100,7 +99,7 @@ class EmptyVista extends Ref implements Vista
     bool get valid => false;
 }
 
-class ConstruccionRA extends Ref implements Vista
+class ConstruccionRA extends Vista
 {
     @Field() String get type__ => VistaType.construccionRA;
     @Field() int get typeNum => 1;

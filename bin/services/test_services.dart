@@ -26,40 +26,7 @@ testPoly ()
 }
 
 
-@app.Route ('/testDatePost', methods: const [app.POST])
-@Encode()
-testDatePost (@Decode() TestClass t) async
-{
-    
-    print (app.request.body);
-    
-    return t;
-}
 
-@app.Route ('/testDateFind')
-@Encode()
-testDateFind () async
-{
-    
-    var t = await db.collection('test').findOne();
-    
-    print (t);
-    
-    return db.decode(t, TestClass);
-}
-
-@app.Route ('/testDate')
-@Encode()
-testDate () async
-{
-    var testClass = new TestClass()
-        ..date = new DateTime.now()
-        ..id = newId();
-    
-    await db.insert('test', testClass);
-    
-    return testClass;
-}
 
 
 @app.Route ('/testOptional/:mandatory')
@@ -177,16 +144,6 @@ gridFSTestFiles(@app.Attr() MongoDb dbConn)
 }
 
 
-@app.Route ('/test/async')
-@Encode()
-testAsync (@app.Attr() MongoDb dbConn) async
-{
-    var res = await panelInfo (dbConn);
-    
-    print (res);
-    
-    return res;
-}
 
 @app.Route('/esteban', methods: const [app.POST])
 @Encode()
