@@ -45,7 +45,7 @@ class VistaTotal
     }
 }
 
-abstract class Vista extends Ref
+class Vista extends Ref
 {
     
     String get type__ => null;
@@ -57,22 +57,14 @@ abstract class Vista extends Ref
     String get href => null;
     bool get valid => false;
     
-    factory Vista([String type__])
+
+    static Vista Factory ([String type__])
     {
         if (type__ == VistaType.construccionRA)
             return new ConstruccionRA()
                 ..elementosInteractivos = [];
         
         return new EmptyVista();
-    }
-    
-    /**
-     * Usar new Vista([String type__])
-     */
-
-    static Vista Factory ([String type__])
-    {
-        return new Vista (type__);
     }
     
     

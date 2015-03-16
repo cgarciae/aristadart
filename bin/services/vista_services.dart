@@ -12,7 +12,7 @@ class VistaServices extends AristaService<Vista>
     Future<Vista> New (@app.QueryParam("type") int typeNumber, @app.QueryParam("eventoId") String eventoId) async
     {
         
-        Vista vista = new Vista (Vista.IndexToType[typeNumber])
+        Vista vista = Vista.Factory (Vista.IndexToType[typeNumber])
             ..id = newId()
             ..nombre = "Mi vista"
             ..owner = (new User()

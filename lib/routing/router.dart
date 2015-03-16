@@ -233,7 +233,7 @@ void recipeBookRouteInitializer(Router router, RouteViewFactory view)
 
 checkLogin ()
 {
-    return requestDecoded
+    return Requester.decoded
     (
          IdResp,
          Method.GET,
@@ -251,7 +251,7 @@ checkLogin ()
 
 checkAdmin ()
 {
-    return requestDecoded
+    return Requester.decoded
     (
          IdResp,
          Method.GET,

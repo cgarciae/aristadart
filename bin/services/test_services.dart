@@ -25,19 +25,6 @@ testPoly ()
     return inst;
 }
 
-@app.Route ('/valid')
-testValid ()
-{
-    var vista = new ConstruccionRA ()
-        ..id = "hola"
-        ..objetoUnity = (new ObjetoUnity()
-            ..id = "chao")
-        ..localTarget = (new LocalImageTarget()
-            ..id = "chao");
-    
-    
-    return err.toString();
-}
 
 @app.Route ('/testDatePost', methods: const [app.POST])
 @Encode()

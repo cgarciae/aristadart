@@ -16,12 +16,8 @@ class MainController
         
     }
     
-    int n = 1;
     
-    agregar() 
-    {
-        Dummy.add ((++n).toString());
-    }
+    
     
     logout ()
     {
