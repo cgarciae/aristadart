@@ -2,11 +2,12 @@ library aristadart.client;
 
 //Dependencies
 import 'dart:convert';
-import 'package:aristadart/arista.dart';
 import 'dart:async';
+import 'dart:html' as dom;
+
+import 'package:aristadart/arista.dart';
 import 'package:redstone_mapper/mapper.dart';
 import 'package:angular/angular.dart';
-import 'dart:html' as dom;
 import "package:googleapis_auth/auth_browser.dart" as auth;
 import 'package:googleapis/oauth2/v2.dart' as oauth;
 

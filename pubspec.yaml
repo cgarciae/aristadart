@@ -30,5 +30,5 @@ transformers:
     - lib/components/widgets/alert/alert.html
     - lib/components/widgets/dummy/dummy.html
 - $dart2js:
-    $exclude: bin
+    $exclude: ["bin", "*test*"]
     minify: true

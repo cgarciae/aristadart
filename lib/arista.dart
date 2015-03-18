@@ -2,7 +2,7 @@ library aristadart.general;
 
 import 'package:redstone_mapper/mapper.dart';
 import 'package:redstone_mapper_mongo/metadata.dart';
-import 'package:redstone/query_map.dart';
+//import 'package:redstone/query_map.dart';
 import 'dart:convert';
 
 part 'models/evento.dart';
@@ -111,9 +111,6 @@ Map maybeAdd (Map map, String field, Object value)
     
     return map;
 }
-
-QueryMap NewQueryMap () => new QueryMap(new Map());
-QueryMap MapToQueryMap (Map map) => new QueryMap(map);
 
 dynamic Cast (Type type, Object obj) => decode (encode(obj), type);
 dynamic Clone (Object obj) => decode (encode(obj), obj.runtimeType);

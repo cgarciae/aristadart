@@ -34,6 +34,10 @@ part 'services/cloud_target_services.dart';
 part 'services/vuforia_services.dart';
 part 'utils/authorization.dart';
 
+
+QueryMap NewQueryMap () => new QueryMap(new Map());
+QueryMap MapToQueryMap (Map map) => new QueryMap(map);
+
 ObjectId StringToId (String id) => new ObjectId.fromHexString(id);
 String newId () => new ObjectId().toHexString();
 
