@@ -110,7 +110,7 @@ class EventoServices extends AristaService<Evento>
             return [];
         
         var vistasId = evento.vistas
-                .map(F.getField(#id))
+                .map((v) => v.id)
                 .map(StringToId)
                 .toList();
         

@@ -7,22 +7,11 @@ import 'package:angular/application_factory.dart';
 import 'package:logging/logging.dart';
 
 
-import 'package:redstone_mapper/mapper_factory.dart';
+//import 'package:redstone_mapper/mapper_factory.dart';
 import 'package:aristadart/arista_client.dart';
 
 
-@MirrorsUsed(targets: const[
-  'angular',
-  'angular.core',
-  'angular.core.dom',
-  'angular.filter',
-  'angular.perf',
-  'angular.directive',
-  'angular.routing',
-  'angular.core.parser',
-  'NodeTreeSanitizer'
-  ],
-  override: '*')
+@MirrorsUsed(override: '*')
 import 'dart:mirrors';
 
 class MyAppModule extends Module
@@ -50,7 +39,7 @@ class MyAppModule extends Module
 void main()
 {
     
-    bootstrapMapper();
+    //bootstrapMapper();
 
     Logger.root.level = Level.FINEST;
     Logger.root.onRecord.listen((LogRecord r) { print(r.message); });

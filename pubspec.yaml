@@ -3,8 +3,6 @@ description: A sample web application
 dependencies:
   angular: any
   browser: any
-  di: any
-  fp: any
   googleapis: any
   googleapis_auth: any
   http: any
@@ -13,10 +11,7 @@ dependencies:
   redstone_mapper: any
   redstone_mapper_mongo: any
   route_hierarchical: '>=0.5.0 <0.7.0'
-  sass: '>=0.4.0 <0.5.0'
-  script_inliner: '>=1.0.0 <2.0.0'
   shelf_static: any
-  stack_trace: any
   unittest: any
 transformers:
 - redstone_mapper
@@ -34,9 +29,6 @@ transformers:
     - lib/components/widgets/loader/loader.html
     - lib/components/widgets/alert/alert.html
     - lib/components/widgets/dummy/dummy.html
-- script_inliner
-- sass:
-    style: compressed
-    copy-sources: true
 - $dart2js:
     $exclude: bin
+    minify: true

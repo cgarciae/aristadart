@@ -20,7 +20,6 @@ import 'package:shelf/shelf.dart' as shelf;
 import 'package:redstone_mapper/plugin.dart';
 import 'package:redstone/server.dart';
 import 'utils/utils.dart';
-import 'package:fp/fp.dart' as F;
 
 part 'services/core/arista_service.dart';
 part 'services/user_services.dart';
@@ -85,7 +84,7 @@ Future<List<dynamic>> deleteFiles (GridFS fs, dynamic fileSelector)
 {
     return fs.files.find (fileSelector).toList().then((List<Map> list)
     {
-        return list.map(F.getByKey('_id')).toList();
+        return list.map((map) => map['_id']).toList();
     })
     .then((List list)
     {
