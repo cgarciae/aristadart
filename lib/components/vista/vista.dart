@@ -8,24 +8,27 @@ part of aristadart.client;
 )
 class VistaVista
 {
+    
     Router router;
     Vista vista = new EmptyVista();
     String eventoId;
     String tituloVista='';
     ClientVistaServices vistaServices;
     
-    static Vista get vistaActual => ClientVistaServices.StringToVista (storage['vistaActual']);
-    static set vistaActual (Vista value)
-    {
-        if (value == null)
-        {
-            storage.remove('vistaActual');
-        }
-        else
-        {
-            storage['vistaActual'] = encodeJson(value);
-        }
-    }
+    static Vista vistaActual;
+    
+//    static Vista get vistaActual => ClientVistaServices.StringToVista (storage['vistaActual']);
+//    static set vistaActual (Vista value)
+//    {
+//        if (value == null)
+//        {
+//            storage.remove('vistaActual');
+//        }
+//        else
+//        {
+//            storage['vistaActual'] = encodeJson(value);
+//        }
+//    }
     
     List<TipoDeVista> tiposDeVista = const 
     [

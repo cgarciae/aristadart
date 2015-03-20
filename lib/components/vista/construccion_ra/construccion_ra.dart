@@ -30,14 +30,12 @@ class VistaConstruccionRA
         vista.id = routeProvider.parameters['vistaID'];
         //eventoId = routeProvider.parameters['eventoID'];
         
+        vista = VistaVista.vistaActual;
+        
         vistaServices = new ClientVistaServices(vista);
         
-        vistaServices.Get().then((_vista){
-        
-        vista = _vista;
-        
         //Si no existe objeto unity
-        return new Future ((){
+        new Future ((){
         objServices = new ClientObjetoUnityServices(vista.objetoUnity);
         
         if (vista.objetoUnity == null || vista.objetoUnity.id == null)
@@ -72,8 +70,7 @@ class VistaConstruccionRA
             });
         }
         });
-        });
-        }).catchError(printReqError, test: ifProgEvent);
+        }).catchError (printReqError, test: ifProgEvent);
     }
     
     Future getAllObjets()
@@ -281,13 +278,14 @@ class VistaConstruccionRA
         })
         .then((_){
         
+        
+        return uploadElements().then((_){
+        
         if (update)
         {
-            return uploadElements().then((_){
-                
             dom.window.location.reload();
-            });
         }
+        });
         });
         
     }

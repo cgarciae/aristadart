@@ -20,7 +20,7 @@ part 'models/user.dart';
 part 'models/file.dart';
 part 'models/validation_rules/truth.dart';
 
-const int tipoBuild = TipoBuild.jsTesting;
+const int tipoBuild = TipoBuild.deploy;
 
 int get port => 9090;
 
@@ -42,8 +42,9 @@ String get partialHost {
     {
         case TipoBuild.desarrollo:
         case TipoBuild.jsTesting:
-        case TipoBuild.dockerTesting:
             return "localhost:9090";
+        case TipoBuild.dockerTesting:
+            return "192.168.59.103:9090";
         case TipoBuild.deploy:
             return "104.131.109.228";
     }

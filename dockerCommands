@@ -8,8 +8,8 @@ docker run -d -p 9090:9090 -it --name server --link db:db cgarciae/aristadart:la
 
 ## SERVER BUILD ##
 cd "/c/Users/Cristian Garcia/Documents/GitHub/aristadart"
-docker build -t cgarciae/aristadart:0.0.4 .
-docker tag cgarciae/aristadart:0.0.4 cgarciae/aristadart:latest
+docker build -t cgarciae/aristadart:0.0.5 .
+docker tag cgarciae/aristadart:0.0.5 cgarciae/aristadart:latest
 
 ## DB TEST RUN##
 docker stop dbtest && docker rm dbtest

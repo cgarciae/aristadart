@@ -13,6 +13,10 @@
             <label>Id {{target.id}}</label>
             <label>Update Pending: {{target.updatePending}}</label>
             <label>Active: {{target.active}}</label>
+            
+            Public? <input type="checkbox" ng-model="target.public"
+                                           ng-click="setPublic (target)">
+            
             <div class="panel right">
                 <h4>Usuario: <h5>{{target.owner.nombre}} {{target.owner.apellido}}</h5></h4>
                 <h4>Correo: <h5>{{target.owner.email}}</h5></h4>

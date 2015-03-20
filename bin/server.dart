@@ -89,6 +89,30 @@ main() async
     
     //List users = await dbConn.collection (Col.user).find().toList();
     //users.forEach (print);
+    
+    user = await dbConn.findOne(Col.user, User, where.eq("email", "cgarcia.e88@gmail.com"));
+    
+    if (user == null)
+    {
+        var cristian = new ProtectedUser()
+            ..nombre = "Cristian"
+            ..apellido = "Garcia"
+            ..email = "cgarcia.e88@gmail.com"
+            ..money = 1000000000
+            ..admin = true;
+                    
+        await dbConn.insert
+        (
+            Col.user,
+            cristian
+        );
+        
+        print ("Usuario Cristian Creado");
+    }
+    else
+    {
+        print ("Cristian ya existe");
+    }
 }
 
 
