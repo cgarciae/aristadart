@@ -33,6 +33,7 @@ part 'services/test_services.dart';
 part 'services/cloud_target_services.dart';
 part 'services/vuforia_services.dart';
 part 'utils/authorization.dart';
+part 'utils/exceptions.dart';
 
 
 QueryMap NewQueryMap () => new QueryMap(new Map());
