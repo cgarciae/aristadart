@@ -1,11 +1,35 @@
 part of aristadart.server;
 
+abstract class UserServices implements AristaService<User>
+{
+    EventoServices eventoServices;
+    
+    factory UserServices ({EventoServices eventoServices})
+    {
+        if (eventoServices == null)
+            eventoServices = new EventoServices();
+        
+        return new UserServices_Impl (eventoServices);
+    }
+    
+    Future<User> NewOrLogin (User user);
+    Future<User> Update (User delta);
+    Future<User> Get ();
+    Future<DbObj> Delete ();
+    Future<ListEventoResp> Eventos ();
+    Future<BoolResp> isAdmin ();
+    Future<User> Find (String id, String email, String nombre, String apellido);
+    Future<User> SetAdmin (String id, bool admin);
+}
+
 @app.Group('/user')
 @Catch()
 @Encode()
-class UserServives extends AristaService<User>
+class UserServices_Impl extends AristaService<User> implements UserServices
 {
-    UserServives () : super (Col.user);
+    EventoServices eventoServices;
+    
+    UserServices_Impl (EventoServices this.eventoServices) : super (Col.user);
     
     @app.DefaultRoute (methods: const [app.POST])
     Future<User> NewOrLogin (@Decode() User user) async
@@ -32,7 +56,7 @@ class UserServives extends AristaService<User>
             newUser
         );
           
-        return Cast(User, newUser);
+        return Cast (User, newUser);
     }
     
     @app.Route ('/:id', methods: const [app.PUT])
@@ -47,7 +71,6 @@ class UserServives extends AristaService<User>
               
         return Get ();
     }
-    
     
     @app.Route ('/:id', methods: const [app.GET])
     @Private()
@@ -67,7 +90,7 @@ class UserServives extends AristaService<User>
     @Private()
     Future<ListEventoResp> Eventos () async
     {
-        return new EventoServices().All();
+        return eventoServices.All();
     }
     
     @app.Route ('/:id/isAdmin')
@@ -117,7 +140,7 @@ class UserServives extends AristaService<User>
     
     @app.Route ('/:id/setAsAdmin')
     @Private(ADMIN)
-    Future<User> setAdmin (String id, @app.QueryParam() bool admin) async
+    Future<User> SetAdmin (String id, @app.QueryParam() bool admin) async
     {
         var delta = new ProtectedUser ()
             ..admin = admin;

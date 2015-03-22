@@ -1,16 +1,33 @@
 part of aristadart.tests;
 
+class _EventServicesMock extends Mock implements UserServices {}
+class _MongoDbMock extends Mock implements MongoDb {}
+
 userServicesTests ()
 {
     group("User Tests", ()
     { 
-        setUp(() 
+        setUp(() async 
         {
-            var dbManager = new MongoDbManager("mongodb://${partialDBHost}/test", poolSize: 3);
-              
-            app.addPlugin(getMapperPlugin(dbManager));
-            app.addPlugin(AuthenticationPlugin);
-            app.addPlugin(ErrorCatchPlugin);
+            
+            var eventServices = new _EventServicesMock()
+                ..when(callsTo('All')).thenReturn([new Evento()]);
+            
+            var con = "mongodb://${partialDBHost}/testUserServices";
+            var dbManager = new MongoDbManager(con, poolSize: 3);
+            
+            MongoDb db = await dbManager.getConnection();
+            await db.collection(Col.user).drop();
+            await db.innerConn.close();
+                
+            app.addPlugin (getMapperPlugin(dbManager));
+            app.addPlugin (AuthenticationPlugin);
+            app.addPlugin (ErrorCatchPlugin);
+            
+            
+            app.addModule(new Module()
+                       ..bind(EventoServices,  toValue: eventServices)
+                       ..bind(User));
           
             app.setUp([#aristadart.server]);
         });
@@ -35,6 +52,11 @@ userServicesTests ()
                 '/user', method: app.POST, bodyType: app.JSON,
                 body : encode (createUser)
             );
+            
+            var dbMock = new _MongoDbMock()
+                ..when(callsTo('insert')).thenReturn(new Future(() => {}));
+            
+            req.attributes['dbConn'] = dbMock;
         
             //dispatch the request
             var resp = await app.dispatch(req);

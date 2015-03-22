@@ -10,20 +10,22 @@ import 'package:redstone_mapper_mongo/manager.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 import 'package:shelf/shelf.dart' as shelf;
 import 'package:shelf_static/shelf_static.dart';
+import 'package:di/di.dart';
 import 'utils/utils.dart';
 import 'dart:async';
 
 main() async
 {
     var con = "mongodb://${partialDBHost}/test";
-    
-    print (con);
-    
     var dbManager = new MongoDbManager(con, poolSize: 3);
     
     app.addPlugin(getMapperPlugin(dbManager));
     app.addPlugin(AuthenticationPlugin);
     app.addPlugin(ErrorCatchPlugin);
+    
+    app.addModule(new Module()
+           ..bind(EventoServices)
+           ..bind(User));
     
     app.setShelfHandler (createStaticHandler
     (

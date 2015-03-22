@@ -137,7 +137,7 @@ class ObjetoUnityServices extends AristaService<ObjetoUnity>
         //Objeto actual
         ObjetoUnity obj = await Get (id);
         
-        obj.owner = await new UserServives().GetGeneric(obj.owner.id);
+        obj.owner = await new UserServices().GetGeneric(obj.owner.id);
         
         //Si se envio archivo para 'ios'
         if (form.ios != null && form.ios is app.HttpBodyFileUpload
@@ -253,7 +253,7 @@ class ObjetoUnityServices extends AristaService<ObjetoUnity>
         {
             for (ObjetoUnity obj in list)
             {
-                obj.owner = await new UserServives().GetGeneric(obj.owner.id);
+                obj.owner = await new UserServices().GetGeneric(obj.owner.id);
             }
         }
         

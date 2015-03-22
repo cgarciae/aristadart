@@ -104,7 +104,7 @@ class VistaServices extends AristaService<Vista>
         Vista vista = await Get (id);
         
         if (owner != null && owner && vista.owner != null)
-                    vista.owner = await new UserServives ().GetGeneric(vista.owner.id);
+                    vista.owner = await new UserServices ().GetGeneric(vista.owner.id);
                 
         if (vista is ConstruccionRA)
         {
@@ -150,7 +150,7 @@ class VistaServices extends AristaService<Vista>
             throw new ArgumentError.notNull("vista");
         
         if (owner && vista.owner != null)
-            vista.owner = await new UserServives ().GetGeneric(vista.owner.id);
+            vista.owner = await new UserServices ().GetGeneric(vista.owner.id);
         
         if (vista is ConstruccionRA)
         {

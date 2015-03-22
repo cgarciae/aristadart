@@ -1,7 +1,5 @@
 part of aristadart.server;
 
-
-
 abstract class Vista2 extends Ref
 {
     String get icon;
@@ -13,6 +11,18 @@ class Const2 extends Ref implements Vista2
     @Field() String get href => "someHost/$id"; 
 }
 
+
+@app.Group ('/testdi')
+@Encode()
+class TestDi
+{
+    User user;
+    
+    TestDi (User this.user);
+    
+    @app.DefaultRoute()
+    testDi () => user..nombre = "Cristian";
+}
 
 
 @app.Route ('/poly')
@@ -26,7 +36,12 @@ testPoly ()
 }
 
 
-
+@app.Route ('*', matchSubPaths: true)
+anyPath()
+{
+    var path = app.request.url;
+    //Do something with path
+}
 
 
 @app.Route ('/testOptional/:mandatory')

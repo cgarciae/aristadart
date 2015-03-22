@@ -20,7 +20,7 @@ part 'models/user.dart';
 part 'models/file.dart';
 part 'models/validation_rules/truth.dart';
 
-const int tipoBuild = TipoBuild.deploy;
+const int tipoBuild = TipoBuild.desarrollo;
 
 int get port => 9090;
 

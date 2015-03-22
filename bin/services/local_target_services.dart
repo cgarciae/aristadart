@@ -122,7 +122,7 @@ class LocalImageTargetServices extends AristaService<LocalImageTarget>
         //Objeto actual
         LocalImageTarget obj = await Get (id);
         
-        obj.owner = await new UserServives().GetGeneric(obj.owner.id);
+        obj.owner = await new UserServices().GetGeneric(obj.owner.id);
         
         //Si se envio archivo para 'xml'
         if (form.xml != null && form.xml is app.HttpBodyFileUpload)
@@ -191,7 +191,7 @@ class LocalImageTargetServices extends AristaService<LocalImageTarget>
         {
             for (LocalImageTarget target in list)
             {
-                target.owner = await new UserServives().GetGeneric(target.owner.id);
+                target.owner = await new UserServices().GetGeneric(target.owner.id);
             }
         }
         

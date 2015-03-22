@@ -6,6 +6,7 @@ dependencies:
   googleapis: any
   googleapis_auth: any
   http: any
+  mock: any
   mongo_dart: any
   redstone: any
   redstone_mapper: any
@@ -30,5 +31,7 @@ transformers:
     - lib/components/widgets/alert/alert.html
     - lib/components/widgets/dummy/dummy.html
 - $dart2js:
-    $exclude: ["bin", "*test*"]
+    $exclude:
+    - bin
+    - '*test*'
     minify: true
