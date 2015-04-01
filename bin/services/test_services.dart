@@ -12,6 +12,35 @@ class Const2 extends Ref implements Vista2
 }
 
 
+
+@app.Route ('/testStream')
+testSream ()
+{
+    StreamController<String> controller = new StreamController<String> ();
+    
+    () async
+    {
+        var initialTime = new DateTime.now();
+        
+        await new Future.delayed (new Duration (seconds: 1));
+        controller.add("hello\n");
+        
+        await new Future.delayed (new Duration (seconds: 10));
+        controller.add("chao\n");
+        
+        var finalTime = new DateTime.now().difference(initialTime);
+        
+        controller.add(finalTime.toString());
+        
+        controller.close();
+    
+    }();
+    
+    Stream<List<int>> intStream = controller.stream.map((s) => s.codeUnits);
+    
+    return new shelf.Response.ok (intStream);
+}
+
 @app.Group ('/testdi')
 @Encode()
 class TestDi

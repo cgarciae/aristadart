@@ -11,8 +11,6 @@ class Evento extends Ref
     @Field () String descripcion;
     @Field() bool active;
     
-    @Field() String get url => localHost + "export/evento/$id";
-    
     @Field() List<Vista> vistas;
     @Field() CloudTarget cloudTarget;
     

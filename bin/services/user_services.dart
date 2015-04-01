@@ -1,35 +1,15 @@
 part of aristadart.server;
 
-abstract class UserServices implements AristaService<User>
-{
-    EventoServices eventoServices;
-    
-    factory UserServices ({EventoServices eventoServices})
-    {
-        if (eventoServices == null)
-            eventoServices = new EventoServices();
-        
-        return new UserServices_Impl (eventoServices);
-    }
-    
-    Future<User> NewOrLogin (User user);
-    Future<User> Update (User delta);
-    Future<User> Get ();
-    Future<DbObj> Delete ();
-    Future<ListEventoResp> Eventos ();
-    Future<BoolResp> isAdmin ();
-    Future<User> Find (String id, String email, String nombre, String apellido);
-    Future<User> SetAdmin (String id, bool admin);
-}
+ 
 
 @app.Group('/user')
 @Catch()
 @Encode()
-class UserServices_Impl extends AristaService<User> implements UserServices
+class UserServices extends AristaService<User>
 {
     EventoServices eventoServices;
     
-    UserServices_Impl (EventoServices this.eventoServices) : super (Col.user);
+    UserServices (EventoServices this.eventoServices) : super (Col.user);
     
     @app.DefaultRoute (methods: const [app.POST])
     Future<User> NewOrLogin (@Decode() User user) async
