@@ -28,9 +28,9 @@ String get staticFolder {
     switch (tipoBuild)
     {
         case TipoBuild.desarrollo:
-            return "../web";
+            return "web";
         case TipoBuild.jsTesting:
-            return "../build/web";
+            return "build/web";
         case TipoBuild.dockerTesting:
         case TipoBuild.deploy:
             return "build/web";
