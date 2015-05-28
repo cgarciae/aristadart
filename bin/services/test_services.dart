@@ -65,14 +65,6 @@ testPoly ()
 }
 
 
-@app.Route ('*', matchSubPaths: true)
-anyPath()
-{
-    var path = app.request.url;
-    //Do something with path
-}
-
-
 @app.Route ('/testOptional/:mandatory')
 testOptional (String mandatory, {@app.QueryParam() String optional}) => "$mandatory $optional";
 
