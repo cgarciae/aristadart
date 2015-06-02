@@ -22,7 +22,11 @@ main() async {
   app.addPlugin(AuthenticationPlugin);
   app.addPlugin(ErrorCatchPlugin);
 
-  app.addModule(new Module()..bind(EventoServices)..bind(User));
+  app.addModule(new Module()
+    ..bind(EventoServices)
+    ..bind(UserServices)
+    ..bind(ObjetoUnityServices)
+    ..bind(User));
 
   app.setShelfHandler(createStaticHandler("web",
       defaultDocument: "index.html", serveFilesOutsidePath: true));

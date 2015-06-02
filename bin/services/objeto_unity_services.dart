@@ -5,7 +5,9 @@ part of aristadart.server;
 @Catch()
 class ObjetoUnityServices extends AristaService<ObjetoUnity>
 {
-    ObjetoUnityServices() : super (Col.objetoUnity);
+    UserServices userServices;
+
+    ObjetoUnityServices(this.userServices) : super (Col.objetoUnity);
     
     @app.DefaultRoute (methods: const [app.POST])
     @Private()
@@ -253,7 +255,7 @@ class ObjetoUnityServices extends AristaService<ObjetoUnity>
         {
             for (ObjetoUnity obj in list)
             {
-                obj.owner = await new UserServices().GetGeneric(obj.owner.id);
+                obj.owner = await userServices.GetGeneric(obj.owner.id);
             }
         }
         
