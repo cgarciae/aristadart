@@ -7,9 +7,9 @@ part of aristadart.server;
 @Encode()
 class UserServices extends AristaService<User>
 {
-    EventoServices eventoServices;
+
     
-    UserServices (EventoServices this.eventoServices) : super (Col.user);
+    UserServices () : super (Col.user);
     
     @app.DefaultRoute (methods: const [app.POST])
     Future<User> NewOrLogin (@Decode() User user) async
@@ -70,7 +70,15 @@ class UserServices extends AristaService<User>
     @Private()
     Future<ListEventoResp> Eventos () async
     {
-        return eventoServices.All();
+        List<Evento> eventos = await mongoDb.find
+        (
+            Col.evento,
+            Evento,
+            where.eq("owner._id", StringToId (userId))
+        );
+
+        return new ListEventoResp()
+            ..eventos = eventos;
     }
     
     @app.Route ('/:id/isAdmin')

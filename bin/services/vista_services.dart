@@ -4,14 +4,18 @@ part of aristadart.server;
 @Catch()
 class VistaServices extends AristaService<Vista>
 {
-    VistaServices () : super (Col.vista);
+    ObjetoUnityServices objetoUnityServices;
+    LocalImageTargetServices localImageTargetServices;
+
+    VistaServices (this.objetoUnityServices, this.localImageTargetServices) : super (Col.vista);
     
     @app.DefaultRoute(methods: const [app.POST])
     @Private()
     @Encode()
     Future<Vista> New (@app.QueryParam("type") int typeNumber, @app.QueryParam("eventoId") String eventoId) async
     {
-        
+
+
         Vista vista = Vista.Factory (Vista.IndexToType[typeNumber])
             ..id = newId()
             ..nombre = "Mi vista"
@@ -25,7 +29,21 @@ class VistaServices extends AristaService<Vista>
         );
         
         if (eventoId != null)
-            await new EventoServices().AddVista(eventoId, vista.id);
+        {
+            var newVista = new EmptyVista()
+                ..id = vista.id;
+
+            await db.update
+            (
+                Col.evento,
+                where.id(StringToId(eventoId)),
+                modify.addToSet
+                (
+                    "vistas",
+                    cleanMap(db.encode(newVista))
+                )
+            );
+        }
         
         
         return vista;
@@ -109,10 +127,10 @@ class VistaServices extends AristaService<Vista>
         if (vista is ConstruccionRA)
         {
             if (objetoUnity != null && objetoUnity && vista.objetoUnity != null)
-                vista.objetoUnity = await new ObjetoUnityServices().Get(vista.objetoUnity.id);
+                vista.objetoUnity = await objetoUnityServices.Get(vista.objetoUnity.id);
             
             if (localTarget != null && localTarget && vista.localTarget != null) 
-                vista.localTarget = await new LocalImageTargetServices().Get(vista.localTarget.id);
+                vista.localTarget = await localImageTargetServices.Get(vista.localTarget.id);
             
         }       
         else
@@ -155,10 +173,10 @@ class VistaServices extends AristaService<Vista>
         if (vista is ConstruccionRA)
         {
             if (objetoUnity != null && objetoUnity && vista.objetoUnity != null)
-                vista.objetoUnity = await new ObjetoUnityServices().Get(vista.objetoUnity.id);
+                vista.objetoUnity = await objetoUnityServices.Get(vista.objetoUnity.id);
             
             if (localTarget != null && localTarget && vista.localTarget != null) 
-                vista.localTarget = await new LocalImageTargetServices().Get(vista.localTarget.id);
+                vista.localTarget = await localImageTargetServices.Get(vista.localTarget.id);
             
         }       
         else

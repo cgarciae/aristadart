@@ -16,12 +16,15 @@ class HomeVista
     
     Router router;
     ClientUserServices userServices;
+    ClientEventoServices eventoServices;
     
     HomeVista (this.router)
     {
+
         userServices = new ClientUserServices(new User()
                                                 ..id = userId);
-        
+
+
         userServices.GetGeneric().then (doIfSuccess((User _user){
         
         user = _user;

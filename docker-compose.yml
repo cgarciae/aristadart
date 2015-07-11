@@ -1,0 +1,18 @@
+data:
+  image: busybox
+  volumes:
+   - /data:/data
+
+db:
+  image: mongo:2.6.7
+  volumes_from:
+   - data
+
+server:
+  image: cgarciae/aristadart:0.0.5
+  links:
+   - db
+  volumes_from:
+   - data
+  ports:
+   - "80:9090"

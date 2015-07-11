@@ -4,7 +4,8 @@ part of aristadart.server;
 @Catch()
 class EventoServices extends AristaService<Evento>
 {
-    EventoServices () : super (Col.evento);
+    VistaServices vistaServices;
+    EventoServices (this.vistaServices) : super (Col.evento);
     
     @app.DefaultRoute (methods: const[app.POST])
     @Private()
@@ -114,7 +115,7 @@ class EventoServices extends AristaService<Evento>
                 .map(StringToId)
                 .toList();
         
-        List<Vista> vistas = await new VistaServices().Find
+        List<Vista> vistas = await vistaServices.Find
         (
             where.oneFrom("_id", vistasId)
         );
@@ -148,7 +149,7 @@ class EventoServices extends AristaService<Evento>
         
         for (Vista _vista in evento.vistas)
         {
-            Vista vista = await new VistaServices().Export
+            Vista vista = await vistaServices.Export
             (
                     _vista.id,
                     objetoUnity: true,

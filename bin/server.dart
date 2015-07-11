@@ -24,18 +24,24 @@ main() async {
 
   app.addModule(new Module()
     ..bind(EventoServices)
+    ..bind(VistaServices)
     ..bind(UserServices)
     ..bind(ObjetoUnityServices)
+    ..bind(VistaServices)
+    ..bind(CloudTargetServices)
+    ..bind(LocalImageTargetServices)
     ..bind(User));
   
 
-  app.setShelfHandler(createStaticHandler("web",
+  app.setShelfHandler(createStaticHandler(staticFolder,
       defaultDocument: "index.html", serveFilesOutsidePath: true));
 
   app.setupConsoleLog(Level.ALL);
   await app.start(port: port, autoCompress: true);
 
   MongoDb dbConn = await dbManager.getConnection();
+
+  print ("Got connection");
 
   User user = await dbConn.findOne(Col.user, User, where.eq('admin', true));
 

@@ -5,7 +5,8 @@ part of aristadart.server;
 @Catch()
 class LocalImageTargetServices extends AristaService<LocalImageTarget>
 {
-    LocalImageTargetServices() : super (Col.localTarget);
+    UserServices userServices;
+    LocalImageTargetServices(this.userServices) : super (Col.localTarget);
     
     @app.DefaultRoute (methods: const [app.POST])
     @Private()
@@ -122,7 +123,7 @@ class LocalImageTargetServices extends AristaService<LocalImageTarget>
         //Objeto actual
         LocalImageTarget obj = await Get (id);
         
-        obj.owner = await new UserServices().GetGeneric(obj.owner.id);
+        obj.owner = await userServices.GetGeneric(obj.owner.id);
         
         //Si se envio archivo para 'xml'
         if (form.xml != null && form.xml is app.HttpBodyFileUpload)
@@ -191,7 +192,7 @@ class LocalImageTargetServices extends AristaService<LocalImageTarget>
         {
             for (LocalImageTarget target in list)
             {
-                target.owner = await new UserServices().GetGeneric(target.owner.id);
+                target.owner = await userServices.GetGeneric(target.owner.id);
             }
         }
         

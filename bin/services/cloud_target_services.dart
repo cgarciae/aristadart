@@ -4,7 +4,8 @@ part of aristadart.server;
 @Catch()
 class CloudTargetServices extends AristaService<CloudTarget>
 {
-    CloudTargetServices () : super (Col.cloudTarget);
+    EventoServices eventoServices;
+    CloudTargetServices (this.eventoServices) : super (Col.cloudTarget);
     
     @app.DefaultRoute (methods: const[app.POST])
     @Private()
@@ -54,7 +55,7 @@ class CloudTargetServices extends AristaService<CloudTarget>
             throw new app.ErrorResponse (400, "Query Parm eventoId requerido");
         
         //Verificar existencia: lanza error si no existe
-        await new EventoServices().Get(eventoId);
+        await eventoServices.Get(eventoId);
             
         
         CloudTarget target = await New(eventoId);

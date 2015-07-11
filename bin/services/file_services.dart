@@ -1,7 +1,6 @@
 part of aristadart.server;
 
 @app.Group('/file')
-@Catch()
 class FileServices
 {
     @app.DefaultRoute(methods: const[app.POST], allowMultipartRequest: true)
@@ -14,7 +13,7 @@ class FileServices
         HttpBodyFileUpload file = FormToFileUpload(form);
             
         if (file == null || file.content == null || file.content.length == 0)
-            throw new app.ErrorResponse (400, "File is null or empty");
+            throw new app.ErrorResponse (401, "File is null or empty");
         
         //Define input from uploaded file
         var input = new Stream.fromIterable([file.content]);
@@ -78,7 +77,7 @@ class FileServices
         );
         
         if (gridOut == null)
-            throw new app.ErrorResponse (400, "El archivo no existe");
+            throw new app.ErrorResponse (400, "El archivo: $id no existe");
         
         return new shelf.Response.ok
         (
@@ -102,7 +101,7 @@ class FileServices
         
         
         if (gridOut == null)
-            throw new app.ErrorResponse(400, "El archivo no existe");
+            throw new app.ErrorResponse(400, "El archivo $id no existe");
         
         return db.decode(gridOut.metaData, FileDb);
         
