@@ -96,7 +96,7 @@ class VuforiaServices
         print (body);
         
         String date = HttpDate.format(new DateTime.now());
-        String accessKey = "8524c879ec19a80b912f989c33091af8ddd7ea8c";
+        String accessKey = "3dcd48a5b15c3aee70c4c73261de189a5118a195";
        
         String signature = _createSignature
         (
@@ -111,7 +111,7 @@ class VuforiaServices
         };
         
         if (notNullOrEmpty(contentType))
-            headers.addAll({Header.contentType : contentType});
+            headers.addAll({HeaderType.contentType : contentType});
         
         var req = new http.Request
         (
@@ -140,7 +140,7 @@ class VuforiaServices
           
           print(stringToSign);
 
-          var server_secret_key = "a26b48430ac02696539b02957f0830572eaa4c6a";
+          var server_secret_key = "e1a1ff6fbeda92abf82a636869b962f6313f7b98";
           var signature = base64_HMAC_SHA1(server_secret_key, stringToSign);
 
         return signature;

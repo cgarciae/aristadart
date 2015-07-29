@@ -7,44 +7,40 @@ class VistaServices extends AristaService<Vista>
     ObjetoUnityServices objetoUnityServices;
     LocalImageTargetServices localImageTargetServices;
 
-    VistaServices (this.objetoUnityServices, this.localImageTargetServices) : super (Col.vista);
+    VistaServices (this.objetoUnityServices, this.localImageTargetServices, MongoDb mongoDb) : super (Col.vista, mongoDb);
     
     @app.DefaultRoute(methods: const [app.POST])
     @Private()
     @Encode()
-    Future<Vista> New (@app.QueryParam("type") int typeNumber, @app.QueryParam("eventoId") String eventoId) async
+    Future<Vista> New (@app.QueryParam("type") int typeNumber, @app.QueryParam() String eventoId, {@Authorization String userId}) async
     {
-
+        if (eventoId == null)
+            throw new app.ErrorResponse(400, "Evento ID null");
 
         Vista vista = Vista.Factory (Vista.IndexToType[typeNumber])
             ..id = newId()
             ..nombre = "Mi vista"
             ..owner = (new User()
                 ..id = userId);
-        
-        
+
         await insert
         (
             vista
         );
         
-        if (eventoId != null)
-        {
-            var newVista = new EmptyVista()
-                ..id = vista.id;
+        var newVista = new EmptyVista()
+            ..id = vista.id;
 
-            await db.update
+        await mongoDb.update
+        (
+            Col.evento,
+            where.id(StringToId(eventoId)),
+            modify.addToSet
             (
-                Col.evento,
-                where.id(StringToId(eventoId)),
-                modify.addToSet
-                (
-                    "vistas",
-                    cleanMap(db.encode(newVista))
-                )
-            );
-        }
-        
+                "vistas",
+                cleanMap(mongoDb.encode(newVista))
+            )
+        );
         
         return vista;
         
@@ -149,11 +145,11 @@ class VistaServices extends AristaService<Vista>
         Vista vista = await Export(id, objetoUnity: true, localTarget: true);
         return vista.valid;
     }
-    
-    
-    static Vista MongoMapToVista (Map map)
+
+
+    Vista MongoMapToVista (Map map)
     {
-        return Vista.MapToVista (db.decode, map);
+        return Vista.MapToVista (mongoDb.decode, map);
     }
     
     Future<List<Vista>> Find (query)

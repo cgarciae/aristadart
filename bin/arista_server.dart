@@ -1,7 +1,7 @@
 library aristadart.server;
 
 import 'dart:io';
-import 'dart:convert' as conv;  
+import 'dart:convert' as conv;
 import 'package:aristadart/arista.dart';
 import 'dart:async';
 import 'package:http/http.dart' as http;
@@ -34,7 +34,7 @@ part 'services/cloud_target_services.dart';
 part 'services/vuforia_services.dart';
 part 'utils/authorization.dart';
 part 'utils/exceptions.dart';
-
+part 'utils/header.dart';
 
 QueryMap NewQueryMap () => new QueryMap(new Map());
 QueryMap MapToQueryMap (Map map) => new QueryMap(map);
@@ -72,16 +72,16 @@ String md5hash (String body)
 {
     var md5 = new crypto.MD5()
         ..add(conv.UTF8.encode (body));
-    
+
     return crypto.CryptoUtils.bytesToHex (md5.close());
 }
 
 String base64_HMAC_SHA1 (String hexKey, String stringToSign)
 {
-    
+
     var hmac = new crypto.HMAC(new crypto.SHA1(), conv.UTF8.encode (hexKey))
         ..add(conv.UTF8.encode (stringToSign));
-    
+
     return crypto.CryptoUtils.bytesToBase64(hmac.close());
 }
 
@@ -95,20 +95,20 @@ Future<List<dynamic>> deleteFiles (GridFS fs, dynamic fileSelector)
     {
         var removeFiles = fs.files.remove(where.oneFrom('_id', list));
         var removeChunks = fs.chunks.remove(where.oneFrom('files_id', list));
-        
+
         return Future.wait([removeChunks, removeFiles]);
     });
-        
+
 }
 
 Future<List<dynamic>> deleteFile (String id)
 {
     var fileId = StringToId(id);
-    
+
     var removeFiles = fs.files.remove (where.id (fileId));
     var removeChunks = fs.chunks.remove (where.eq ('files_id', fileId));
-        
-    return Future.wait([removeChunks, removeFiles]);  
+
+    return Future.wait([removeChunks, removeFiles]);
 }
 
 Stream<List<int>> getData (GridOut gridOut)
@@ -120,7 +120,7 @@ Stream<List<int>> getData (GridOut gridOut)
 }
 
 String bytesToString (List<int> list)
-{    
+{
     return conv.UTF8.decode (list);
 }
 
@@ -128,7 +128,7 @@ Map bytesToJSON (List<int> list)
 {
     var string = conv.UTF8.decode (list);
     var map = conv.JSON.decode (string);
-    
+
     return map;
 }
 
@@ -137,7 +137,7 @@ Future<dynamic> streamedResponseToObject (Type type, http.StreamedResponse resp)
     String json = await resp.stream.toList()
         .then (flatten)
         .then(bytesToString);
-        
+
     return decodeJson(json, type);
 }
 
@@ -159,7 +159,7 @@ Function ifNotNull (String failMessage, dynamic f (dynamic))
         if (obj == null)
             return new Resp()
                 ..error = failMessage;
-        
+
         return f (obj);
     };
 }
@@ -177,7 +177,7 @@ ModifierBuilder getModifierBuilder (Object obj, [MongoDb dbConn])
 {
     dbConn = dbConn == null ? db : dbConn;
     Map<String, dynamic> map = dbConn.encode(obj);
-    
+
     map = cleanMap (map);
 
     Map mod = {r'$set' : map};
@@ -198,13 +198,13 @@ dynamic cleanMap (dynamic json)
         for (String key in json.keys)
         {
             var value = json[key];
-            
+
             if (value == null)
                 continue;
-            
+
             if (value is List || value is Map)
                 map[key] = cleanMap (value);
-            
+
             else
                 map[key] = value;
         }

@@ -9,10 +9,17 @@ db:
    - data
 
 server:
-  image: cgarciae/aristadart:0.0.5
+  image: cgarciae/aristadart:0.0.7
   links:
    - db
   volumes_from:
    - data
   ports:
    - "80:9090"
+
+mongoex:
+  image: knickers/mongo-express
+  links:
+   - db:mongo
+  ports:
+     - "8081:8081"

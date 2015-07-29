@@ -20,11 +20,11 @@ part 'models/user.dart';
 part 'models/file.dart';
 part 'models/validation_rules/truth.dart';
 
-const int tipoBuild = TipoBuild.desarrollo;
+const int tipoBuild = TipoBuild.deploy;
 
 int get port => 9090;
 
-final String boot2docker_ip = "192.168.59.105";
+final String boot2docker_ip = "192.168.59.103";
 final String host_ip = "45.55.155.202";
 
 String get staticFolder {
@@ -185,7 +185,7 @@ class ObjetoUnityResp extends Resp
 
 List flatten (List<List> list) => list.expand((x) => x).toList();
 
-abstract class Header
+abstract class HeaderType
 {
     static const String contentType = 'Content-Type';
     static const String authorization = 'Authorization';

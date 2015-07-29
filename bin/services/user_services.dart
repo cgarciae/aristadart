@@ -7,9 +7,7 @@ part of aristadart.server;
 @Encode()
 class UserServices extends AristaService<User>
 {
-
-    
-    UserServices () : super (Col.user);
+    UserServices (MongoDb mongoDb) : super (Col.user, mongoDb);
     
     @app.DefaultRoute (methods: const [app.POST])
     Future<User> NewOrLogin (@Decode() User user) async
@@ -85,7 +83,7 @@ class UserServices extends AristaService<User>
     @Private()
     Future<BoolResp> isAdmin () async
     {
-        ProtectedUser user = await db.findOne
+        ProtectedUser user = await mongoDb.findOne
         (
             Col.user,
             ProtectedUser,

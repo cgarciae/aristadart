@@ -1,14 +1,19 @@
 part of aristadart.server;
 
 @app.Group('/file')
-class FileServices
+class FileServices extends AristaService<FileDb>
 {
+
+    GridFS get fs => new GridFS(mongoDb.innerConn);
+
+    FileServices(MongoDb mongoDb) : super ("files", mongoDb);
+
     @app.DefaultRoute(methods: const[app.POST], allowMultipartRequest: true)
     @Private()
     @Encode()
     Future<FileDb> NewOrUpdate (@app.Body(app.FORM) Map form, 
                                 @Decode(fromQueryParams: true) FileDb queryMetadata,
-                                {String id, String ownerId}) async
+                                {String id, @Authorization String ownerId}) async
     {
         HttpBodyFileUpload file = FormToFileUpload(form);
             
@@ -33,9 +38,8 @@ class FileServices
         if (newMetadata.type == null)
             newMetadata.type = file.contentType.value;
         
-        if (ownerId == null)
-            newMetadata.owner = (new User()
-            ..id = userId);
+        newMetadata.owner = (new User()
+            ..id = ownerId);
         
         if (id != null)
         {
@@ -51,16 +55,12 @@ class FileServices
             ..error = null
             ..filename = file.filename;
         
-        print ("Metadata es ${encode(newMetadata)}");
-        
-        
+
         //Convert to map and clean null fields
-        var metadataMap = cleanMap(db.encode(newMetadata));
+        var metadataMap = cleanMap(mongoDb.encode(newMetadata));
         
         //Save metadata
         gridIn.metaData = metadataMap;
-        
-        print ("MetadataMap es ${metadataMap}");
                
         //Wait till save finishes
         await gridIn.save();
@@ -103,7 +103,7 @@ class FileServices
         if (gridOut == null)
             throw new app.ErrorResponse(400, "El archivo $id no existe");
         
-        return db.decode(gridOut.metaData, FileDb);
+        return mongoDb.decode(gridOut.metaData, FileDb);
         
     }
     
@@ -149,7 +149,7 @@ class FileServices
                     => (file.contentType as String).contains(type) || file.metadata.type == type);
         
         
-        return stream.map((QueryMap file) => db.decode(file.metadata, FileDb)).toList();
+        return stream.map((QueryMap file) => mongoDb.decode(file.metadata, FileDb)).toList();
     }
     
     @app.Route('/allImages', methods: const[app.GET])

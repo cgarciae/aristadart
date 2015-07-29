@@ -8,7 +8,7 @@ abstract class Requester
     {
         
         if (userId != null)
-            headers = addOrSet(headers, {Header.authorization : userId});
+            headers = addOrSet(headers, {HeaderType.authorization : userId});
         
         if (params != null)
             path = appendRequestParams(path, params);
@@ -73,7 +73,7 @@ abstract class Requester
             params: params, headers: addOrSet
             (
                 headers,
-                {Header.contentType : ContType.applicationJson}
+                {HeaderType.contentType : ContType.applicationJson}
             )
         );
     }
@@ -161,7 +161,7 @@ abstract class Requester
             userId: userId, headers: addOrSet
             (
                 headers,
-                {Header.contentType : ContType.applicationJson}
+                {HeaderType.contentType : ContType.applicationJson}
             )
         );
     }

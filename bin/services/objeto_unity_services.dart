@@ -3,13 +3,14 @@ part of aristadart.server;
 @app.Group('/${Col.objetoUnity}')
 class ObjetoUnityServices extends AristaService<ObjetoUnity> {
   UserServices userServices;
+  FileServices fileServices;
 
-  ObjetoUnityServices(this.userServices) : super(Col.objetoUnity);
+  ObjetoUnityServices(this.userServices, this.fileServices, MongoDb mongoDb) : super(Col.objetoUnity, mongoDb);
 
   @app.DefaultRoute(methods: const [app.POST])
   @Private()
   @Encode()
-  Future<ObjetoUnity> New() async {
+  Future<ObjetoUnity> New(@Authorization String userId) async {
     ObjetoUnity obj = new ObjetoUnity()
       ..name = "Nuevo Modelo"
       ..version = 0
@@ -64,13 +65,13 @@ class ObjetoUnityServices extends AristaService<ObjetoUnity> {
     try {
       if (obj.userFile != null) {
         //Update
-        userFile = await new FileServices().Update(obj.userFile.id, form);
+        userFile = await fileServices.Update(obj.userFile.id, form);
       } else {
         //New
-        userFile = await new FileServices().NewOrUpdate(form, metadata);
+        userFile = await fileServices.NewOrUpdate(form, metadata);
       }
     } on app.ErrorResponse catch (e, s) {
-      userFile = await new FileServices().NewOrUpdate(form, metadata);
+      userFile = await fileServices.NewOrUpdate(form, metadata);
     }
 
     print("ACA");
@@ -107,8 +108,8 @@ class ObjetoUnityServices extends AristaService<ObjetoUnity> {
       ..osxUpdated = false;
 
     //Guardar
-    await db.update(
-        collectionName, where.id(StringToId(id)), getModifierBuilder(delta));
+    await mongoDb.update(
+        collectionName, where.id(StringToId(id)), getModifierBuilder(delta, mongoDb));
 
     //Retornar objeto modificado
     return Get(id);
@@ -277,11 +278,11 @@ class ObjetoUnityServices extends AristaService<ObjetoUnity> {
     //Si ios ya existe
     if (modelo != null && modelo.id != null) {
       file =
-          await new FileServices().Update(modelo.id, newForm, ownerId: ownerId);
+          await fileServices.Update(modelo.id, newForm, ownerId: ownerId);
     } else {
       var metadata = new FileDb()..system = system;
 
-      file = await new FileServices().NewOrUpdate(
+      file = await fileServices.NewOrUpdate(
           new QueryMap(newForm), metadata, ownerId: ownerId);
     }
 

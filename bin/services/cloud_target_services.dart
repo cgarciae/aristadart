@@ -5,7 +5,9 @@ part of aristadart.server;
 class CloudTargetServices extends AristaService<CloudTarget>
 {
     EventoServices eventoServices;
-    CloudTargetServices (this.eventoServices) : super (Col.cloudTarget);
+    FileServices fileServices;
+
+    CloudTargetServices (this.fileServices, this.eventoServices, MongoDb mongoDb) : super (Col.cloudTarget, mongoDb);
     
     @app.DefaultRoute (methods: const[app.POST])
     @Private()
@@ -79,7 +81,7 @@ class CloudTargetServices extends AristaService<CloudTarget>
         
                 
         //Subir la imagen a Mongo
-        FileDb image = await new FileServices().NewOrUpdate (form, new FileDb());
+        FileDb image = await fileServices.NewOrUpdate (form, new FileDb());
          
         //Crear cambios
         var delta = new CloudTarget()
@@ -106,7 +108,7 @@ class CloudTargetServices extends AristaService<CloudTarget>
         
         HttpBodyFileUpload file = FormToFileUpload(form);
         
-        FileDb image = await new FileServices ().Update(target.image.id, form);
+        FileDb image = await fileServices.Update(target.image.id, form);
         VuforiaResponse response = await VuforiaServices.updateImage
         (
             target.target.id,

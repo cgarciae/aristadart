@@ -3,7 +3,7 @@ part of aristadart.server;
 
 abstract class AristaService<T extends DbObj> extends MongoDbService<T>
 {
-    AristaService (String collectionName) : super (collectionName);
+    AristaService (String collectionName, MongoDb mongoDb) : super.fromConnection (mongoDb, collectionName);
     
     Future<T> NewGeneric (T obj) async
     {
@@ -40,12 +40,22 @@ abstract class AristaService<T extends DbObj> extends MongoDbService<T>
         }
         catch (e, s)
         {
-            await db.update
-            (
-                collectionName,
-                where.id(StringToId(id)),
-                getModifierBuilder(delta)
-            );
+            try {
+                await mongoDb.update
+                (
+                    collectionName,
+                    where.id(StringToId(id)),
+                    getModifierBuilder(delta, mongoDb)
+                );
+            }
+            catch (e2, s2) {
+                await mongoDb.update
+                (
+                    collectionName,
+                    where.id(StringToId(id)),
+                    encode(delta)
+                );
+            }
         }
     }
     

@@ -5,12 +5,12 @@ part of aristadart.server;
 class EventoServices extends AristaService<Evento>
 {
     VistaServices vistaServices;
-    EventoServices (this.vistaServices) : super (Col.evento);
+    EventoServices (this.vistaServices, MongoDb mongoDb) : super (Col.evento, mongoDb);
     
     @app.DefaultRoute (methods: const[app.POST])
     @Private()
     @Encode()
-    Future<Evento> New () async
+    Future<Evento> New (@Authorization String userId) async
     {
         Evento evento = new Evento()
             ..id = newId()

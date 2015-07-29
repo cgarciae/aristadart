@@ -18,16 +18,16 @@ class LocalImageTarget extends Ref
 
     @Field () int version = 0;
     
-    @Field () bool get active => activeDat && activeXml;
-    @Field() bool get updated => datUpdated && xmlUpdated;
+    @Field () bool get active => activeDat == true && activeXml == true;
+    @Field() bool get updated => datUpdated == true && xmlUpdated == true;
     
     @Field() FileDb dat;
     @Field() bool get activeDat => dat != null && notNullOrEmpty(dat.id);
-    @Field() bool datUpdated = false;
+    @Field() bool datUpdated;
     
     @Field() FileDb xml;
     @Field() bool get activeXml => xml != null && notNullOrEmpty(xml.id);
-    @Field() bool xmlUpdated = false;
+    @Field() bool xmlUpdated;
 }
 
 class ListLocalImageTargetResp extends Resp
