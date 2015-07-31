@@ -212,6 +212,7 @@ main() async {
 
     evento = await eventoServices.Update(evento.id, new Evento()
       ..nombre = "Evento Prueba"
+      ..demo = true
       ..descripcion = "Este es un evento de prueba"
       ..imagenPreview = fileDb);
 

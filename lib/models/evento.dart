@@ -10,6 +10,7 @@ class Evento extends Ref
     @Field () String nombre;
     @Field () String descripcion;
     @Field() bool active;
+    @Field() bool demo;
     
     @Field() List<Vista> vistas;
     @Field() CloudTarget cloudTarget;

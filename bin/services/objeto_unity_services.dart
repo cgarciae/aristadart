@@ -135,8 +135,7 @@ class ObjetoUnityServices extends AristaService<ObjetoUnity> {
         form.ios.content is List &&
         form.ios.content.isNotEmpty) {
       print("ios");
-      print(form.ios);
-      print(form.ios.content);
+
 
       //Actualizar FileDb obj.ios
       FileDb newFile = await ActualizarModelo(

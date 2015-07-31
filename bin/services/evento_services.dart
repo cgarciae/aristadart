@@ -167,5 +167,24 @@ class EventoServices extends AristaService<Evento>
         
         return evento;
     }
+
+    Stream<Evento> ExportMany_ (Iterable<String> ids) async * {
+
+        for (var id in ids) {
+            try {
+                Evento evento = await Export(id);
+                yield evento;
+            }
+            catch(e){}
+        }
+    }
+
+    @app.Route ('/get-demos', methods: const[app.GET])
+    @Encode()
+    Future<List<Evento>> GetDemos () async {
+        List<Evento> demos = await find(where.eq("demo", true));
+        return ExportMany_(demos.map((e) => e.id)).toList();
+    }
+
 }
 
