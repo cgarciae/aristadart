@@ -141,6 +141,8 @@ class ObjetoUnityServices extends AristaService<ObjetoUnity> {
       FileDb newFile = await ActualizarModelo(
           obj.ios, SystemType.ios, form.ios, obj.owner.id);
 
+      print("ios2");
+
       //Guardar unicamente el [id] en delta
       delta
         ..ios = (new FileDb()..id = newFile.id)
