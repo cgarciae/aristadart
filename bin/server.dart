@@ -245,17 +245,6 @@ handleResponseHeader() {
   }
 }
 
-@app.Interceptor(r'/private/.+')
-authenticationFilter() {
-  print(app.request.headers);
-  if (session["id"] == null) {
-    app.chain.interrupt(
-        statusCode: HttpStatus.UNAUTHORIZED,
-        responseValue: {"error": "NOT_AUTHENTICATED"});
-  } else {
-    app.chain.next();
-  }
-}
 
 _specialHeaders() {
   var cross = {"Access-Control-Allow-Origin": "*"};

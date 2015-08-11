@@ -1,15 +1,13 @@
 data:
   image: busybox
   volumes:
-   - /data
-
+   - /data:data
 db:
   image: mongo:2.6.7
   volumes_from:
    - data
   ports:
    - "8095:27017"
-
 mongoex:
   image: knickers/mongo-express
   links:
